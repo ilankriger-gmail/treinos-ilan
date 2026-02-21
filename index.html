@@ -790,9 +790,339 @@
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
-    
+
     @keyframes spin {
       to { transform: rotate(360deg); }
+    }
+
+    /* Chat UI */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 120px);
+      max-height: calc(100vh - 120px);
+    }
+
+    .chat-profile-header {
+      padding: 12px 20px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chat-profile-header:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .chat-profile-summary {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .chat-profile-summary .toggle-icon {
+      margin-left: auto;
+      transition: transform 0.2s;
+      color: var(--text-muted);
+    }
+
+    .chat-profile-summary .toggle-icon.open {
+      transform: rotate(180deg);
+    }
+
+    .chat-profile-details {
+      display: none;
+      padding-top: 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .chat-profile-details.open {
+      display: block;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-bubble {
+      max-width: 85%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.6;
+      word-wrap: break-word;
+    }
+
+    .chat-bubble.user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-bubble.assistant {
+      align-self: flex-start;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      border-bottom-left-radius: 4px;
+    }
+
+    .chat-bubble.assistant p { margin-bottom: 8px; }
+    .chat-bubble.assistant p:last-child { margin-bottom: 0; }
+    .chat-bubble.assistant strong { color: var(--accent); }
+    .chat-bubble.assistant ul, .chat-bubble.assistant ol { margin: 8px 0; padding-left: 20px; }
+    .chat-bubble.assistant li { margin-bottom: 4px; }
+
+    .chat-typing {
+      align-self: flex-start;
+      padding: 12px 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      border-bottom-left-radius: 4px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .chat-typing .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      animation: typingBounce 1.4s infinite ease-in-out;
+    }
+
+    .chat-typing .dot:nth-child(2) { animation-delay: 0.2s; }
+    .chat-typing .dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); }
+    }
+
+    .chat-input-area {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-primary);
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 12px 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      resize: none;
+      max-height: 120px;
+      line-height: 1.4;
+    }
+
+    .chat-input::placeholder { color: var(--text-muted); }
+    .chat-input:focus { outline: none; border-color: var(--accent); }
+
+    .chat-send-btn {
+      width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .chat-send-btn:hover { background: #7c3aed; }
+    .chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .chat-start-btn {
+      padding: 16px;
+      background: linear-gradient(135deg, var(--accent), #7c3aed);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px;
+      transition: all 0.2s;
+    }
+
+    .chat-start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+    }
+
+    /* Suggestion Cards */
+    .suggestion-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 10px;
+    }
+
+    .suggestion-card.accepted {
+      border-color: var(--success);
+      background: rgba(34, 197, 94, 0.08);
+    }
+
+    .suggestion-card.rejected {
+      opacity: 0.4;
+      border-color: #ef4444;
+    }
+
+    .suggestion-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .suggestion-card-header .label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .suggestion-card-header .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    .suggestion-card-detail {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .suggestion-card-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .suggestion-card-actions button {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .suggestion-accept {
+      background: var(--success);
+      border: none;
+      color: white;
+    }
+
+    .suggestion-modify {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .suggestion-reject {
+      background: transparent;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+
+    .suggestion-accept:hover { background: #16a34a; }
+    .suggestion-modify:hover { background: var(--accent-dim); }
+    .suggestion-reject:hover { background: rgba(239, 68, 68, 0.1); }
+
+    .exercise-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: var(--bg-tertiary);
+    }
+
+    /* Editable exercise stat inputs */
+    .stat-input {
+      width: 42px;
+      padding: 4px 2px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-primary);
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      text-align: center;
+      -moz-appearance: textfield;
+    }
+
+    .stat-input::-webkit-outer-spin-button,
+    .stat-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .stat-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .stat-input-wide {
+      width: 54px;
+    }
+
+    .type-toggle {
+      display: inline-flex;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin-top: 10px;
+    }
+
+    .type-toggle button {
+      padding: 5px 14px;
+      border: none;
+      background: var(--bg-tertiary);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .type-toggle button.active {
+      background: var(--accent);
+      color: white;
     }
   </style>
 </head>
@@ -1222,35 +1552,75 @@
     
     <!-- IA Coach View -->
     <div id="coachView" class="view">
-      <div class="coach-section">
-        <!-- Perfil do Usuário -->
-        <div class="coach-card">
-          <h3>👤 Meu Perfil <button onclick="saveProfile()" style="margin-left: auto; padding: 4px 10px; background: var(--accent); border: none; border-radius: 4px; color: white; font-size: 11px; cursor: pointer;">Salvar</button></h3>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <!-- Profile collapsible header -->
+      <div class="chat-profile-header" onclick="toggleChatProfile()">
+        <div class="chat-profile-summary">
+          <span>👤</span>
+          <span id="chatProfileName" style="font-weight: 600;">Meu Perfil</span>
+          <span id="chatProfileMeta" style="color: var(--text-muted); font-size: 12px;"></span>
+          <span class="toggle-icon" id="chatProfileToggle">▼</span>
+        </div>
+        <div class="chat-profile-details" id="chatProfileDetails">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
             <div style="grid-column: span 2;">
               <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Nome</label>
-              <input type="text" id="profileNome" placeholder="Seu nome" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
+              <input type="text" id="profileNome" placeholder="Seu nome" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
             </div>
             <div>
               <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Idade</label>
-              <input type="number" id="profileIdade" placeholder="Ex: 30" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
+              <input type="number" id="profileIdade" placeholder="Ex: 30" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
             </div>
             <div>
               <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Altura (cm)</label>
-              <input type="number" id="profileAltura" placeholder="Ex: 175" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
+              <input type="number" id="profileAltura" placeholder="Ex: 175" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
             </div>
             <div style="grid-column: span 2;">
               <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Sexo</label>
               <div style="display: flex; gap: 8px;">
-                <button onclick="selectSexo('masculino')" class="sexo-btn" data-sexo="masculino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">♂️ Masculino</button>
-                <button onclick="selectSexo('feminino')" class="sexo-btn" data-sexo="feminino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">♀️ Feminino</button>
+                <button onclick="event.stopPropagation(); selectSexo('masculino')" class="sexo-btn" data-sexo="masculino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">M</button>
+                <button onclick="event.stopPropagation(); selectSexo('feminino')" class="sexo-btn" data-sexo="feminino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">F</button>
               </div>
             </div>
           </div>
+          <div style="margin-bottom: 10px;">
+            <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Objetivo</label>
+            <textarea class="coach-textarea" id="objetivoInput" onclick="event.stopPropagation()" placeholder="Ex: Ganhar massa muscular, perder gordura..." style="min-height: 60px;"></textarea>
+          </div>
+          <div style="margin-bottom: 10px;">
+            <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Dores / Problemas</label>
+            <textarea class="coach-textarea" id="doresInput" onclick="event.stopPropagation()" placeholder="Ex: Dor no ombro direito, tendinite no joelho..."></textarea>
+          </div>
+          <div style="margin-bottom: 10px;">
+            <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Notas Medicas</label>
+            <div style="display: flex; gap: 8px;">
+              <textarea class="coach-textarea" id="notaMedicaInput" onclick="event.stopPropagation()" placeholder="Adicionar nota medica..." style="min-height: 50px; flex: 1;"></textarea>
+              <button onclick="event.stopPropagation(); addMedicalNote()" style="padding: 8px 12px; background: var(--success); border: none; border-radius: 6px; color: white; font-size: 11px; cursor: pointer; align-self: flex-end;">+</button>
+            </div>
+            <div id="notasMedicasList" style="margin-top: 8px;"></div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="event.stopPropagation(); saveProfile(); saveField('objetivo'); saveField('dores')" style="flex: 1; padding: 10px; background: var(--accent); border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">Salvar Perfil</button>
+          </div>
         </div>
-        
-        <!-- Arquivos primeiro -->
-        <div class="coach-card">
+      </div>
+
+      <!-- Chat area (hidden until started) -->
+      <div id="chatArea" style="display: none;" class="chat-container">
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+          <textarea class="chat-input" id="chatInput" placeholder="Digite sua mensagem..." rows="1" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendChatMessage()}" oninput="autoResizeChatInput(this)"></textarea>
+          <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()">➤</button>
+        </div>
+      </div>
+
+      <!-- Start button (shown initially) -->
+      <div id="chatStartArea">
+        <button class="chat-start-btn" onclick="startCoachChat()">
+          🤖 Iniciar Conversa com Coach
+        </button>
+
+        <!-- Arquivos -->
+        <div class="coach-card" style="margin: 0 20px 16px;">
           <h3>📎 Arquivos (Exames, Laudos)</h3>
           <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
             <div class="dropzone-icon">📄</div>
@@ -1260,39 +1630,12 @@
           <input type="file" id="fileInput" multiple accept=".pdf,.txt,.png,.jpg,.jpeg" style="display: none" onchange="handleFiles(this.files)">
           <div class="file-list" id="fileList"></div>
         </div>
-        
-        <!-- Botão de análise logo após arquivos -->
-        <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()">
-          <span id="analyzeBtnText">🤖 Analisar com IA</span>
-        </button>
-        
-        <!-- Resultado da análise -->
-        <div class="analysis-result" id="analysisResult" style="display: none;">
-          <h3>🤖 Análise do Coach IA</h3>
-          <div class="analysis-content" id="analysisContent"></div>
-        </div>
-        
-        <!-- Campos de texto depois -->
-        <div class="coach-card" style="margin-top: 16px;">
-          <h3>🎯 Meu Objetivo <button onclick="saveField('objetivo')" style="margin-left: auto; padding: 4px 10px; background: var(--accent); border: none; border-radius: 4px; color: white; font-size: 11px; cursor: pointer;">Salvar</button></h3>
-          <textarea class="coach-textarea" id="objetivoInput" placeholder="Ex: Ganhar massa muscular, perder gordura, melhorar resistência..."></textarea>
-        </div>
-        
-        <div class="coach-card">
-          <h3>🩹 Dores / Problemas <button onclick="saveField('dores')" style="margin-left: auto; padding: 4px 10px; background: var(--accent); border: none; border-radius: 4px; color: white; font-size: 11px; cursor: pointer;">Salvar</button></h3>
-          <textarea class="coach-textarea" id="doresInput" placeholder="Ex: Dor no ombro direito, tendinite no joelho, hérnia lombar..."></textarea>
-        </div>
-        
-        <div class="coach-card">
-          <h3>🏥 Informações Médicas <button onclick="addMedicalNote()" style="margin-left: auto; padding: 4px 10px; background: var(--success); border: none; border-radius: 4px; color: white; font-size: 11px; cursor: pointer;">+ Adicionar</button></h3>
-          <textarea class="coach-textarea" id="notaMedicaInput" placeholder="Adicione informações médicas, resultados de exames, diagnósticos... (cada nota fica salva no histórico)" style="min-height: 80px;"></textarea>
-          <div id="notasMedicasList" style="margin-top: 12px;"></div>
-        </div>
-        
-        <div class="coach-card">
-          <h3>📊 Histórico de Análises</h3>
+
+        <!-- Historico de analises -->
+        <div class="coach-card" style="margin: 0 20px 16px;">
+          <h3>📊 Historico de Analises</h3>
           <div id="analysisHistory" style="margin-top: 12px;">
-            <p style="color: var(--text-muted); font-size: 13px;">Nenhuma análise ainda</p>
+            <p style="color: var(--text-muted); font-size: 13px;">Nenhuma analise ainda</p>
           </div>
         </div>
       </div>
@@ -1334,15 +1677,16 @@
       
       <div style="margin-bottom: 16px;">
         <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">⏱️ Duração (minutos)</label>
-        <input type="number" id="activityDuration" placeholder="30" style="width: 100%; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 16px; font-family: 'Inter', sans-serif;">
+        <input type="number" id="activityDuration" value="60" placeholder="60" style="width: 100%; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 16px; font-family: 'Inter', sans-serif;">
       </div>
       
       <div style="margin-bottom: 16px;">
-        <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">⚡ Intensidade</label>
-        <div style="display: flex; gap: 8px;">
-          <button onclick="selectIntensity('leve')" class="intensity-btn" data-intensity="leve" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">Leve</button>
-          <button onclick="selectIntensity('moderado')" class="intensity-btn" data-intensity="moderado" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">Moderado</button>
-          <button onclick="selectIntensity('intenso')" class="intensity-btn" data-intensity="intenso" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">Intenso</button>
+        <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">⚡ Esforço: <span id="effortValue" style="color: var(--accent); font-weight: 600;">5</span>/10</label>
+        <input type="range" id="activityEffort" min="0" max="10" value="5" oninput="document.getElementById('effortValue').textContent=this.value" style="width: 100%; accent-color: var(--accent);">
+        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+          <span>0 - Nada</span>
+          <span>5 - Moderado</span>
+          <span>10 - Maximo</span>
         </div>
       </div>
       
@@ -1399,11 +1743,13 @@
       document.getElementById('activityModalType').value = type;
       document.getElementById('activityModalEmoji').textContent = emoji;
       document.getElementById('activityModalTitle').textContent = activityNames[type] || type;
-      document.getElementById('activityDuration').value = '';
+      document.getElementById('activityDuration').value = '60';
       document.getElementById('activityNotes').value = '';
       document.getElementById('fisioTreino').value = '';
+      document.getElementById('activityEffort').value = '5';
+      document.getElementById('effortValue').textContent = '5';
       selectedIntensity = null;
-      
+
       // Reset intensity buttons
       document.querySelectorAll('.intensity-btn').forEach(btn => {
         btn.style.background = 'var(--bg-tertiary)';
@@ -1450,11 +1796,14 @@
       const dateStr = formatDate(selectedDate);
       if (!activities[dateStr]) activities[dateStr] = [];
       
+      const effort = document.getElementById('activityEffort').value;
+
       const activity = {
         type,
         time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
         duration: duration ? parseInt(duration) : null,
         intensity: selectedIntensity,
+        effort: parseInt(effort),
         notes: notes || null,
         fisioTreino: fisioTreino || null
       };
@@ -1561,7 +1910,7 @@
             <div class="activity-item-time">
               ${a.time || ''}
               ${a.duration ? ' • ' + a.duration + 'min' : ''}
-              ${a.intensity ? ' • ' + a.intensity : ''}
+              ${a.effort != null ? ' • esforco ' + a.effort + '/10' : (a.intensity ? ' • ' + a.intensity : '')}
             </div>
           </div>
           <button class="activity-delete" onclick="deleteActivity('${dateStr}', ${i})">✕</button>
@@ -1803,7 +2152,9 @@
           const el = document.getElementById(`last-${id}`);
           if (el) {
             const date = new Date(latest[id].created_at).toLocaleDateString('pt-BR');
-            el.innerHTML = `Último: <strong>${latest[id].weight}kg</strong> (${date})`;
+            const config = exerciseConfigs[id];
+            const unit = config && config.type === 'tempo' ? 's' : 'kg';
+            el.innerHTML = `Ultimo: <strong>${latest[id].weight}${unit}</strong> (${date})`;
           }
         });
       } catch (e) {
@@ -1811,6 +2162,145 @@
       }
     }
     
+    // ========== EXERCISE CONTROLS (editable sets/reps/type) ==========
+
+    const defaultExConfigs = {
+      'b1': { sets: 3, reps: '10-12', rest: 90, type: 'kg' },
+      'b2': { sets: 3, reps: '10-12', rest: 90, type: 'kg' },
+      'b3': { sets: 3, reps: '10-12', rest: 90, type: 'kg' },
+      'b4': { sets: 3, reps: '15', rest: 60, type: 'kg' },
+      'b5': { sets: 4, reps: '15-20', rest: 60, type: 'kg' },
+      'b6': { sets: 3, reps: '12-15', rest: 60, type: 'kg' },
+      'b7': { sets: 3, reps: '10-12', rest: 90, type: 'kg' },
+      'b8': { sets: 3, reps: '12-15', rest: 60, type: 'kg' },
+      'p1': { sets: 5, reps: '45', rest: 0, type: 'tempo' },
+      'p2': { sets: 3, reps: '15-20', rest: 0, type: 'kg' },
+      'p3': { sets: 3, reps: '10', rest: 0, type: 'kg' },
+      'p4': { sets: 3, reps: '10', rest: 0, type: 'kg' },
+      'p5': { sets: 3, reps: '12-15', rest: 0, type: 'kg' },
+      'p6': { sets: 3, reps: '15-20', rest: 0, type: 'kg' },
+      'p7': { sets: 3, reps: '15-20', rest: 0, type: 'kg' },
+    };
+
+    let exerciseConfigs = {};
+
+    function loadExerciseConfigs() {
+      try {
+        exerciseConfigs = JSON.parse(localStorage.getItem('exercise-configs') || '{}');
+      } catch(e) { exerciseConfigs = {}; }
+    }
+
+    function saveExerciseConfigs() {
+      localStorage.setItem('exercise-configs', JSON.stringify(exerciseConfigs));
+    }
+
+    function initExerciseControls() {
+      loadExerciseConfigs();
+
+      document.querySelectorAll('.exercise[data-id]').forEach(ex => {
+        const id = ex.dataset.id;
+        const defaults = defaultExConfigs[id] || { sets: 3, reps: '10', rest: 60, type: 'kg' };
+        const config = exerciseConfigs[id] || { ...defaults };
+        exerciseConfigs[id] = config;
+
+        // Replace exercise-stats with editable inputs
+        const stats = ex.querySelector('.exercise-stats');
+        if (stats) {
+          const repsLabel = config.type === 'tempo' ? 'seg' : 'reps';
+          let restHtml = '';
+          if (config.rest > 0) {
+            restHtml = `<span>⏱ <input type="number" class="stat-input" value="${config.rest}" min="0" max="600" step="10" onchange="updateExConfig('${id}', 'rest', this.value)">s</span>`;
+          }
+          stats.innerHTML = `
+            <span><input type="number" class="stat-input" value="${config.sets}" min="1" max="20" onchange="updateExConfig('${id}', 'sets', this.value)"> séries</span>
+            <span><input type="text" class="stat-input stat-input-wide" value="${config.reps}" onchange="updateExConfig('${id}', 'reps', this.value)"> <span id="reps-label-${id}">${repsLabel}</span></span>
+            ${restHtml}
+          `;
+        }
+
+        // Add type toggle after note (or after header)
+        const note = ex.querySelector('.exercise-note');
+        const insertRef = note || ex.querySelector('.exercise-header');
+        const toggle = document.createElement('div');
+        toggle.className = 'type-toggle';
+        toggle.innerHTML = `
+          <button class="${config.type === 'kg' ? 'active' : ''}" onclick="setExType('${id}', 'kg', this)">Kg</button>
+          <button class="${config.type === 'tempo' ? 'active' : ''}" onclick="setExType('${id}', 'tempo', this)">Tempo</button>
+        `;
+        insertRef.insertAdjacentElement('afterend', toggle);
+
+        // Ensure weight-row exists
+        let weightRow = ex.querySelector('.weight-row');
+        if (!weightRow) {
+          weightRow = document.createElement('div');
+          weightRow.className = 'weight-row';
+          weightRow.innerHTML = `
+            <input type="number" class="weight-input" placeholder="${config.type === 'tempo' ? 'Seg' : 'Peso'}" step="${config.type === 'tempo' ? '1' : '0.5'}" onchange="saveWeight(this)">
+            <span class="weight-unit">${config.type === 'tempo' ? 's' : 'kg'}</span>
+          `;
+          const lastDiv = ex.querySelector('[id^="last-"]');
+          if (lastDiv) {
+            ex.insertBefore(weightRow, lastDiv);
+          } else {
+            ex.appendChild(weightRow);
+          }
+        } else {
+          applyWeightRowType(weightRow, config.type);
+        }
+      });
+
+      saveExerciseConfigs();
+    }
+
+    function updateExConfig(id, field, value) {
+      if (field === 'sets' || field === 'rest') {
+        exerciseConfigs[id][field] = parseInt(value) || 0;
+      } else {
+        exerciseConfigs[id][field] = value;
+      }
+      saveExerciseConfigs();
+
+      // Update timer button if rest changed
+      if (field === 'rest') {
+        const ex = document.querySelector(`[data-id="${id}"]`);
+        const timerBtn = ex?.querySelector('.timer-btn');
+        if (timerBtn) {
+          const rest = parseInt(value) || 60;
+          timerBtn.textContent = `⏱ Descanso ${rest}s`;
+          timerBtn.setAttribute('onclick', `startTimer(${rest})`);
+        }
+      }
+    }
+
+    function setExType(id, type, btn) {
+      exerciseConfigs[id].type = type;
+      saveExerciseConfigs();
+
+      // Update toggle buttons
+      const toggle = btn.parentNode;
+      toggle.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Update reps label
+      const label = document.getElementById(`reps-label-${id}`);
+      if (label) label.textContent = type === 'tempo' ? 'seg' : 'reps';
+
+      // Update weight row
+      const ex = document.querySelector(`[data-id="${id}"]`);
+      const weightRow = ex?.querySelector('.weight-row');
+      if (weightRow) applyWeightRowType(weightRow, type);
+    }
+
+    function applyWeightRowType(weightRow, type) {
+      const input = weightRow.querySelector('.weight-input');
+      const unit = weightRow.querySelector('.weight-unit');
+      if (input) {
+        input.placeholder = type === 'tempo' ? 'Seg' : 'Peso';
+        input.step = type === 'tempo' ? '1' : '0.5';
+      }
+      if (unit) unit.textContent = type === 'tempo' ? 's' : 'kg';
+    }
+
     // ========== TIMER ==========
     
     function startTimer(seconds) {
@@ -1857,12 +2347,417 @@
     }
     
     // ========== IA COACH ==========
-    
-    // API key movida para edge function
+
     let uploadedFiles = [];
     let selectedSexo = null;
     let lastSaveTime = null;
     let hasUnsavedChanges = false;
+    let chatMessages = []; // multi-turn history
+    let chatActive = false;
+
+    // Exercise image cache
+    const exerciseImageCache = {};
+    const exerciseNameMap = {
+      'remada': 'row', 'crucifixo': 'fly', 'supino': 'bench press',
+      'biceps': 'bicep curl', 'triceps': 'tricep', 'agachamento': 'squat',
+      'afundo': 'lunge', 'panturrilha': 'calf raise', 'ponte': 'bridge',
+      'face pull': 'face pull', 'cadeira flexora': 'leg curl',
+      'cadeira solear': 'seated calf raise', 'corrida': 'running',
+      'abdominais': 'crunch', 'prancha': 'plank', 'leg press': 'leg press',
+      'elevacao lateral': 'lateral raise', 'desenvolvimento': 'shoulder press'
+    };
+
+    function toggleChatProfile() {
+      const details = document.getElementById('chatProfileDetails');
+      const toggle = document.getElementById('chatProfileToggle');
+      details.classList.toggle('open');
+      toggle.classList.toggle('open');
+    }
+
+    function updateChatProfileSummary() {
+      const nome = document.getElementById('profileNome')?.value || '';
+      const objetivo = document.getElementById('objetivoInput')?.value || '';
+      const nameEl = document.getElementById('chatProfileName');
+      const metaEl = document.getElementById('chatProfileMeta');
+      if (nameEl) nameEl.textContent = nome || 'Meu Perfil';
+      if (metaEl) metaEl.textContent = objetivo ? objetivo.substring(0, 40) + (objetivo.length > 40 ? '...' : '') : '';
+    }
+
+    function autoResizeChatInput(el) {
+      el.style.height = 'auto';
+      el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+    }
+
+    // System prompt for the coach
+    function buildSystemPrompt() {
+      return `Voce e um coach de treino pessoal interativo. Voce conversa em portugues brasileiro, de forma direta e motivadora.
+
+REGRAS:
+1. Na PRIMEIRA mensagem, faca 2-3 perguntas sobre como o aluno esta hoje, o que quer treinar, e como se sente.
+2. Depois das respostas, de sugestoes praticas e personalizadas.
+3. Use blocos <suggestion> para sugestoes acionaveis que o aluno pode aceitar e adicionar ao calendario.
+4. Seja breve nas respostas (maximo 3-4 paragrafos).
+5. Nao repita informacoes que ja foram dadas no contexto.
+
+FORMATO DE SUGESTAO (quando aplicavel):
+<suggestion>
+type: atividade
+action: add
+label: Nome da atividade sugerida
+activity_type: corrida|surf|tenis|bike|fisio|upper|lower
+duration: 30
+detail: Descricao breve da sugestao
+</suggestion>
+
+<suggestion>
+type: exercicio
+action: modify
+label: Nome do exercicio
+exercise_name: Nome do exercicio
+detail: O que mudar no exercicio
+sets: 3
+reps: 12
+weight: 20
+</suggestion>
+
+Tipos validos de activity_type: corrida, surf, tenis, bike, fisio, upper, lower
+Use <suggestion> APENAS quando tiver sugestoes concretas e acionaveis. Nao use em perguntas iniciais.`;
+    }
+
+    async function gatherCoachContext() {
+      let workoutHistory = [];
+      let weightHistory = [];
+      let calendarData = [];
+
+      try {
+        const [whRes, wlRes, calRes] = await Promise.all([
+          fetch(\`\${SUPABASE_URL}/rest/v1/workout_sessions?select=*&order=created_at.desc&limit=10\`, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': \`Bearer \${SUPABASE_KEY}\` }
+          }),
+          fetch(\`\${SUPABASE_URL}/rest/v1/workout_logs?select=*&order=created_at.desc&limit=30\`, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': \`Bearer \${SUPABASE_KEY}\` }
+          }),
+          fetch(\`\${SUPABASE_URL}/rest/v1/calendar_activities?select=*&order=date.desc&limit=14\`, {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': \`Bearer \${SUPABASE_KEY}\` }
+          })
+        ]);
+        workoutHistory = await whRes.json();
+        weightHistory = await wlRes.json();
+        calendarData = await calRes.json();
+      } catch (e) { console.error(e); }
+
+      const objetivo = document.getElementById('objetivoInput')?.value?.trim() || 'Nao informado';
+      const dores = document.getElementById('doresInput')?.value?.trim() || 'Nenhum';
+      const estado = document.getElementById('estadoHojeMain')?.value?.trim() || 'Nao informado';
+      const nome = document.getElementById('profileNome')?.value?.trim() || '';
+      const idade = document.getElementById('profileIdade')?.value || '';
+      const altura = document.getElementById('profileAltura')?.value || '';
+
+      const filesText = uploadedFiles.map(f => {
+        if (f.type.includes('pdf')) return \`[PDF: \${f.name}]\`;
+        return \`--- \${f.name} ---\\n\${f.content.substring(0, 3000)}\`;
+      }).join('\\n');
+
+      return \`## PERFIL
+Nome: \${nome} | Idade: \${idade} | Altura: \${altura}cm | Sexo: \${selectedSexo || '?'}
+Objetivo: \${objetivo}
+Dores/Problemas: \${dores}
+Estado hoje: \${estado}
+
+## TREINO ATUAL
+Upper: Remada Aberta 3x10-12, Crucifixo Inclinado 3x10-12, Remada Fechada 3x10-12, Crucifixo Inverso 3x15, Face Pull 4x15-20, Triceps Corda 3x12-15, Supino Reto 3x10-12, Biceps Barra W 3x12-15
+Lower: Isometria Abdução 5x45s, Ponte Bipodal 3x15-20, Agachamento Espanhol 3x10, Afundo 3x10, Cadeira Flexora 3x12-15, Panturrilha Step 3x15-20, Solear 3x15-20
+
+## HISTORICO RECENTE (ultimos treinos)
+\${workoutHistory.length > 0 ? JSON.stringify(workoutHistory.slice(0, 5)) : 'Nenhum'}
+
+## ULTIMOS PESOS
+\${weightHistory.length > 0 ? JSON.stringify(weightHistory.slice(0, 10)) : 'Nenhum'}
+
+## CALENDARIO (ultimos 14 dias)
+\${calendarData.length > 0 ? calendarData.map(d => \`\${d.date}: \${JSON.stringify(d.activities)}\`).join('\\n') : 'Vazio'}
+
+\${filesText ? \`## ARQUIVOS\\n\${filesText}\` : ''}\`;
+    }
+
+    async function startCoachChat() {
+      chatMessages = [];
+      chatActive = true;
+      document.getElementById('chatStartArea').style.display = 'none';
+      document.getElementById('chatArea').style.display = 'flex';
+      document.getElementById('chatMessages').innerHTML = '';
+
+      // Show typing
+      addTypingIndicator();
+
+      const context = await gatherCoachContext();
+      const firstMessage = \`Aqui esta o contexto do aluno:\\n\\n\${context}\\n\\nComece a conversa fazendo 2-3 perguntas relevantes para entender como o aluno esta hoje e o que quer trabalhar.\`;
+
+      chatMessages.push({ role: 'user', content: firstMessage });
+
+      try {
+        const response = await callCoachAPI(chatMessages);
+        chatMessages.push({ role: 'assistant', content: response });
+        removeTypingIndicator();
+        renderAssistantMessage(response);
+      } catch (e) {
+        removeTypingIndicator();
+        addChatBubble('Erro ao conectar com o coach. Tente novamente.', 'assistant');
+        console.error(e);
+      }
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text || !chatActive) return;
+
+      input.value = '';
+      input.style.height = 'auto';
+      addChatBubble(text, 'user');
+
+      chatMessages.push({ role: 'user', content: text });
+      addTypingIndicator();
+      scrollChatToBottom();
+
+      const sendBtn = document.getElementById('chatSendBtn');
+      sendBtn.disabled = true;
+
+      try {
+        const response = await callCoachAPI(chatMessages);
+        chatMessages.push({ role: 'assistant', content: response });
+        removeTypingIndicator();
+        renderAssistantMessage(response);
+      } catch (e) {
+        removeTypingIndicator();
+        addChatBubble('Erro na resposta. Tente novamente.', 'assistant');
+        console.error(e);
+      } finally {
+        sendBtn.disabled = false;
+        scrollChatToBottom();
+      }
+    }
+
+    async function callCoachAPI(messages) {
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system: buildSystemPrompt(),
+          messages: messages
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(\`API error: \${response.status}\`);
+      }
+
+      const data = await response.json();
+      if (data.error) throw new Error(data.error);
+      return data.content;
+    }
+
+    function addChatBubble(text, role) {
+      const container = document.getElementById('chatMessages');
+      const bubble = document.createElement('div');
+      bubble.className = \`chat-bubble \${role}\`;
+      if (role === 'user') {
+        bubble.textContent = text;
+      } else {
+        bubble.innerHTML = formatAnalysis(text);
+      }
+      container.appendChild(bubble);
+      scrollChatToBottom();
+    }
+
+    function renderAssistantMessage(text) {
+      const container = document.getElementById('chatMessages');
+
+      // Extract suggestions
+      const suggestionRegex = /<suggestion>([\s\S]*?)<\/suggestion>/g;
+      const suggestions = [];
+      let match;
+      while ((match = suggestionRegex.exec(text)) !== null) {
+        suggestions.push(parseSuggestion(match[1]));
+      }
+
+      // Clean text (remove suggestion blocks)
+      const cleanText = text.replace(suggestionRegex, '').trim();
+
+      if (cleanText) {
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble assistant';
+        bubble.innerHTML = formatAnalysis(cleanText);
+        container.appendChild(bubble);
+      }
+
+      // Render suggestion cards
+      suggestions.forEach((s, i) => {
+        if (!s) return;
+        const card = createSuggestionCard(s, i);
+        container.appendChild(card);
+      });
+
+      // Save analysis to history
+      if (suggestions.length > 0 || cleanText.length > 100) {
+        historicoAnalises.unshift({ texto: cleanText, data: new Date().toISOString() });
+        renderAnalysisHistory();
+      }
+
+      scrollChatToBottom();
+    }
+
+    function parseSuggestion(raw) {
+      const lines = raw.trim().split('\\n');
+      const s = {};
+      lines.forEach(line => {
+        const idx = line.indexOf(':');
+        if (idx > -1) {
+          const key = line.substring(0, idx).trim().toLowerCase();
+          const val = line.substring(idx + 1).trim();
+          s[key] = val;
+        }
+      });
+      return s.label ? s : null;
+    }
+
+    function createSuggestionCard(s, idx) {
+      const card = document.createElement('div');
+      card.className = 'suggestion-card';
+      card.id = \`suggestion-\${idx}\`;
+
+      const emoji = s.activity_type ? (activityEmojis[s.activity_type] || '📋') : '💡';
+      const badge = s.type === 'atividade' ? 'Atividade' : (s.type === 'exercicio' ? 'Exercicio' : 'Sugestao');
+
+      let detailHtml = s.detail || '';
+      if (s.sets) detailHtml += \` | \${s.sets} series\`;
+      if (s.reps) detailHtml += \` x \${s.reps} reps\`;
+      if (s.weight) detailHtml += \` | \${s.weight}kg\`;
+      if (s.duration) detailHtml += \` | \${s.duration}min\`;
+
+      card.innerHTML = \`
+        <div class="suggestion-card-header">
+          <span>\${emoji}</span>
+          <span class="label">\${s.label}</span>
+          <span class="badge">\${badge}</span>
+        </div>
+        <div class="suggestion-card-detail">\${detailHtml}</div>
+        <div class="suggestion-card-actions">
+          <button class="suggestion-accept" onclick="acceptSuggestion(\${idx}, this)">Aceitar</button>
+          <button class="suggestion-modify" onclick="modifySuggestion(\${idx})">Modificar</button>
+          <button class="suggestion-reject" onclick="rejectSuggestion(\${idx}, this)">Rejeitar</button>
+        </div>
+      \`;
+
+      // Store suggestion data on card
+      card.dataset.suggestion = JSON.stringify(s);
+      return card;
+    }
+
+    async function acceptSuggestion(idx, btn) {
+      const card = btn.closest('.suggestion-card');
+      const s = JSON.parse(card.dataset.suggestion);
+      card.classList.add('accepted');
+      card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Adicionado ao calendario</span>';
+
+      const validTypes = ['corrida', 'surf', 'tenis', 'bike', 'fisio', 'upper', 'lower'];
+      const type = s.activity_type && validTypes.includes(s.activity_type) ? s.activity_type : null;
+
+      if (type) {
+        const today = formatDate(new Date());
+        if (!activities[today]) activities[today] = [];
+        activities[today].push({
+          type: type,
+          time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+          duration: s.duration ? parseInt(s.duration) : null,
+          notes: s.detail || s.label,
+          effort: null
+        });
+
+        // Ensure selectedDate is today for saving
+        const prevSelected = selectedDate;
+        selectedDate = new Date();
+        await saveActivities();
+        selectedDate = prevSelected;
+
+        renderCalendar();
+        renderDayActivities();
+        showToast('Sugestao adicionada ao calendario!');
+      } else {
+        showToast('Sugestao aceita!');
+      }
+    }
+
+    function modifySuggestion(idx) {
+      const card = document.getElementById(\`suggestion-\${idx}\`);
+      if (!card) return;
+      const s = JSON.parse(card.dataset.suggestion);
+      const input = document.getElementById('chatInput');
+      input.value = \`Sobre "\${s.label}": quero ajustar - \`;
+      input.focus();
+      autoResizeChatInput(input);
+    }
+
+    function rejectSuggestion(idx, btn) {
+      const card = btn.closest('.suggestion-card');
+      card.classList.add('rejected');
+      card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: #ef4444; font-size: 12px;">Rejeitado</span>';
+    }
+
+    function addTypingIndicator() {
+      const container = document.getElementById('chatMessages');
+      const typing = document.createElement('div');
+      typing.className = 'chat-typing';
+      typing.id = 'chatTyping';
+      typing.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+      container.appendChild(typing);
+      scrollChatToBottom();
+    }
+
+    function removeTypingIndicator() {
+      const el = document.getElementById('chatTyping');
+      if (el) el.remove();
+    }
+
+    function scrollChatToBottom() {
+      const container = document.getElementById('chatMessages');
+      if (container) {
+        setTimeout(() => { container.scrollTop = container.scrollHeight; }, 50);
+      }
+    }
+
+    // Exercise images from wger.de API
+    async function fetchExerciseImage(exerciseName) {
+      const nameLower = exerciseName.toLowerCase();
+      if (exerciseImageCache[nameLower]) return exerciseImageCache[nameLower];
+
+      // Map PT name to EN
+      let searchTerm = nameLower;
+      for (const [pt, en] of Object.entries(exerciseNameMap)) {
+        if (nameLower.includes(pt)) { searchTerm = en; break; }
+      }
+
+      try {
+        const res = await fetch(\`https://wger.de/api/v2/exercise/search/?term=\${encodeURIComponent(searchTerm)}&language=2&format=json\`);
+        const data = await res.json();
+        if (data.suggestions && data.suggestions.length > 0) {
+          const exId = data.suggestions[0].data?.id;
+          if (exId) {
+            const imgRes = await fetch(\`https://wger.de/api/v2/exerciseimage/?exercise=\${exId}&format=json\`);
+            const imgData = await imgRes.json();
+            if (imgData.results && imgData.results.length > 0) {
+              const url = imgData.results[0].image;
+              exerciseImageCache[nameLower] = url;
+              return url;
+            }
+          }
+        }
+      } catch (e) { console.error('Image fetch error:', e); }
+
+      exerciseImageCache[nameLower] = null;
+      return null;
+    }
     
     // ========== SAVE STATUS ==========
     
@@ -2003,162 +2898,9 @@
       renderFileList();
     }
     
+    // Legacy runAnalysis - now redirects to chat
     async function runAnalysis() {
-      const objetivo = document.getElementById('objetivoInput').value.trim();
-      const dores = document.getElementById('doresInput').value.trim();
-      const estado = document.getElementById('estadoHojeMain').value.trim();
-      
-      if (!objetivo && !dores && !estado) {
-        showToast('❌ Preencha pelo menos um campo');
-        return;
-      }
-      
-      const btn = document.getElementById('analyzeBtn');
-      const btnText = document.getElementById('analyzeBtnText');
-      btn.disabled = true;
-      btnText.innerHTML = '<div class="spinner"></div> Analisando...';
-      
-      // Buscar histórico de treinos
-      let workoutHistory = [];
-      try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/workout_sessions?select=*&order=created_at.desc&limit=10`, {
-          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-        });
-        workoutHistory = await res.json();
-      } catch (e) {
-        console.error(e);
-      }
-      
-      // Buscar últimos pesos
-      let weightHistory = [];
-      try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/workout_logs?select=*&order=created_at.desc&limit=30`, {
-          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-        });
-        weightHistory = await res.json();
-      } catch (e) {
-        console.error(e);
-      }
-      
-      // Montar prompt
-      const filesText = uploadedFiles.map(f => {
-        if (f.type.includes('pdf')) {
-          return `[Arquivo PDF: ${f.name}]`;
-        }
-        return `--- ${f.name} ---\n${f.content.substring(0, 5000)}`;
-      }).join('\n\n');
-      
-      const prompt = `Você é um coach de treino especializado. Analise o perfil do aluno e dê recomendações personalizadas.
-
-## PERFIL DO ALUNO
-
-**Objetivo:** ${objetivo || 'Não informado'}
-
-**Dores/Problemas:** ${dores || 'Nenhum informado'}
-
-**Estado Hoje:** ${estado || 'Não informado'}
-
-## TREINO ATUAL
-
-**Upper Body (Braço/Costas):**
-1. Remada Aberta Curvada - 3x10-12 (90s)
-2. Crucifixo Inclinado - 3x10-12 (90s)
-3. Remada Fechada Triângulo - 3x10-12 (90s)
-4. Crucifixo Inverso - 3x15 (60s)
-5. Face Pull - 4x15-20 (60s)
-6. Tríceps Corda - 3x12-15 (60s)
-7. Supino Reto Halteres - 3x10-12 (90s)
-8. Bíceps Barra W - 3x12-15 (60s)
-
-**Lower Body (Pernas):**
-1. Isometria Abdução na Parede - 5x45s (analgésico)
-2. Ponte Bipodal no Chão - 3x15-20
-3. Agachamento Espanhol - 3x10
-4. Afundo com Flexão de Tronco - 3x10
-5. Cadeira Flexora - 3x12-15
-6. Panturrilha no Step - 3x15-20
-7. Cadeira Solear - 3x15-20
-
-## HISTÓRICO RECENTE
-
-**Últimos treinos:** ${workoutHistory.length > 0 ? JSON.stringify(workoutHistory.slice(0, 5)) : 'Nenhum registrado'}
-
-**Últimos pesos:** ${weightHistory.length > 0 ? JSON.stringify(weightHistory.slice(0, 10)) : 'Nenhum registrado'}
-
-${filesText ? `## ARQUIVOS ANEXADOS\n${filesText}` : ''}
-
-## SUA ANÁLISE
-
-Por favor, forneça:
-1. **Avaliação geral** do estado atual do aluno
-2. **Adaptações recomendadas** no treino considerando as dores/limitações
-3. **Exercícios para evitar ou modificar**
-4. **Sugestões de progressão** baseadas no histórico
-5. **Recomendações para hoje** considerando o estado informado
-
-Seja específico e prático. Use linguagem direta e motivadora.`;
-
-      try {
-        const response = await fetch('/api/analyze', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ prompt })
-        });
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('API Error:', errorText);
-          throw new Error(`API error: ${response.status} - ${errorText.substring(0, 100)}`);
-        }
-        
-        const data = await response.json();
-        if (data.error) throw new Error(data.error);
-        const analysis = data.content;
-        
-        // Mostrar resultado
-        document.getElementById('analysisContent').innerHTML = formatAnalysis(analysis);
-        document.getElementById('analysisResult').style.display = 'block';
-        
-        // Salvar no histórico
-        historicoAnalises.unshift({
-          texto: analysis,
-          data: new Date().toISOString()
-        });
-        renderAnalysisHistory();
-        
-        // Salvar no Supabase
-        try {
-          await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
-            method: 'PATCH',
-            headers: {
-              'apikey': SUPABASE_KEY,
-              'Authorization': `Bearer ${SUPABASE_KEY}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              objetivo,
-              dores,
-              estado_hoje: estado,
-              ultima_analise: analysis,
-              historico_analises: historicoAnalises.slice(0, 20),
-              updated_at: new Date().toISOString()
-            })
-          });
-        } catch (e) {
-          console.error(e);
-        }
-        
-        showToast('✅ Análise concluída!');
-        
-      } catch (error) {
-        console.error('Analysis error:', error);
-        showToast('❌ Erro na análise: ' + error.message);
-      } finally {
-        btn.disabled = false;
-        btnText.textContent = '🤖 Analisar com IA';
-      }
+      startCoachChat();
     }
     
     function formatAnalysis(text) {
@@ -2285,9 +3027,13 @@ Seja específico e prático. Use linguagem direta e motivadora.`;
     
     function showAnalysis(index) {
       const analysis = historicoAnalises[index];
-      document.getElementById('analysisContent').innerHTML = formatAnalysis(analysis.texto);
-      document.getElementById('analysisResult').style.display = 'block';
-      document.getElementById('analysisResult').scrollIntoView({ behavior: 'smooth' });
+      // Open chat and show the old analysis as a message
+      chatMessages = [];
+      chatActive = true;
+      document.getElementById('chatStartArea').style.display = 'none';
+      document.getElementById('chatArea').style.display = 'flex';
+      document.getElementById('chatMessages').innerHTML = '';
+      renderAssistantMessage(analysis.texto);
     }
     
     async function saveEstado() {
@@ -2324,41 +3070,44 @@ Seja específico e prático. Use linguagem direta e motivadora.`;
           headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
         });
         const data = await res.json();
-        
+
         if (data.length > 0) {
           const profile = data[0];
-          
+
           // Campos de perfil
           const nomeInput = document.getElementById('profileNome');
           const idadeInput = document.getElementById('profileIdade');
           const alturaInput = document.getElementById('profileAltura');
-          
+
           if (nomeInput && profile.nome) nomeInput.value = profile.nome;
           if (idadeInput && profile.idade) idadeInput.value = profile.idade;
           if (alturaInput && profile.altura) alturaInput.value = profile.altura;
           if (profile.sexo) selectSexo(profile.sexo);
-          
-          // Estado de hoje na main
+
+          // Estado de hoje — reset diario
           const estadoMain = document.getElementById('estadoHojeMain');
-          if (estadoMain && profile.estado_hoje) estadoMain.value = profile.estado_hoje;
-          
+          if (estadoMain) {
+            if (profile.updated_at) {
+              const updatedDate = new Date(profile.updated_at).toDateString();
+              const todayDate = new Date().toDateString();
+              if (updatedDate === todayDate && profile.estado_hoje) {
+                estadoMain.value = profile.estado_hoje;
+              } else {
+                estadoMain.value = '';
+              }
+            } else {
+              estadoMain.value = '';
+            }
+          }
+
           // Campos do IA Coach
           const objetivoInput = document.getElementById('objetivoInput');
           const doresInput = document.getElementById('doresInput');
-          
+
           if (objetivoInput && profile.objetivo) objetivoInput.value = profile.objetivo;
           if (doresInput && profile.dores) doresInput.value = profile.dores;
-          
-          if (profile.ultima_analise) {
-            const content = document.getElementById('analysisContent');
-            const result = document.getElementById('analysisResult');
-            if (content && result) {
-              content.innerHTML = formatAnalysis(profile.ultima_analise);
-              result.style.display = 'block';
-            }
-          }
-          
-          // Carregar notas médicas
+
+          // Carregar notas medicas
           if (profile.notas_medicas) {
             const linhas = profile.notas_medicas.split('\n\n').filter(l => l.trim());
             notasMedicas = linhas.map(l => {
@@ -2371,23 +3120,26 @@ Seja específico e prático. Use linguagem direta e motivadora.`;
             });
             renderMedicalNotes();
           }
-          
-          // Carregar histórico de análises
+
+          // Carregar historico de analises
           if (profile.historico_analises && Array.isArray(profile.historico_analises)) {
             historicoAnalises = profile.historico_analises;
             renderAnalysisHistory();
           }
-          
-          // Atualizar status de salvamento com a última atualização
+
+          // Atualizar status de salvamento
           if (profile.updated_at) {
             updateSaveStatus(true, new Date(profile.updated_at));
           } else {
             updateSaveStatus(true, new Date());
           }
+
+          // Update chat profile summary
+          updateChatProfileSummary();
         } else {
           updateSaveStatus(false);
         }
-        
+
         setupChangeTracking();
       } catch (e) {
         console.error(e);
@@ -2398,6 +3150,7 @@ Seja específico e prático. Use linguagem direta e motivadora.`;
     // ========== INIT ==========
     
     document.addEventListener('DOMContentLoaded', () => {
+      initExerciseControls();
       loadActivities();
       loadProgress();
       loadLastWeights();

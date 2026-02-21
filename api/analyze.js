@@ -20,7 +20,33 @@ export default async function handler(req) {
   }
 
   try {
-    const { prompt } = await req.json();
+    const body = await req.json();
+
+    // Support multi-turn: { messages, system } or legacy { prompt }
+    let messages;
+    let system;
+
+    if (body.messages && Array.isArray(body.messages)) {
+      messages = body.messages;
+      system = body.system || undefined;
+    } else if (body.prompt) {
+      messages = [{ role: 'user', content: body.prompt }];
+    } else {
+      return new Response(JSON.stringify({ error: 'Missing messages or prompt' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    const requestBody = {
+      model: 'claude-sonnet-4-5-20250929',
+      max_tokens: 4096,
+      messages,
+    };
+
+    if (system) {
+      requestBody.system = system;
+    }
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -29,11 +55,7 @@ export default async function handler(req) {
         'x-api-key': ANTHROPIC_API_KEY,
         'anthropic-version': '2023-06-01',
       },
-      body: JSON.stringify({
-        model: 'claude-opus-4-6',
-        max_tokens: 2000,
-        messages: [{ role: 'user', content: prompt }],
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
