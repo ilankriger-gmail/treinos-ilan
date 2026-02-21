@@ -4,24 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Treinos</title>
-  <meta name="theme-color" content="#1e1e2e">
+  <meta name="theme-color" content="#1a1a2e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     :root {
-      --bg-primary: #1e1e2e;
-      --bg-secondary: #262637;
-      --bg-tertiary: #2d2d3f;
-      --accent: #8b5cf6;
-      --accent-dim: rgba(139, 92, 246, 0.15);
-      --text-primary: #e2e2e9;
-      --text-secondary: #8b8b9e;
-      --text-muted: #5c5c6f;
-      --border: rgba(255,255,255,0.06);
-      --success: #22c55e;
-      --warning: #f59e0b;
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-tertiary: #0f3460;
+      --accent: #7f5af0;
+      --accent-dim: rgba(127, 90, 240, 0.12);
+      --accent-glow: rgba(127, 90, 240, 0.3);
+      --text-primary: #e0e0e0;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border: rgba(255,255,255,0.05);
+      --success: #2cb67d;
+      --warning: #ff8906;
+      --surface: rgba(255,255,255,0.03);
     }
     
     body {
@@ -41,6 +43,9 @@
     header {
       padding: 24px 20px 16px;
       border-bottom: 1px solid var(--border);
+      background: rgba(26, 26, 46, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
     
     .header-top {
@@ -71,21 +76,23 @@
       padding: 12px 20px;
       gap: 8px;
       border-bottom: 1px solid var(--border);
-      background: var(--bg-primary);
+      background: rgba(26, 26, 46, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       position: sticky;
       top: 0;
       z-index: 100;
     }
-    
+
     .main-tab {
       flex: 1;
       padding: 12px;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 50px;
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
       background: transparent;
       color: var(--text-secondary);
       font-family: 'Inter', sans-serif;
@@ -94,11 +101,12 @@
       justify-content: center;
       gap: 6px;
     }
-    
+
     .main-tab.active {
       background: var(--accent-dim);
       border-color: var(--accent);
       color: var(--accent);
+      box-shadow: 0 0 16px var(--accent-glow);
     }
     
     /* Views */
@@ -162,14 +170,14 @@
     .calendar-day {
       aspect-ratio: 1;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 10px;
       background: var(--bg-secondary);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
       position: relative;
       font-size: 14px;
     }
@@ -356,10 +364,12 @@
     
     .exercise {
       background: var(--bg-secondary);
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 16px;
       margin-bottom: 10px;
       border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: all 0.3s ease;
     }
     
     .exercise.done {
@@ -538,7 +548,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(30, 30, 46, 0.95);
+      background: rgba(26, 26, 46, 0.95);
       display: none;
       justify-content: center;
       align-items: center;
@@ -615,6 +625,7 @@
       padding: 16px;
       margin-bottom: 16px;
       border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
     
     .coach-card h3 {
@@ -718,7 +729,7 @@
     .analyze-btn {
       width: 100%;
       padding: 16px;
-      background: linear-gradient(135deg, var(--accent), #7c3aed);
+      background: linear-gradient(135deg, var(--accent), #6025d1);
       border: none;
       border-radius: 12px;
       color: white;
@@ -730,12 +741,12 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
     }
     
     .analyze-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+      box-shadow: 0 4px 20px var(--accent-glow);
     }
     
     .analyze-btn:disabled {
@@ -856,10 +867,11 @@
     .chat-bubble {
       max-width: 85%;
       padding: 12px 16px;
-      border-radius: 16px;
+      border-radius: 18px;
       font-size: 14px;
       line-height: 1.6;
       word-wrap: break-word;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     }
 
     .chat-bubble.user {
@@ -952,30 +964,32 @@
       flex-shrink: 0;
     }
 
-    .chat-send-btn:hover { background: #7c3aed; }
+    .chat-send-btn:hover { background: #6025d1; }
     .chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .chat-start-btn {
-      padding: 16px;
-      background: linear-gradient(135deg, var(--accent), #7c3aed);
+      padding: 20px;
+      background: linear-gradient(135deg, var(--accent), #6025d1);
       border: none;
-      border-radius: 12px;
+      border-radius: 16px;
       color: white;
-      font-size: 16px;
-      font-weight: 600;
+      font-size: 18px;
+      font-weight: 700;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 12px;
       margin: 20px;
-      transition: all 0.2s;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 24px var(--accent-glow);
+      letter-spacing: 0.3px;
     }
 
     .chat-start-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(127, 90, 240, 0.5);
     }
 
     /* Suggestion Cards */
@@ -1124,6 +1138,109 @@
       background: var(--accent);
       color: white;
     }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.08);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    /* Chat area gradient background */
+    .chat-messages {
+      background: linear-gradient(180deg, rgba(26,26,46,0.5) 0%, rgba(22,33,62,0.3) 100%);
+    }
+
+    /* Dashboard summary cards */
+    .dashboard-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 16px 20px 0;
+    }
+
+    .dash-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    .dash-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 2px 12px var(--accent-glow);
+    }
+
+    .dash-card-icon {
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+
+    .dash-card-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dash-card-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .dash-card-value {
+      font-size: 13px;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dash-card-arrow {
+      color: var(--text-muted);
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    /* Activity item softer radius */
+    .activity-item {
+      border-radius: 12px;
+    }
+
+    /* Activity btn softer radius */
+    .activity-btn {
+      border-radius: 12px;
+      transition: all 0.3s ease;
+    }
+
+    /* Suggestion card softer */
+    .suggestion-card {
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
   </style>
 </head>
 <body>
@@ -1142,13 +1259,13 @@
     
     <!-- Main Navigation -->
     <div class="main-tabs">
-      <button class="main-tab active" onclick="showView('calendar')">📅 Agenda</button>
+      <button class="main-tab active" onclick="showView('coach')">🤖 AI Coach</button>
+      <button class="main-tab" onclick="showView('calendar')">📅 Agenda</button>
       <button class="main-tab" onclick="showView('workouts')">💪 Treino</button>
-      <button class="main-tab" onclick="showView('coach')">🤖 IA Coach</button>
     </div>
     
     <!-- Calendar View -->
-    <div id="calendarView" class="view active">
+    <div id="calendarView" class="view">
       <!-- Como estou hoje - sempre visível -->
       <div style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
@@ -1551,7 +1668,7 @@
     </div>
     
     <!-- IA Coach View -->
-    <div id="coachView" class="view">
+    <div id="coachView" class="view active">
       <!-- Profile collapsible header -->
       <div class="chat-profile-header" onclick="toggleChatProfile()">
         <div class="chat-profile-summary">
@@ -1615,6 +1732,9 @@
 
       <!-- Start button (shown initially) -->
       <div id="chatStartArea">
+        <!-- Dashboard summary cards -->
+        <div class="dashboard-cards" id="dashboardCards"></div>
+
         <button class="chat-start-btn" onclick="startCoachChat()">
           🤖 Iniciar Conversa com Coach
         </button>
@@ -1819,11 +1939,15 @@
     // ========== VIEWS ==========
     
     function showView(view) {
-      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-      document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+      document.querySelectorAll('.main-tab').forEach(function(t) { t.classList.remove('active'); });
       document.getElementById(view + 'View').classList.add('active');
-      event.target.classList.add('active');
-      
+
+      // Map view name to tab index (coach=0, calendar=1, workouts=2)
+      var tabMap = { 'coach': 0, 'calendar': 1, 'workouts': 2 };
+      var tabs = document.querySelectorAll('.main-tab');
+      if (tabs[tabMap[view]]) tabs[tabMap[view]].classList.add('active');
+
       document.getElementById('progressBar').style.display = view === 'workouts' ? 'block' : 'none';
     }
     
@@ -1981,8 +2105,9 @@
       
       renderCalendar();
       renderDayActivities();
+      if (typeof renderDashboardCards === 'function') renderDashboardCards();
     }
-    
+
     // ========== WORKOUTS ==========
     
     function showWorkout(id) {
@@ -3131,6 +3256,7 @@
 
           // Update chat profile summary
           updateChatProfileSummary();
+          if (typeof renderDashboardCards === 'function') renderDashboardCards();
         } else {
           updateSaveStatus(false);
         }
@@ -3142,8 +3268,83 @@
       }
     }
     
+    // ========== DASHBOARD CARDS ==========
+
+    function renderDashboardCards() {
+      var container = document.getElementById('dashboardCards');
+      if (!container) return;
+
+      // --- Card Hoje (agenda) ---
+      var todayStr = formatDate(new Date());
+      var todayActs = activities[todayStr] || [];
+      var hojeValue = '';
+      if (todayActs.length > 0) {
+        hojeValue = todayActs.map(function(a) {
+          return (activityEmojis[a.type] || '') + ' ' + (activityNames[a.type] || a.type);
+        }).join(', ');
+      } else {
+        hojeValue = 'Nenhuma atividade hoje';
+      }
+
+      // --- Card Treino (ultimo treino) ---
+      var treinoValue = 'Nenhum treino registrado';
+      // Check last workout from activities (upper/lower types)
+      var sortedDates = Object.keys(activities).sort().reverse();
+      for (var i = 0; i < sortedDates.length; i++) {
+        var dayActs = activities[sortedDates[i]];
+        for (var j = 0; j < dayActs.length; j++) {
+          if (dayActs[j].type === 'upper' || dayActs[j].type === 'lower') {
+            var parts = sortedDates[i].split('-');
+            treinoValue = (activityEmojis[dayActs[j].type] || '') + ' ' + (activityNames[dayActs[j].type] || dayActs[j].type) + ' - ' + parts[2] + '/' + parts[1];
+            i = sortedDates.length; // break outer
+            break;
+          }
+        }
+      }
+
+      // --- Card Saude ---
+      var estadoEl = document.getElementById('estadoHojeMain');
+      var estadoText = estadoEl ? estadoEl.value.trim() : '';
+      var doresEl = document.getElementById('doresInput');
+      var doresText = doresEl ? doresEl.value.trim() : '';
+      var saudeValue = '';
+      if (estadoText) {
+        saudeValue = estadoText.substring(0, 50) + (estadoText.length > 50 ? '...' : '');
+      } else if (doresText) {
+        saudeValue = doresText.substring(0, 50) + (doresText.length > 50 ? '...' : '');
+      } else {
+        saudeValue = 'Sem dados de saude hoje';
+      }
+
+      container.innerHTML =
+        '<div class="dash-card" onclick="showView(\'calendar\')">' +
+          '<div class="dash-card-icon">📅</div>' +
+          '<div class="dash-card-content">' +
+            '<div class="dash-card-title">Hoje</div>' +
+            '<div class="dash-card-value">' + hojeValue + '</div>' +
+          '</div>' +
+          '<div class="dash-card-arrow">›</div>' +
+        '</div>' +
+        '<div class="dash-card" onclick="showView(\'workouts\')">' +
+          '<div class="dash-card-icon">💪</div>' +
+          '<div class="dash-card-content">' +
+            '<div class="dash-card-title">Treino</div>' +
+            '<div class="dash-card-value">' + treinoValue + '</div>' +
+          '</div>' +
+          '<div class="dash-card-arrow">›</div>' +
+        '</div>' +
+        '<div class="dash-card" onclick="toggleChatProfile()">' +
+          '<div class="dash-card-icon">🩺</div>' +
+          '<div class="dash-card-content">' +
+            '<div class="dash-card-title">Saude</div>' +
+            '<div class="dash-card-value">' + saudeValue + '</div>' +
+          '</div>' +
+          '<div class="dash-card-arrow">›</div>' +
+        '</div>';
+    }
+
     // ========== INIT ==========
-    
+
     document.addEventListener('DOMContentLoaded', () => {
       initExerciseControls();
       loadActivities();
@@ -3151,6 +3352,8 @@
       loadLastWeights();
       loadProfile();
       selectDate(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+      // Render dashboard cards after loading data
+      setTimeout(renderDashboardCards, 500);
     });
   </script>
 </body>
