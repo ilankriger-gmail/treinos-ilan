@@ -9,6 +9,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
     
     :root {
       --bg-primary: #1a1a2e;
@@ -19,10 +24,14 @@
       --accent-glow: rgba(127, 90, 240, 0.3);
       --text-primary: #e0e0e0;
       --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --border: rgba(255,255,255,0.05);
+      --text-muted: #7c8da3;
+      --border: rgba(255,255,255,0.10);
       --success: #2cb67d;
       --warning: #ff8906;
+      --error: #ef4444;
+      --error-dim: rgba(239,68,68,0.1);
+      --success-dim: rgba(44,182,125,0.08);
+      --accent-dark: #6025d1;
       --surface: rgba(255,255,255,0.03);
     }
     
@@ -70,6 +79,78 @@
       border-radius: 2px;
     }
     
+    /* Reusable Button System */
+    .btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+    }
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--accent-dark); }
+    .btn-success {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+    .btn-success:hover { background: #16a34a; }
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--text-secondary);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+    .btn-lg { padding: 14px 20px; font-size: 15px; }
+
+    /* Reusable Form Inputs */
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+    }
+    .form-input:focus { outline: none; border-color: var(--accent); }
+    .form-input::placeholder { color: var(--text-muted); }
+    .form-textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      resize: vertical;
+    }
+    .form-textarea:focus { outline: none; border-color: var(--accent); }
+    .form-textarea::placeholder { color: var(--text-muted); }
+    .form-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .form-group { margin-bottom: 12px; }
+
+    /* Toast variants */
+    .toast.error { background: var(--error); }
+
     /* Main Tabs */
     .main-tabs {
       display: flex;
@@ -155,7 +236,7 @@
     
     .weekday {
       text-align: center;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--text-muted);
       padding: 8px;
@@ -349,7 +430,7 @@
     .workout.active { display: block; }
     
     .section-title {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.5px;
       text-transform: uppercase;
@@ -455,14 +536,15 @@
     .weight-input:focus { outline: none; border-color: var(--accent); }
     
     .weight-unit { color: var(--text-muted); font-size: 12px; }
-    .weight-last { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+    .weight-last { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
     .weight-last strong { color: var(--accent); }
     
     .checkbox {
-      width: 24px;
-      height: 24px;
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
       border: 2px solid var(--text-muted);
-      border-radius: 6px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -486,12 +568,13 @@
     
     .timer-btn {
       margin-top: 10px;
-      padding: 8px 14px;
+      padding: 12px 18px;
+      min-height: 44px;
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
       border-radius: 6px;
       color: var(--text-secondary);
-      font-size: 12px;
+      font-size: 13px;
       font-family: 'Inter', sans-serif;
       cursor: pointer;
     }
@@ -605,7 +688,7 @@
       position: fixed;
       top: 10px;
       right: 10px;
-      font-size: 10px;
+      font-size: 12px;
       color: var(--text-muted);
       opacity: 0;
       transition: opacity 0.3s;
@@ -745,8 +828,7 @@
     }
     
     .analyze-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 20px var(--accent-glow);
+      opacity: 0.95;
     }
     
     .analyze-btn:disabled {
@@ -988,8 +1070,7 @@
     }
 
     .chat-start-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 32px rgba(127, 90, 240, 0.5);
+      opacity: 0.95;
     }
 
     /* Suggestion Cards */
@@ -1181,8 +1262,7 @@
     }
 
     .dash-card:hover {
-      border-color: var(--accent);
-      box-shadow: 0 2px 12px var(--accent-glow);
+      opacity: 0.95;
     }
 
     .dash-card-icon {
@@ -1241,6 +1321,46 @@
       border-radius: 14px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     }
+
+    /* 6.1 Hover effects only on devices with hover */
+    @media (hover: hover) {
+      .analyze-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px var(--accent-glow);
+      }
+      .chat-start-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 32px rgba(127, 90, 240, 0.5);
+      }
+      .dash-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 2px 12px var(--accent-glow);
+      }
+    }
+
+    /* 6.2 Respect reduced motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* 6.3 Firefox scrollbar */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.08) transparent;
+    }
+
+    /* 6.4 Touch feedback on calendar */
+    .calendar-day:active { transform: scale(0.95); }
+    .activity-btn:active { transform: scale(0.96); }
+
+    /* 6.5 Tabular nums for timer */
+    .timer-display {
+      font-variant-numeric: tabular-nums;
+    }
   </style>
 </head>
 <body>
@@ -1250,7 +1370,7 @@
     <header>
       <div class="header-top">
         <h1>Treinos</h1>
-        <div id="saveStatus" style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+        <div id="saveStatus" style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
           <span id="saveStatusDot" style="width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted);"></span>
           <span id="saveStatusText">Carregando...</span>
         </div>
@@ -1273,14 +1393,17 @@
           <span style="font-size: 14px; font-weight: 600;">Como estou hoje</span>
           <button onclick="saveEstado()" style="margin-left: auto; padding: 6px 12px; background: var(--accent); border: none; border-radius: 6px; color: white; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif;">Salvar</button>
         </div>
-        <textarea id="estadoHojeMain" placeholder="Ex: Dormí bem, com energia, leve dor no ombro..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 14px; resize: none;"></textarea>
+        <textarea id="estadoHojeMain" aria-label="Como estou hoje" placeholder="Ex: Dormi bem, com energia, leve dor no ombro..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 14px; resize: none;"></textarea>
       </div>
       
       <div class="calendar-header">
-        <button class="calendar-nav" onclick="changeMonth(-1)">
-          <button>←</button>
-        </button>
-        <span class="calendar-month" id="calendarMonth">Fevereiro 2026</span>
+        <div class="calendar-nav">
+          <button onclick="changeMonth(-1)">←</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="calendar-month" id="calendarMonth">Fevereiro 2026</span>
+          <button onclick="goToToday()" style="padding: 4px 10px; background: var(--accent-dim); border: 1px solid var(--accent); border-radius: 6px; color: var(--accent); font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">Hoje</button>
+        </div>
         <div class="calendar-nav">
           <button onclick="changeMonth(1)">→</button>
         </div>
@@ -1344,8 +1467,8 @@
     <!-- Workouts View -->
     <div id="workoutsView" class="view">
       <div class="workout-tabs">
-        <button class="workout-tab active" onclick="showWorkout('braco')">💪 Upper Body</button>
-        <button class="workout-tab" onclick="showWorkout('perna')">🦵 Lower Body</button>
+        <button class="workout-tab active" onclick="showWorkout('braco', this)">💪 Upper Body</button>
+        <button class="workout-tab" onclick="showWorkout('perna', this)">🦵 Lower Body</button>
       </div>
       
       <!-- Upper Body -->
@@ -1680,19 +1803,19 @@
         <div class="chat-profile-details" id="chatProfileDetails">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
             <div style="grid-column: span 2;">
-              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Nome</label>
+              <label for="profileNome" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Nome</label>
               <input type="text" id="profileNome" placeholder="Seu nome" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
             </div>
             <div>
-              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Idade</label>
+              <label for="profileIdade" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Idade</label>
               <input type="number" id="profileIdade" placeholder="Ex: 30" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
             </div>
             <div>
-              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Altura (cm)</label>
+              <label for="profileAltura" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Altura (cm)</label>
               <input type="number" id="profileAltura" placeholder="Ex: 175" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
             </div>
             <div style="grid-column: span 2;">
-              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Sexo</label>
+              <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Sexo</label>
               <div style="display: flex; gap: 8px;">
                 <button onclick="event.stopPropagation(); selectSexo('masculino')" class="sexo-btn" data-sexo="masculino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">M</button>
                 <button onclick="event.stopPropagation(); selectSexo('feminino')" class="sexo-btn" data-sexo="feminino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">F</button>
@@ -1700,17 +1823,17 @@
             </div>
           </div>
           <div style="margin-bottom: 10px;">
-            <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Objetivo</label>
+            <label for="objetivoInput" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Objetivo</label>
             <textarea class="coach-textarea" id="objetivoInput" onclick="event.stopPropagation()" placeholder="Ex: Ganhar massa muscular, perder gordura..." style="min-height: 60px;"></textarea>
           </div>
           <div style="margin-bottom: 10px;">
-            <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Dores / Problemas</label>
+            <label for="doresInput" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Dores / Problemas</label>
             <textarea class="coach-textarea" id="doresInput" onclick="event.stopPropagation()" placeholder="Ex: Dor no ombro direito, tendinite no joelho..."></textarea>
           </div>
           <div style="margin-bottom: 10px;">
-            <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Notas Medicas</label>
+            <label for="notaMedicaInput" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Notas Médicas</label>
             <div style="display: flex; gap: 8px;">
-              <textarea class="coach-textarea" id="notaMedicaInput" onclick="event.stopPropagation()" placeholder="Adicionar nota medica..." style="min-height: 50px; flex: 1;"></textarea>
+              <textarea class="coach-textarea" id="notaMedicaInput" onclick="event.stopPropagation()" placeholder="Adicionar nota médica..." style="min-height: 50px; flex: 1;"></textarea>
               <button onclick="event.stopPropagation(); addMedicalNote()" style="padding: 8px 12px; background: var(--success); border: none; border-radius: 6px; color: white; font-size: 11px; cursor: pointer; align-self: flex-end;">+</button>
             </div>
             <div id="notasMedicasList" style="margin-top: 8px;"></div>
@@ -1723,10 +1846,14 @@
 
       <!-- Chat area (hidden until started) -->
       <div id="chatArea" style="display: none;" class="chat-container">
+        <div style="padding: 8px 20px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); display: flex; align-items: center; gap: 10px;">
+          <button onclick="exitChat()" aria-label="Voltar ao dashboard" style="padding: 8px 14px; background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px;">← Voltar</button>
+          <span style="font-size: 13px; color: var(--text-muted);">Coach IA</span>
+        </div>
         <div class="chat-messages" id="chatMessages"></div>
         <div class="chat-input-area">
-          <textarea class="chat-input" id="chatInput" placeholder="Digite sua mensagem..." rows="1" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendChatMessage()}" oninput="autoResizeChatInput(this)"></textarea>
-          <button class="chat-send-btn" id="chatSendBtn" onclick="sendChatMessage()">➤</button>
+          <textarea class="chat-input" id="chatInput" aria-label="Mensagem para o coach" placeholder="Digite sua mensagem..." rows="1" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendChatMessage()}" oninput="autoResizeChatInput(this)"></textarea>
+          <button class="chat-send-btn" id="chatSendBtn" aria-label="Enviar mensagem" onclick="sendChatMessage()">➤</button>
         </div>
       </div>
 
@@ -1751,11 +1878,11 @@
           <div class="file-list" id="fileList"></div>
         </div>
 
-        <!-- Historico de analises -->
+        <!-- Histórico de análises -->
         <div class="coach-card" style="margin: 0 20px 16px;">
-          <h3>📊 Historico de Analises</h3>
+          <h3>📊 Histórico de Análises</h3>
           <div id="analysisHistory" style="margin-top: 12px;">
-            <p style="color: var(--text-muted); font-size: 13px;">Nenhuma analise ainda</p>
+            <p style="color: var(--text-muted); font-size: 13px;">Nenhuma análise ainda</p>
           </div>
         </div>
       </div>
@@ -1806,11 +1933,11 @@
         <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 4px;">
           <span>0 - Nada</span>
           <span>5 - Moderado</span>
-          <span>10 - Maximo</span>
+          <span>10 - Máximo</span>
         </div>
       </div>
       
-      <div style="margin-bottom: 16px;" id="fisioTreinoContainer" style="display: none;">
+      <div id="fisioTreinoContainer" style="margin-bottom: 16px; display: none;">
         <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">📋 Treino de Fisioterapia</label>
         <textarea id="fisioTreino" placeholder="Descreva os exercícios da fisio..." style="width: 100%; min-height: 80px; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
       </div>
@@ -2003,6 +2130,14 @@
       currentDate.setMonth(currentDate.getMonth() + delta);
       renderCalendar();
     }
+
+    function goToToday() {
+      var today = new Date();
+      currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
+      selectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      renderCalendar();
+      renderDayActivities();
+    }
     
     function selectDate(year, month, day) {
       selectedDate = new Date(year, month, day);
@@ -2034,24 +2169,52 @@
             <div class="activity-item-time">
               ${a.time || ''}
               ${a.duration ? ' • ' + a.duration + 'min' : ''}
-              ${a.effort != null ? ' • esforco ' + a.effort + '/10' : (a.intensity ? ' • ' + a.intensity : '')}
+              ${a.effort != null ? ' • esforço ' + a.effort + '/10' : (a.intensity ? ' • ' + a.intensity : '')}
             </div>
           </div>
           <button class="activity-delete" onclick="deleteActivity('${dateStr}', ${i})">✕</button>
-          ${a.notes ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: var(--bg-tertiary); border-radius: 6px; font-size: 12px; color: var(--text-secondary); margin-left: 36px;">💬 ' + a.notes + '</div>' : ''}
-          ${a.fisioTreino ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: rgba(139, 92, 246, 0.1); border-radius: 6px; font-size: 12px; color: var(--accent); margin-left: 36px; border-left: 2px solid var(--accent);">📋 ' + a.fisioTreino + '</div>' : ''}
+          ${a.notes ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: var(--bg-tertiary); border-radius: 6px; font-size: 12px; color: var(--text-secondary); margin-left: 36px;">💬 ' + escapeHtml(a.notes) + '</div>' : ''}
+          ${a.fisioTreino ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: rgba(139, 92, 246, 0.1); border-radius: 6px; font-size: 12px; color: var(--accent); margin-left: 36px; border-left: 2px solid var(--accent);">📋 ' + escapeHtml(a.fisioTreino) + '</div>' : ''}
         </div>
       `).join('');
     }
     
     // ========== ACTIVITIES ==========
     
+    var undoDeleteTimer = null;
     function deleteActivity(dateStr, index) {
-      activities[dateStr].splice(index, 1);
+      var removed = activities[dateStr].splice(index, 1)[0];
       if (activities[dateStr].length === 0) delete activities[dateStr];
-      saveActivities();
       renderCalendar();
       renderDayActivities();
+
+      // Show undo toast
+      if (undoDeleteTimer) clearTimeout(undoDeleteTimer);
+      var toast = document.getElementById('toast');
+      toast.innerHTML = 'Atividade removida <button onclick="undoDeleteActivity(\'' + dateStr + '\',' + index + ')" style="margin-left: 10px; padding: 4px 12px; background: white; color: var(--success); border: none; border-radius: 4px; font-weight: 600; cursor: pointer; font-family: \'Inter\', sans-serif; font-size: 12px;">Desfazer</button>';
+      toast.classList.add('show');
+      // Store for undo
+      toast.dataset.undoActivity = JSON.stringify({ dateStr: dateStr, index: index, activity: removed });
+      undoDeleteTimer = setTimeout(function() {
+        toast.classList.remove('show');
+        toast.textContent = '';
+        // Only persist after undo window closes
+        saveActivities();
+      }, 4000);
+    }
+
+    function undoDeleteActivity(dateStr, index) {
+      var toast = document.getElementById('toast');
+      try {
+        var data = JSON.parse(toast.dataset.undoActivity);
+        if (!activities[data.dateStr]) activities[data.dateStr] = [];
+        activities[data.dateStr].splice(data.index, 0, data.activity);
+        renderCalendar();
+        renderDayActivities();
+        if (undoDeleteTimer) clearTimeout(undoDeleteTimer);
+        toast.classList.remove('show');
+        showToast('Atividade restaurada!');
+      } catch (e) { console.error(e); }
     }
     
     async function saveActivities() {
@@ -2110,11 +2273,11 @@
 
     // ========== WORKOUTS ==========
     
-    function showWorkout(id) {
+    function showWorkout(id, btn) {
       document.querySelectorAll('.workout').forEach(w => w.classList.remove('active'));
       document.querySelectorAll('.workout-tab').forEach(t => t.classList.remove('active'));
       document.getElementById(id).classList.add('active');
-      event.target.classList.add('active');
+      if (btn) btn.classList.add('active');
       currentWorkout = id;
       updateProgress();
     }
@@ -2234,24 +2397,34 @@
       updateProgress();
     }
     
-    async function saveWeight(input) {
+    var saveWeightTimers = {};
+    function saveWeight(input) {
+      var exercise = input.closest('.exercise');
+      var id = exercise.dataset.id;
+      if (saveWeightTimers[id]) clearTimeout(saveWeightTimers[id]);
+      saveWeightTimers[id] = setTimeout(function() {
+        doSaveWeight(input);
+      }, 600);
+    }
+
+    async function doSaveWeight(input) {
       const exercise = input.closest('.exercise');
       const weight = parseFloat(input.value);
       if (!weight) return;
-      
+
       showSync('Salvando...');
       try {
-        await fetch(`${SUPABASE_URL}/rest/v1/workout_logs`, {
+        await fetch(SUPABASE_URL + '/rest/v1/workout_logs', {
           method: 'POST',
           headers: {
             'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Authorization': 'Bearer ' + SUPABASE_KEY,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             exercise_id: exercise.dataset.id,
             exercise_name: exercise.dataset.name,
-            weight
+            weight: weight
           })
         });
         showSync('✓ Salvo!', 'success');
@@ -2279,7 +2452,15 @@
             const date = new Date(latest[id].created_at).toLocaleDateString('pt-BR');
             const config = exerciseConfigs[id];
             const unit = config && config.type === 'tempo' ? 's' : 'kg';
-            el.innerHTML = `Ultimo: <strong>${latest[id].weight}${unit}</strong> (${date})`;
+            el.innerHTML = 'Último: <strong>' + latest[id].weight + unit + '</strong> (' + date + ')';
+          }
+          // Pre-fill weight input if empty
+          var exercise = document.querySelector('[data-id="' + id + '"]');
+          if (exercise) {
+            var weightInput = exercise.querySelector('.weight-input');
+            if (weightInput && !weightInput.value) {
+              weightInput.value = latest[id].weight;
+            }
           }
         });
       } catch (e) {
@@ -2299,12 +2480,12 @@
       'b7': { sets: 3, reps: '10-12', rest: 90, type: 'kg' },
       'b8': { sets: 3, reps: '12-15', rest: 60, type: 'kg' },
       'p1': { sets: 5, reps: '45', rest: 0, type: 'tempo' },
-      'p2': { sets: 3, reps: '15-20', rest: 0, type: 'kg' },
-      'p3': { sets: 3, reps: '10', rest: 0, type: 'kg' },
-      'p4': { sets: 3, reps: '10', rest: 0, type: 'kg' },
-      'p5': { sets: 3, reps: '12-15', rest: 0, type: 'kg' },
-      'p6': { sets: 3, reps: '15-20', rest: 0, type: 'kg' },
-      'p7': { sets: 3, reps: '15-20', rest: 0, type: 'kg' },
+      'p2': { sets: 3, reps: '15-20', rest: 60, type: 'kg' },
+      'p3': { sets: 3, reps: '10', rest: 90, type: 'kg' },
+      'p4': { sets: 3, reps: '10', rest: 90, type: 'kg' },
+      'p5': { sets: 3, reps: '12-15', rest: 60, type: 'kg' },
+      'p6': { sets: 3, reps: '15-20', rest: 60, type: 'kg' },
+      'p7': { sets: 3, reps: '15-20', rest: 60, type: 'kg' },
     };
 
     let exerciseConfigs = {};
@@ -2457,6 +2638,11 @@
     
     // ========== UTILS ==========
     
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
     function showSync(text, status = '') {
       const el = document.getElementById('syncIndicator');
       document.getElementById('syncText').textContent = text;
@@ -2464,11 +2650,13 @@
       setTimeout(() => el.classList.remove('show'), 2000);
     }
     
-    function showToast(text) {
+    function showToast(text, type) {
       const toast = document.getElementById('toast');
       toast.textContent = text;
+      toast.classList.remove('error');
+      if (type === 'error') toast.classList.add('error');
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2000);
+      setTimeout(function() { toast.classList.remove('show', 'error'); }, 2500);
     }
     
     // ========== IA COACH ==========
@@ -2592,12 +2780,42 @@
         (filesText ? '## ARQUIVOS\n' + filesText : '');
     }
 
+    function exitChat() {
+      chatActive = false;
+      document.getElementById('chatArea').style.display = 'none';
+      document.getElementById('chatStartArea').style.display = 'block';
+      renderDashboardCards();
+    }
+
     async function startCoachChat() {
+      // Check for saved conversation first
+      if (loadChatFromStorage() && chatMessages.length > 1) {
+        chatActive = true;
+        document.getElementById('chatStartArea').style.display = 'none';
+        document.getElementById('chatArea').style.display = 'flex';
+        document.getElementById('chatMessages').innerHTML = '';
+        // Replay saved messages (skip first context message)
+        for (var i = 0; i < chatMessages.length; i++) {
+          if (chatMessages[i].role === 'assistant') {
+            renderAssistantMessage(chatMessages[i].content);
+          } else if (i > 0) {
+            addChatBubble(chatMessages[i].content, 'user');
+          }
+        }
+        return;
+      }
+
       chatMessages = [];
       chatActive = true;
       document.getElementById('chatStartArea').style.display = 'none';
       document.getElementById('chatArea').style.display = 'flex';
       document.getElementById('chatMessages').innerHTML = '';
+
+      // Disable input while loading initial response
+      var chatInput = document.getElementById('chatInput');
+      var chatSendBtn = document.getElementById('chatSendBtn');
+      chatInput.disabled = true;
+      chatSendBtn.disabled = true;
 
       // Show typing
       addTypingIndicator();
@@ -2618,10 +2836,15 @@
         chatMessages.push({ role: 'assistant', content: response });
         removeTypingIndicator();
         renderAssistantMessage(response);
+        saveChatToStorage();
       } catch (e) {
         removeTypingIndicator();
         addChatBubble('Erro ao conectar com o coach: ' + e.message, 'assistant');
         console.error('Coach API error:', e);
+      } finally {
+        chatInput.disabled = false;
+        chatSendBtn.disabled = false;
+        chatInput.focus();
       }
     }
 
@@ -2646,9 +2869,12 @@
         chatMessages.push({ role: 'assistant', content: response });
         removeTypingIndicator();
         renderAssistantMessage(response);
+        saveChatToStorage();
       } catch (e) {
         removeTypingIndicator();
-        addChatBubble('Erro na resposta. Tente novamente.', 'assistant');
+        // Remove the failed user message from history so retry works
+        chatMessages.pop();
+        addChatErrorBubble(text);
         console.error(e);
       } finally {
         sendBtn.disabled = false;
@@ -2749,7 +2975,7 @@
       card.id = 'suggestion-' + idx;
 
       const emoji = s.activity_type ? (activityEmojis[s.activity_type] || '📋') : '💡';
-      const badge = s.type === 'atividade' ? 'Atividade' : (s.type === 'exercicio' ? 'Exercicio' : 'Sugestao');
+      const badge = s.type === 'atividade' ? 'Atividade' : (s.type === 'exercicio' ? 'Exercício' : 'Sugestão');
 
       let detailHtml = s.detail || '';
       if (s.sets) detailHtml += ' | ' + s.sets + ' series';
@@ -2803,9 +3029,9 @@
 
         renderCalendar();
         renderDayActivities();
-        showToast('Sugestao adicionada ao calendario!');
+        showToast('Sugestão adicionada ao calendário!');
       } else {
-        showToast('Sugestao aceita!');
+        showToast('Sugestão aceita!');
       }
     }
 
@@ -2823,6 +3049,43 @@
       const card = btn.closest('.suggestion-card');
       card.classList.add('rejected');
       card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: #ef4444; font-size: 12px;">Rejeitado</span>';
+    }
+
+    function addChatErrorBubble(lastUserText) {
+      var container = document.getElementById('chatMessages');
+      var bubble = document.createElement('div');
+      bubble.className = 'chat-bubble assistant';
+      bubble.innerHTML = '<span style="color: var(--error);">Erro na resposta.</span><br>' +
+        '<button onclick="retryChatMessage(this)" data-text="' + escapeHtml(lastUserText) + '" style="margin-top: 8px; padding: 8px 16px; background: var(--accent); border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: \'Inter\', sans-serif;">Tentar novamente</button>';
+      container.appendChild(bubble);
+      scrollChatToBottom();
+    }
+
+    async function retryChatMessage(btn) {
+      var text = btn.getAttribute('data-text');
+      // Remove the error bubble
+      btn.closest('.chat-bubble').remove();
+      // Re-send the message
+      chatMessages.push({ role: 'user', content: text });
+      addTypingIndicator();
+      scrollChatToBottom();
+      var sendBtn = document.getElementById('chatSendBtn');
+      sendBtn.disabled = true;
+      try {
+        var response = await callCoachAPI(chatMessages);
+        chatMessages.push({ role: 'assistant', content: response });
+        removeTypingIndicator();
+        renderAssistantMessage(response);
+        saveChatToStorage();
+      } catch (e) {
+        removeTypingIndicator();
+        chatMessages.pop();
+        addChatErrorBubble(text);
+        console.error(e);
+      } finally {
+        sendBtn.disabled = false;
+        scrollChatToBottom();
+      }
     }
 
     function addTypingIndicator() {
@@ -2843,8 +3106,34 @@
     function scrollChatToBottom() {
       const container = document.getElementById('chatMessages');
       if (container) {
-        setTimeout(() => { container.scrollTop = container.scrollHeight; }, 50);
+        setTimeout(function() { container.scrollTop = container.scrollHeight; }, 50);
       }
+    }
+
+    function saveChatToStorage() {
+      try {
+        localStorage.setItem('chat-messages', JSON.stringify(chatMessages));
+        localStorage.setItem('chat-date', new Date().toDateString());
+      } catch (e) { console.error(e); }
+    }
+
+    function loadChatFromStorage() {
+      try {
+        var savedDate = localStorage.getItem('chat-date');
+        if (savedDate !== new Date().toDateString()) {
+          localStorage.removeItem('chat-messages');
+          return false;
+        }
+        var saved = localStorage.getItem('chat-messages');
+        if (saved) {
+          var msgs = JSON.parse(saved);
+          if (msgs.length > 1) {
+            chatMessages = msgs;
+            return true;
+          }
+        }
+      } catch (e) { console.error(e); }
+      return false;
     }
 
     // Exercise images from wger.de API
@@ -2954,14 +3243,25 @@
     }
     
     // Track changes for unsaved indicator
+    var estadoAutoSaveTimer = null;
     function setupChangeTracking() {
-      const inputs = ['profileNome', 'profileIdade', 'profileAltura', 'objetivoInput', 'doresInput', 'estadoHojeMain'];
-      inputs.forEach(id => {
-        const el = document.getElementById(id);
+      var inputs = ['profileNome', 'profileIdade', 'profileAltura', 'objetivoInput', 'doresInput', 'estadoHojeMain'];
+      inputs.forEach(function(id) {
+        var el = document.getElementById(id);
         if (el) {
           el.addEventListener('input', markUnsaved);
         }
       });
+      // Auto-save "Como estou hoje" with debounce
+      var estadoEl = document.getElementById('estadoHojeMain');
+      if (estadoEl) {
+        estadoEl.addEventListener('input', function() {
+          if (estadoAutoSaveTimer) clearTimeout(estadoAutoSaveTimer);
+          estadoAutoSaveTimer = setTimeout(function() {
+            saveEstado();
+          }, 1500);
+        });
+      }
     }
     
     // Dropzone
@@ -2983,23 +3283,44 @@
     });
     
     function handleFiles(files) {
-      Array.from(files).forEach(file => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
+      Array.from(files).forEach(function(file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
           uploadedFiles.push({
             name: file.name,
             type: file.type,
             content: e.target.result
           });
           renderFileList();
+          saveUploadedFiles();
         };
-        
-        if (file.type === 'application/pdf') {
-          reader.readAsDataURL(file);
-        } else {
+
+        if (file.type.startsWith('text/')) {
           reader.readAsText(file);
+        } else {
+          reader.readAsDataURL(file);
         }
       });
+    }
+
+    function saveUploadedFiles() {
+      try {
+        localStorage.setItem('uploaded-files', JSON.stringify(uploadedFiles));
+      } catch (e) {
+        console.error('Erro ao salvar arquivos:', e);
+      }
+    }
+
+    function loadUploadedFiles() {
+      try {
+        var saved = localStorage.getItem('uploaded-files');
+        if (saved) {
+          uploadedFiles = JSON.parse(saved);
+          renderFileList();
+        }
+      } catch (e) {
+        console.error('Erro ao carregar arquivos:', e);
+      }
     }
     
     function renderFileList() {
@@ -3016,6 +3337,7 @@
     function removeFile(index) {
       uploadedFiles.splice(index, 1);
       renderFileList();
+      saveUploadedFiles();
     }
     
     // Legacy runAnalysis - now redirects to chat
@@ -3118,7 +3440,7 @@
       container.innerHTML = notasMedicas.map((n, i) => `
         <div style="padding: 10px 12px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 8px; border-left: 3px solid var(--success);">
           <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">${new Date(n.data).toLocaleDateString('pt-BR')}</div>
-          <div style="font-size: 13px; color: var(--text-primary);">${n.texto}</div>
+          <div style="font-size: 13px; color: var(--text-primary);">${escapeHtml(n.texto)}</div>
         </div>
       `).join('');
     }
@@ -3313,7 +3635,7 @@
       } else if (doresText) {
         saudeValue = doresText.substring(0, 50) + (doresText.length > 50 ? '...' : '');
       } else {
-        saudeValue = 'Sem dados de saude hoje';
+        saudeValue = 'Sem dados de saúde hoje';
       }
 
       container.innerHTML =
@@ -3336,7 +3658,7 @@
         '<div class="dash-card" onclick="toggleChatProfile()">' +
           '<div class="dash-card-icon">🩺</div>' +
           '<div class="dash-card-content">' +
-            '<div class="dash-card-title">Saude</div>' +
+            '<div class="dash-card-title">Saúde</div>' +
             '<div class="dash-card-value">' + saudeValue + '</div>' +
           '</div>' +
           '<div class="dash-card-arrow">›</div>' +
@@ -3345,15 +3667,32 @@
 
     // ========== INIT ==========
 
-    document.addEventListener('DOMContentLoaded', () => {
+    // Close modals with Escape
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        var activityModal = document.getElementById('activityModal');
+        if (activityModal.classList.contains('active')) {
+          closeActivityModal();
+          return;
+        }
+        var timerModal = document.getElementById('timerModal');
+        if (timerModal.classList.contains('active')) {
+          closeTimer();
+          return;
+        }
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
       initExerciseControls();
-      loadActivities();
+      loadUploadedFiles();
       loadProgress();
       loadLastWeights();
-      loadProfile();
       selectDate(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
-      // Render dashboard cards after loading data
-      setTimeout(renderDashboardCards, 500);
+      // Load data then render dashboard
+      Promise.all([loadActivities(), loadProfile()]).then(function() {
+        renderDashboardCards();
+      });
     });
   </script>
 </body>
