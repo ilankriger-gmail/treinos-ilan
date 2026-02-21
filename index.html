@@ -1379,21 +1379,22 @@
     
     <!-- Main Navigation -->
     <div class="main-tabs">
-      <button class="main-tab active" onclick="showView('coach')">🤖 AI Coach</button>
-      <button class="main-tab" onclick="showView('calendar')">📅 Agenda</button>
+      <button class="main-tab active" onclick="showView('calendar')">📅 Agenda</button>
+      <button class="main-tab" onclick="showView('coach')">🤖 AI Coach</button>
       <button class="main-tab" onclick="showView('workouts')">💪 Treino</button>
     </div>
     
     <!-- Calendar View -->
-    <div id="calendarView" class="view">
-      <!-- Como estou hoje - sempre visível -->
+    <div id="calendarView" class="view active">
+      <!-- Como estou agora - sempre visível -->
       <div style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
           <span style="font-size: 18px;">💭</span>
-          <span style="font-size: 14px; font-weight: 600;">Como estou hoje</span>
+          <span style="font-size: 14px; font-weight: 600;">Como estou agora</span>
           <button onclick="saveEstado()" style="margin-left: auto; padding: 6px 12px; background: var(--accent); border: none; border-radius: 6px; color: white; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif;">Salvar</button>
         </div>
-        <textarea id="estadoHojeMain" aria-label="Como estou hoje" placeholder="Ex: Dormi bem, com energia, leve dor no ombro..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 14px; resize: none;"></textarea>
+        <textarea id="estadoHojeMain" aria-label="Como estou agora" placeholder="Ex: Dormi bem, com energia, leve dor no ombro..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 14px; resize: none;"></textarea>
+        <div id="estadoEntries" style="margin-top: 10px;"></div>
       </div>
       
       <div class="calendar-header">
@@ -1791,7 +1792,7 @@
     </div>
     
     <!-- IA Coach View -->
-    <div id="coachView" class="view active">
+    <div id="coachView" class="view">
       <!-- Profile collapsible header -->
       <div class="chat-profile-header" onclick="toggleChatProfile()">
         <div class="chat-profile-summary">
@@ -1949,7 +1950,7 @@
       
       <div style="display: flex; gap: 10px;">
         <button onclick="closeActivityModal()" style="flex: 1; padding: 14px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">Cancelar</button>
-        <button onclick="saveActivity()" style="flex: 2; padding: 14px; border: none; border-radius: 8px; background: var(--success); color: white; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">Salvar Atividade</button>
+        <button id="saveActivityBtn" onclick="saveActivity()" style="flex: 2; padding: 14px; border: none; border-radius: 8px; background: var(--success); color: white; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">Salvar Atividade</button>
       </div>
     </div>
   </div>
@@ -2012,11 +2013,42 @@
         fisioContainer.style.display = 'none';
       }
       
+      editingActivityIndex = null;
+      editingActivityDate = null;
+      document.getElementById('saveActivityBtn').textContent = 'Salvar Atividade';
       document.getElementById('activityModal').classList.add('active');
     }
-    
+
+    var editingActivityIndex = null;
+    var editingActivityDate = null;
+
     function closeActivityModal() {
       document.getElementById('activityModal').classList.remove('active');
+      editingActivityIndex = null;
+      editingActivityDate = null;
+    }
+
+    function editActivity(dateStr, index) {
+      var a = activities[dateStr][index];
+      if (!a) return;
+      editingActivityIndex = index;
+      editingActivityDate = dateStr;
+
+      var emoji = activityEmojis[a.type] || '🏋️';
+      document.getElementById('activityModalType').value = a.type;
+      document.getElementById('activityModalEmoji').textContent = emoji;
+      document.getElementById('activityModalTitle').textContent = activityNames[a.type] || a.type;
+      document.getElementById('activityDuration').value = a.duration || '60';
+      document.getElementById('activityNotes').value = a.notes || '';
+      document.getElementById('fisioTreino').value = a.fisioTreino || '';
+      document.getElementById('activityEffort').value = a.effort != null ? a.effort : '5';
+      document.getElementById('effortValue').textContent = a.effort != null ? a.effort : '5';
+
+      var fisioContainer = document.getElementById('fisioTreinoContainer');
+      fisioContainer.style.display = a.type === 'fisio' ? 'block' : 'none';
+
+      document.getElementById('saveActivityBtn').textContent = 'Atualizar Atividade';
+      document.getElementById('activityModal').classList.add('active');
     }
     
     function selectIntensity(level) {
@@ -2035,18 +2067,14 @@
     }
     
     async function saveActivity() {
-      const type = document.getElementById('activityModalType').value;
-      const duration = document.getElementById('activityDuration').value;
-      const notes = document.getElementById('activityNotes').value.trim();
-      const fisioTreino = document.getElementById('fisioTreino').value.trim();
-      
-      const dateStr = formatDate(selectedDate);
-      if (!activities[dateStr]) activities[dateStr] = [];
-      
-      const effort = document.getElementById('activityEffort').value;
+      var type = document.getElementById('activityModalType').value;
+      var duration = document.getElementById('activityDuration').value;
+      var notes = document.getElementById('activityNotes').value.trim();
+      var fisioTreino = document.getElementById('fisioTreino').value.trim();
+      var effort = document.getElementById('activityEffort').value;
 
-      const activity = {
-        type,
+      var activity = {
+        type: type,
         time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
         duration: duration ? parseInt(duration) : null,
         intensity: selectedIntensity,
@@ -2054,13 +2082,24 @@
         notes: notes || null,
         fisioTreino: fisioTreino || null
       };
-      
-      activities[dateStr].push(activity);
+
+      // Edit mode: update existing activity
+      if (editingActivityIndex !== null && editingActivityDate) {
+        var existing = activities[editingActivityDate][editingActivityIndex];
+        activity.time = existing.time; // keep original time
+        activities[editingActivityDate][editingActivityIndex] = activity;
+      } else {
+        // New activity
+        var dateStr = formatDate(selectedDate);
+        if (!activities[dateStr]) activities[dateStr] = [];
+        activities[dateStr].push(activity);
+      }
+      var isEdit = editingActivityIndex !== null;
       await saveActivities();
       renderCalendar();
       renderDayActivities();
       closeActivityModal();
-      showToast('✅ Atividade salva!');
+      showToast(isEdit ? 'Atividade atualizada!' : 'Atividade salva!');
     }
     
     // ========== VIEWS ==========
@@ -2070,8 +2109,8 @@
       document.querySelectorAll('.main-tab').forEach(function(t) { t.classList.remove('active'); });
       document.getElementById(view + 'View').classList.add('active');
 
-      // Map view name to tab index (coach=0, calendar=1, workouts=2)
-      var tabMap = { 'coach': 0, 'calendar': 1, 'workouts': 2 };
+      // Map view name to tab index (calendar=0, coach=1, workouts=2)
+      var tabMap = { 'calendar': 0, 'coach': 1, 'workouts': 2 };
       var tabs = document.querySelectorAll('.main-tab');
       if (tabs[tabMap[view]]) tabs[tabMap[view]].classList.add('active');
 
@@ -2172,6 +2211,7 @@
               ${a.effort != null ? ' • esforço ' + a.effort + '/10' : (a.intensity ? ' • ' + a.intensity : '')}
             </div>
           </div>
+          <button onclick="editActivity('${dateStr}', ${i})" style="width: 28px; height: 28px; border: none; border-radius: 6px; background: var(--accent-dim); color: var(--accent); cursor: pointer; font-size: 14px;">✎</button>
           <button class="activity-delete" onclick="deleteActivity('${dateStr}', ${i})">✕</button>
           ${a.notes ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: var(--bg-tertiary); border-radius: 6px; font-size: 12px; color: var(--text-secondary); margin-left: 36px;">💬 ' + escapeHtml(a.notes) + '</div>' : ''}
           ${a.fisioTreino ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: rgba(139, 92, 246, 0.1); border-radius: 6px; font-size: 12px; color: var(--accent); margin-left: 36px; border-left: 2px solid var(--accent);">📋 ' + escapeHtml(a.fisioTreino) + '</div>' : ''}
@@ -2750,7 +2790,7 @@
 
       const objetivo = document.getElementById('objetivoInput')?.value?.trim() || 'Nao informado';
       const dores = document.getElementById('doresInput')?.value?.trim() || 'Nenhum';
-      const estado = document.getElementById('estadoHojeMain')?.value?.trim() || 'Nao informado';
+      var estado = estadoEntries.length > 0 ? estadoEntries.map(function(e) { return '[' + e.hora + '] ' + e.texto; }).join('; ') : 'Nao informado';
       const nome = document.getElementById('profileNome')?.value?.trim() || '';
       const idade = document.getElementById('profileIdade')?.value || '';
       const altura = document.getElementById('profileAltura')?.value || '';
@@ -3252,14 +3292,14 @@
           el.addEventListener('input', markUnsaved);
         }
       });
-      // Auto-save "Como estou hoje" with debounce
+      // Enter to save estado
       var estadoEl = document.getElementById('estadoHojeMain');
       if (estadoEl) {
-        estadoEl.addEventListener('input', function() {
-          if (estadoAutoSaveTimer) clearTimeout(estadoAutoSaveTimer);
-          estadoAutoSaveTimer = setTimeout(function() {
+        estadoEl.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
             saveEstado();
-          }, 1500);
+          }
         });
       }
     }
@@ -3520,32 +3560,88 @@
       renderAssistantMessage(analysis.texto);
     }
     
+    var estadoEntries = [];
+
     async function saveEstado() {
-      const estado = document.getElementById('estadoHojeMain').value.trim();
+      var input = document.getElementById('estadoHojeMain');
+      var estado = input.value.trim();
+      if (!estado) return;
+
+      var entry = {
+        texto: estado,
+        hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date().toISOString()
+      };
+      estadoEntries.push(entry);
+
+      // Build full text for DB (all entries today)
+      var fullText = estadoEntries.map(function(e) {
+        return '[' + e.hora + '] ' + e.texto;
+      }).join('\n');
+
       showSync('Salvando...');
-      
       try {
-        await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
+        await fetch(SUPABASE_URL + '/rest/v1/user_profile?id=eq.1', {
           method: 'PATCH',
           headers: {
             'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Authorization': 'Bearer ' + SUPABASE_KEY,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            estado_hoje: estado,
+            estado_hoje: fullText,
             updated_at: new Date().toISOString()
           })
         });
         showSync('✓ Salvo!', 'success');
-        showToast('✅ Estado salvo!');
+        showToast('Salvo!');
         updateSaveStatus(true, new Date());
-        
-        // Campo estadoHojeMain já está atualizado
+        input.value = '';
+        renderEstadoEntries();
+        renderDashboardCards();
       } catch (e) {
         console.error(e);
-        showToast('❌ Erro ao salvar');
+        estadoEntries.pop();
+        showToast('Erro ao salvar', 'error');
       }
+    }
+
+    function renderEstadoEntries() {
+      var container = document.getElementById('estadoEntries');
+      if (!container) return;
+      if (estadoEntries.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      container.innerHTML = estadoEntries.map(function(e, i) {
+        return '<div style="padding: 10px 12px; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 6px; border-left: 3px solid var(--accent); display: flex; align-items: flex-start; gap: 8px;">' +
+          '<div style="flex: 1;">' +
+            '<div style="font-size: 12px; color: var(--text-muted); margin-bottom: 2px;">' + escapeHtml(e.hora) + '</div>' +
+            '<div style="font-size: 13px; color: var(--text-primary);">' + escapeHtml(e.texto) + '</div>' +
+          '</div>' +
+          '<button onclick="deleteEstadoEntry(' + i + ')" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; padding: 2px 6px;">✕</button>' +
+        '</div>';
+      }).join('');
+    }
+
+    async function deleteEstadoEntry(index) {
+      estadoEntries.splice(index, 1);
+      var fullText = estadoEntries.map(function(e) {
+        return '[' + e.hora + '] ' + e.texto;
+      }).join('\n');
+      try {
+        await fetch(SUPABASE_URL + '/rest/v1/user_profile?id=eq.1', {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_KEY,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ estado_hoje: fullText, updated_at: new Date().toISOString() })
+        });
+      } catch (e) { console.error(e); }
+      renderEstadoEntries();
+      renderDashboardCards();
     }
     
     async function loadProfile() {
@@ -3568,19 +3664,26 @@
           if (alturaInput && profile.altura) alturaInput.value = profile.altura;
           if (profile.sexo) selectSexo(profile.sexo);
 
-          // Estado de hoje — reset diario
-          const estadoMain = document.getElementById('estadoHojeMain');
-          if (estadoMain) {
-            if (profile.updated_at) {
-              const updatedDate = new Date(profile.updated_at).toDateString();
-              const todayDate = new Date().toDateString();
-              if (updatedDate === todayDate && profile.estado_hoje) {
-                estadoMain.value = profile.estado_hoje;
-              } else {
-                estadoMain.value = '';
-              }
-            } else {
-              estadoMain.value = '';
+          // Estado de hoje — reset diario, parse entries
+          estadoEntries = [];
+          var estadoMain = document.getElementById('estadoHojeMain');
+          if (estadoMain) estadoMain.value = '';
+          if (profile.updated_at) {
+            var updatedDate = new Date(profile.updated_at).toDateString();
+            var todayDate = new Date().toDateString();
+            if (updatedDate === todayDate && profile.estado_hoje) {
+              // Parse entries from saved text: "[HH:MM] texto"
+              var lines = profile.estado_hoje.split('\n').filter(function(l) { return l.trim(); });
+              lines.forEach(function(line) {
+                var match = line.match(/^\[(\d{2}:\d{2})\]\s*(.+)/);
+                if (match) {
+                  estadoEntries.push({ hora: match[1], texto: match[2], timestamp: profile.updated_at });
+                } else {
+                  // Legacy single text format
+                  estadoEntries.push({ hora: '--:--', texto: line, timestamp: profile.updated_at });
+                }
+              });
+              renderEstadoEntries();
             }
           }
 
@@ -3667,13 +3770,12 @@
       }
 
       // --- Card Saude ---
-      var estadoEl = document.getElementById('estadoHojeMain');
-      var estadoText = estadoEl ? estadoEl.value.trim() : '';
       var doresEl = document.getElementById('doresInput');
       var doresText = doresEl ? doresEl.value.trim() : '';
       var saudeValue = '';
-      if (estadoText) {
-        saudeValue = estadoText.substring(0, 50) + (estadoText.length > 50 ? '...' : '');
+      if (estadoEntries.length > 0) {
+        var lastEntry = estadoEntries[estadoEntries.length - 1];
+        saudeValue = lastEntry.texto.substring(0, 50) + (lastEntry.texto.length > 50 ? '...' : '');
       } else if (doresText) {
         saudeValue = doresText.substring(0, 50) + (doresText.length > 50 ? '...' : '');
       } else {
