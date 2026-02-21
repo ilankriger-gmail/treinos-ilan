@@ -2390,38 +2390,27 @@
 
     // System prompt for the coach
     function buildSystemPrompt() {
-      return `Voce e um coach de treino pessoal interativo. Voce conversa em portugues brasileiro, de forma direta e motivadora.
-
-REGRAS:
-1. Na PRIMEIRA mensagem, faca 2-3 perguntas sobre como o aluno esta hoje, o que quer treinar, e como se sente.
-2. Depois das respostas, de sugestoes praticas e personalizadas.
-3. Use blocos <suggestion> para sugestoes acionaveis que o aluno pode aceitar e adicionar ao calendario.
-4. Seja breve nas respostas (maximo 3-4 paragrafos).
-5. Nao repita informacoes que ja foram dadas no contexto.
-
-FORMATO DE SUGESTAO (quando aplicavel):
-<suggestion>
-type: atividade
-action: add
-label: Nome da atividade sugerida
-activity_type: corrida|surf|tenis|bike|fisio|upper|lower
-duration: 30
-detail: Descricao breve da sugestao
-</suggestion>
-
-<suggestion>
-type: exercicio
-action: modify
-label: Nome do exercicio
-exercise_name: Nome do exercicio
-detail: O que mudar no exercicio
-sets: 3
-reps: 12
-weight: 20
-</suggestion>
-
-Tipos validos de activity_type: corrida, surf, tenis, bike, fisio, upper, lower
-Use <suggestion> APENAS quando tiver sugestoes concretas e acionaveis. Nao use em perguntas iniciais.`;
+      var sg = 'suggestion';
+      return 'Voce e um coach de treino pessoal interativo. Voce conversa em portugues brasileiro, de forma direta e motivadora.\n\n' +
+        'REGRAS:\n' +
+        '1. Na PRIMEIRA mensagem, faca 2-3 perguntas sobre como o aluno esta hoje, o que quer treinar, e como se sente.\n' +
+        '2. Depois das respostas, de sugestoes praticas e personalizadas.\n' +
+        '3. Use blocos <' + sg + '> para sugestoes acionaveis que o aluno pode aceitar e adicionar ao calendario.\n' +
+        '4. Seja breve nas respostas (maximo 3-4 paragrafos).\n' +
+        '5. Nao repita informacoes que ja foram dadas no contexto.\n\n' +
+        'FORMATO DE SUGESTAO (quando aplicavel):\n' +
+        '<' + sg + '>\n' +
+        'type: atividade\naction: add\nlabel: Nome da atividade sugerida\n' +
+        'activity_type: corrida|surf|tenis|bike|fisio|upper|lower\n' +
+        'duration: 30\ndetail: Descricao breve da sugestao\n' +
+        '</' + sg + '>\n\n' +
+        '<' + sg + '>\n' +
+        'type: exercicio\naction: modify\nlabel: Nome do exercicio\n' +
+        'exercise_name: Nome do exercicio\ndetail: O que mudar no exercicio\n' +
+        'sets: 3\nreps: 12\nweight: 20\n' +
+        '</' + sg + '>\n\n' +
+        'Tipos validos de activity_type: corrida, surf, tenis, bike, fisio, upper, lower\n' +
+        'Use <' + sg + '> APENAS quando tiver sugestoes concretas e acionaveis. Nao use em perguntas iniciais.';
     }
 
     async function gatherCoachContext() {
@@ -2488,20 +2477,26 @@ Use <suggestion> APENAS quando tiver sugestoes concretas e acionaveis. Nao use e
       // Show typing
       addTypingIndicator();
 
-      const context = await gatherCoachContext();
-      const firstMessage = 'Aqui esta o contexto do aluno:\n\n' + context + '\n\nComece a conversa fazendo 2-3 perguntas relevantes para entender como o aluno esta hoje e o que quer trabalhar.';
+      var context = '';
+      try {
+        context = await gatherCoachContext();
+      } catch (e) {
+        console.error('Erro ao coletar contexto:', e);
+      }
+
+      var firstMessage = 'Aqui esta o contexto do aluno:\n\n' + context + '\n\nComece a conversa fazendo 2-3 perguntas relevantes para entender como o aluno esta hoje e o que quer trabalhar.';
 
       chatMessages.push({ role: 'user', content: firstMessage });
 
       try {
-        const response = await callCoachAPI(chatMessages);
+        var response = await callCoachAPI(chatMessages);
         chatMessages.push({ role: 'assistant', content: response });
         removeTypingIndicator();
         renderAssistantMessage(response);
       } catch (e) {
         removeTypingIndicator();
-        addChatBubble('Erro ao conectar com o coach. Tente novamente.', 'assistant');
-        console.error(e);
+        addChatBubble('Erro ao conectar com o coach: ' + e.message, 'assistant');
+        console.error('Coach API error:', e);
       }
     }
 
@@ -2537,7 +2532,7 @@ Use <suggestion> APENAS quando tiver sugestoes concretas e acionaveis. Nao use e
     }
 
     async function callCoachAPI(messages) {
-      const response = await fetch('/api/analyze', {
+      var response = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -2547,11 +2542,12 @@ Use <suggestion> APENAS quando tiver sugestoes concretas e acionaveis. Nao use e
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error('API error: ' + response.status);
+        var errorText = await response.text();
+        console.error('API response error:', response.status, errorText);
+        throw new Error('API ' + response.status + ': ' + errorText.substring(0, 100));
       }
 
-      const data = await response.json();
+      var data = await response.json();
       if (data.error) throw new Error(data.error);
       return data.content;
     }
@@ -2573,15 +2569,17 @@ Use <suggestion> APENAS quando tiver sugestoes concretas e acionaveis. Nao use e
       const container = document.getElementById('chatMessages');
 
       // Extract suggestions
-      const suggestionRegex = /<suggestion>([\s\S]*?)<\/suggestion>/g;
-      const suggestions = [];
-      let match;
+      var sgOpen = '<' + 'suggestion>';
+      var sgClose = '</' + 'suggestion>';
+      var suggestionRegex = new RegExp(sgOpen + '([\\s\\S]*?)' + sgClose, 'g');
+      var suggestions = [];
+      var match;
       while ((match = suggestionRegex.exec(text)) !== null) {
         suggestions.push(parseSuggestion(match[1]));
       }
 
       // Clean text (remove suggestion blocks)
-      const cleanText = text.replace(suggestionRegex, '').trim();
+      var cleanText = text.replace(suggestionRegex, '').trim();
 
       if (cleanText) {
         const bubble = document.createElement('div');
