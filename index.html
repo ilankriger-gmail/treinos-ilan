@@ -2431,14 +2431,14 @@ Use <suggestion> APENAS quando tiver sugestoes concretas e acionaveis. Nao use e
 
       try {
         const [whRes, wlRes, calRes] = await Promise.all([
-          fetch(\`\${SUPABASE_URL}/rest/v1/workout_sessions?select=*&order=created_at.desc&limit=10\`, {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': \`Bearer \${SUPABASE_KEY}\` }
+          fetch(SUPABASE_URL + '/rest/v1/workout_sessions?select=*&order=created_at.desc&limit=10', {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
           }),
-          fetch(\`\${SUPABASE_URL}/rest/v1/workout_logs?select=*&order=created_at.desc&limit=30\`, {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': \`Bearer \${SUPABASE_KEY}\` }
+          fetch(SUPABASE_URL + '/rest/v1/workout_logs?select=*&order=created_at.desc&limit=30', {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
           }),
-          fetch(\`\${SUPABASE_URL}/rest/v1/calendar_activities?select=*&order=date.desc&limit=14\`, {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': \`Bearer \${SUPABASE_KEY}\` }
+          fetch(SUPABASE_URL + '/rest/v1/calendar_activities?select=*&order=date.desc&limit=14', {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
           })
         ]);
         workoutHistory = await whRes.json();
@@ -2453,31 +2453,29 @@ Use <suggestion> APENAS quando tiver sugestoes concretas e acionaveis. Nao use e
       const idade = document.getElementById('profileIdade')?.value || '';
       const altura = document.getElementById('profileAltura')?.value || '';
 
-      const filesText = uploadedFiles.map(f => {
-        if (f.type.includes('pdf')) return \`[PDF: \${f.name}]\`;
-        return \`--- \${f.name} ---\\n\${f.content.substring(0, 3000)}\`;
-      }).join('\\n');
+      const filesText = uploadedFiles.map(function(f) {
+        if (f.type.includes('pdf')) return '[PDF: ' + f.name + ']';
+        return '--- ' + f.name + ' ---\n' + f.content.substring(0, 3000);
+      }).join('\n');
 
-      return \`## PERFIL
-Nome: \${nome} | Idade: \${idade} | Altura: \${altura}cm | Sexo: \${selectedSexo || '?'}
-Objetivo: \${objetivo}
-Dores/Problemas: \${dores}
-Estado hoje: \${estado}
+      const calText = calendarData.length > 0
+        ? calendarData.map(function(d) { return d.date + ': ' + JSON.stringify(d.activities); }).join('\n')
+        : 'Vazio';
 
-## TREINO ATUAL
-Upper: Remada Aberta 3x10-12, Crucifixo Inclinado 3x10-12, Remada Fechada 3x10-12, Crucifixo Inverso 3x15, Face Pull 4x15-20, Triceps Corda 3x12-15, Supino Reto 3x10-12, Biceps Barra W 3x12-15
-Lower: Isometria Abdução 5x45s, Ponte Bipodal 3x15-20, Agachamento Espanhol 3x10, Afundo 3x10, Cadeira Flexora 3x12-15, Panturrilha Step 3x15-20, Solear 3x15-20
-
-## HISTORICO RECENTE (ultimos treinos)
-\${workoutHistory.length > 0 ? JSON.stringify(workoutHistory.slice(0, 5)) : 'Nenhum'}
-
-## ULTIMOS PESOS
-\${weightHistory.length > 0 ? JSON.stringify(weightHistory.slice(0, 10)) : 'Nenhum'}
-
-## CALENDARIO (ultimos 14 dias)
-\${calendarData.length > 0 ? calendarData.map(d => \`\${d.date}: \${JSON.stringify(d.activities)}\`).join('\\n') : 'Vazio'}
-
-\${filesText ? \`## ARQUIVOS\\n\${filesText}\` : ''}\`;
+      return '## PERFIL\n' +
+        'Nome: ' + nome + ' | Idade: ' + idade + ' | Altura: ' + altura + 'cm | Sexo: ' + (selectedSexo || '?') + '\n' +
+        'Objetivo: ' + objetivo + '\n' +
+        'Dores/Problemas: ' + dores + '\n' +
+        'Estado hoje: ' + estado + '\n\n' +
+        '## TREINO ATUAL\n' +
+        'Upper: Remada Aberta 3x10-12, Crucifixo Inclinado 3x10-12, Remada Fechada 3x10-12, Crucifixo Inverso 3x15, Face Pull 4x15-20, Triceps Corda 3x12-15, Supino Reto 3x10-12, Biceps Barra W 3x12-15\n' +
+        'Lower: Isometria Abducao 5x45s, Ponte Bipodal 3x15-20, Agachamento Espanhol 3x10, Afundo 3x10, Cadeira Flexora 3x12-15, Panturrilha Step 3x15-20, Solear 3x15-20\n\n' +
+        '## HISTORICO RECENTE\n' +
+        (workoutHistory.length > 0 ? JSON.stringify(workoutHistory.slice(0, 5)) : 'Nenhum') + '\n\n' +
+        '## ULTIMOS PESOS\n' +
+        (weightHistory.length > 0 ? JSON.stringify(weightHistory.slice(0, 10)) : 'Nenhum') + '\n\n' +
+        '## CALENDARIO (ultimos 14 dias)\n' + calText + '\n\n' +
+        (filesText ? '## ARQUIVOS\n' + filesText : '');
     }
 
     async function startCoachChat() {
@@ -2491,7 +2489,7 @@ Lower: Isometria Abdução 5x45s, Ponte Bipodal 3x15-20, Agachamento Espanhol 3x
       addTypingIndicator();
 
       const context = await gatherCoachContext();
-      const firstMessage = \`Aqui esta o contexto do aluno:\\n\\n\${context}\\n\\nComece a conversa fazendo 2-3 perguntas relevantes para entender como o aluno esta hoje e o que quer trabalhar.\`;
+      const firstMessage = 'Aqui esta o contexto do aluno:\n\n' + context + '\n\nComece a conversa fazendo 2-3 perguntas relevantes para entender como o aluno esta hoje e o que quer trabalhar.';
 
       chatMessages.push({ role: 'user', content: firstMessage });
 
@@ -2550,7 +2548,7 @@ Lower: Isometria Abdução 5x45s, Ponte Bipodal 3x15-20, Agachamento Espanhol 3x
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(\`API error: \${response.status}\`);
+        throw new Error('API error: ' + response.status);
       }
 
       const data = await response.json();
@@ -2561,7 +2559,7 @@ Lower: Isometria Abdução 5x45s, Ponte Bipodal 3x15-20, Agachamento Espanhol 3x
     function addChatBubble(text, role) {
       const container = document.getElementById('chatMessages');
       const bubble = document.createElement('div');
-      bubble.className = \`chat-bubble \${role}\`;
+      bubble.className = 'chat-bubble ' + role;
       if (role === 'user') {
         bubble.textContent = text;
       } else {
@@ -2609,7 +2607,7 @@ Lower: Isometria Abdução 5x45s, Ponte Bipodal 3x15-20, Agachamento Espanhol 3x
     }
 
     function parseSuggestion(raw) {
-      const lines = raw.trim().split('\\n');
+      const lines = raw.trim().split('\n');
       const s = {};
       lines.forEach(line => {
         const idx = line.indexOf(':');
@@ -2625,30 +2623,29 @@ Lower: Isometria Abdução 5x45s, Ponte Bipodal 3x15-20, Agachamento Espanhol 3x
     function createSuggestionCard(s, idx) {
       const card = document.createElement('div');
       card.className = 'suggestion-card';
-      card.id = \`suggestion-\${idx}\`;
+      card.id = 'suggestion-' + idx;
 
       const emoji = s.activity_type ? (activityEmojis[s.activity_type] || '📋') : '💡';
       const badge = s.type === 'atividade' ? 'Atividade' : (s.type === 'exercicio' ? 'Exercicio' : 'Sugestao');
 
       let detailHtml = s.detail || '';
-      if (s.sets) detailHtml += \` | \${s.sets} series\`;
-      if (s.reps) detailHtml += \` x \${s.reps} reps\`;
-      if (s.weight) detailHtml += \` | \${s.weight}kg\`;
-      if (s.duration) detailHtml += \` | \${s.duration}min\`;
+      if (s.sets) detailHtml += ' | ' + s.sets + ' series';
+      if (s.reps) detailHtml += ' x ' + s.reps + ' reps';
+      if (s.weight) detailHtml += ' | ' + s.weight + 'kg';
+      if (s.duration) detailHtml += ' | ' + s.duration + 'min';
 
-      card.innerHTML = \`
-        <div class="suggestion-card-header">
-          <span>\${emoji}</span>
-          <span class="label">\${s.label}</span>
-          <span class="badge">\${badge}</span>
-        </div>
-        <div class="suggestion-card-detail">\${detailHtml}</div>
-        <div class="suggestion-card-actions">
-          <button class="suggestion-accept" onclick="acceptSuggestion(\${idx}, this)">Aceitar</button>
-          <button class="suggestion-modify" onclick="modifySuggestion(\${idx})">Modificar</button>
-          <button class="suggestion-reject" onclick="rejectSuggestion(\${idx}, this)">Rejeitar</button>
-        </div>
-      \`;
+      card.innerHTML =
+        '<div class="suggestion-card-header">' +
+          '<span>' + emoji + '</span>' +
+          '<span class="label">' + s.label + '</span>' +
+          '<span class="badge">' + badge + '</span>' +
+        '</div>' +
+        '<div class="suggestion-card-detail">' + detailHtml + '</div>' +
+        '<div class="suggestion-card-actions">' +
+          '<button class="suggestion-accept" onclick="acceptSuggestion(' + idx + ', this)">Aceitar</button>' +
+          '<button class="suggestion-modify" onclick="modifySuggestion(' + idx + ')">Modificar</button>' +
+          '<button class="suggestion-reject" onclick="rejectSuggestion(' + idx + ', this)">Rejeitar</button>' +
+        '</div>';
 
       // Store suggestion data on card
       card.dataset.suggestion = JSON.stringify(s);
@@ -2690,11 +2687,11 @@ Lower: Isometria Abdução 5x45s, Ponte Bipodal 3x15-20, Agachamento Espanhol 3x
     }
 
     function modifySuggestion(idx) {
-      const card = document.getElementById(\`suggestion-\${idx}\`);
+      const card = document.getElementById('suggestion-' + idx);
       if (!card) return;
       const s = JSON.parse(card.dataset.suggestion);
       const input = document.getElementById('chatInput');
-      input.value = \`Sobre "\${s.label}": quero ajustar - \`;
+      input.value = 'Sobre "' + s.label + '": quero ajustar - ';
       input.focus();
       autoResizeChatInput(input);
     }
@@ -2739,12 +2736,12 @@ Lower: Isometria Abdução 5x45s, Ponte Bipodal 3x15-20, Agachamento Espanhol 3x
       }
 
       try {
-        const res = await fetch(\`https://wger.de/api/v2/exercise/search/?term=\${encodeURIComponent(searchTerm)}&language=2&format=json\`);
+        const res = await fetch('https://wger.de/api/v2/exercise/search/?term=' + encodeURIComponent(searchTerm) + '&language=2&format=json');
         const data = await res.json();
         if (data.suggestions && data.suggestions.length > 0) {
           const exId = data.suggestions[0].data?.id;
           if (exId) {
-            const imgRes = await fetch(\`https://wger.de/api/v2/exerciseimage/?exercise=\${exId}&format=json\`);
+            const imgRes = await fetch('https://wger.de/api/v2/exerciseimage/?exercise=' + exId + '&format=json');
             const imgData = await imgRes.json();
             if (imgData.results && imgData.results.length > 0) {
               const url = imgData.results[0].image;
