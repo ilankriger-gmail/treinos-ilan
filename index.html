@@ -1,0 +1,2408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Treinos</title>
+  <meta name="theme-color" content="#1e1e2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg-primary: #1e1e2e;
+      --bg-secondary: #262637;
+      --bg-tertiary: #2d2d3f;
+      --accent: #8b5cf6;
+      --accent-dim: rgba(139, 92, 246, 0.15);
+      --text-primary: #e2e2e9;
+      --text-secondary: #8b8b9e;
+      --text-muted: #5c5c6f;
+      --border: rgba(255,255,255,0.06);
+      --success: #22c55e;
+      --warning: #f59e0b;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding-bottom: 100px;
+    }
+    
+    header {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    h1::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    
+    /* Main Tabs */
+    .main-tabs {
+      display: flex;
+      padding: 12px 20px;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-primary);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .main-tab {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    
+    .main-tab.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    
+    /* Views */
+    .view { display: none; }
+    .view.active { display: block; }
+    
+    /* Calendar View */
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+    }
+    
+    .calendar-nav {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .calendar-nav button {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .calendar-month {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .calendar-grid {
+      padding: 0 20px 20px;
+    }
+    
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+    
+    .weekday {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      padding: 8px;
+    }
+    
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    
+    .calendar-day {
+      aspect-ratio: 1;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      font-size: 14px;
+    }
+    
+    .calendar-day:hover {
+      border-color: var(--accent);
+    }
+    
+    .calendar-day.today {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+    
+    .calendar-day.other-month {
+      opacity: 0.3;
+    }
+    
+    .calendar-day.has-activity::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      width: 6px;
+      height: 6px;
+      background: var(--success);
+      border-radius: 50%;
+    }
+    
+    .calendar-day.selected {
+      background: var(--accent);
+      color: white;
+    }
+    
+    /* Activity Types */
+    .activity-types {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .activity-types h3 {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .activity-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    
+    .activity-btn {
+      padding: 12px 8px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .activity-btn:hover {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+    
+    .activity-btn .emoji {
+      font-size: 24px;
+    }
+    
+    /* Day Activities */
+    .day-activities {
+      padding: 16px 20px;
+    }
+    
+    .day-title {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    
+    .day-title strong {
+      color: var(--text-primary);
+    }
+    
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+    }
+    
+    .activity-item .emoji {
+      font-size: 24px;
+    }
+    
+    .activity-item-info {
+      flex: 1;
+    }
+    
+    .activity-item-name {
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .activity-item-time {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .activity-delete {
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 6px;
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .no-activities {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 40px 20px;
+      font-size: 14px;
+    }
+    
+    /* Workout Tabs */
+    .workout-tabs {
+      display: flex;
+      padding: 12px 20px;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .workout-tab {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .workout-tab.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    
+    /* Workout Content */
+    .workout { display: none; padding: 16px 20px; }
+    .workout.active { display: block; }
+    
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 20px 0 12px;
+      padding: 8px 12px;
+      background: var(--accent-dim);
+      border-radius: 6px;
+    }
+    
+    .section-title:first-child { margin-top: 0; }
+    
+    .exercise {
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+    }
+    
+    .exercise.done {
+      background: rgba(34, 197, 94, 0.08);
+      border-color: rgba(34, 197, 94, 0.25);
+    }
+    
+    .exercise-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .exercise-number {
+      width: 28px;
+      height: 28px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .exercise.done .exercise-number {
+      background: var(--success);
+      color: white;
+    }
+    
+    .exercise-info { flex: 1; }
+    
+    .exercise-name {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    
+    .exercise-stats {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    
+    .exercise-stats strong {
+      color: var(--text-secondary);
+    }
+    
+    .exercise-note {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: rgba(245, 158, 11, 0.08);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--warning);
+      border-left: 2px solid var(--warning);
+    }
+    
+    .weight-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      align-items: center;
+    }
+    
+    .weight-input {
+      flex: 1;
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      text-align: center;
+    }
+    
+    .weight-input::placeholder { color: var(--text-muted); font-weight: 400; }
+    .weight-input:focus { outline: none; border-color: var(--accent); }
+    
+    .weight-unit { color: var(--text-muted); font-size: 12px; }
+    .weight-last { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+    .weight-last strong { color: var(--accent); }
+    
+    .checkbox {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--text-muted);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    
+    .exercise.done .checkbox {
+      background: var(--success);
+      border-color: var(--success);
+    }
+    
+    .checkbox::after {
+      content: '✓';
+      color: white;
+      font-weight: 700;
+      font-size: 12px;
+      opacity: 0;
+    }
+    
+    .exercise.done .checkbox::after { opacity: 1; }
+    
+    .timer-btn {
+      margin-top: 10px;
+      padding: 8px 14px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+    }
+    
+    .timer-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    
+    /* Progress Bar */
+    .progress-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-secondary);
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .progress-container { max-width: 600px; margin: 0 auto; }
+    
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .progress-info span:last-child {
+      color: var(--accent);
+      font-weight: 600;
+    }
+    
+    .progress-track {
+      height: 4px;
+      background: var(--bg-tertiary);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+    
+    /* Timer Modal */
+    .timer-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(30, 30, 46, 0.95);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      flex-direction: column;
+    }
+    
+    .timer-modal.active { display: flex; }
+    
+    .timer-display {
+      font-size: 72px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    
+    .timer-label {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    
+    .timer-close {
+      margin-top: 32px;
+      padding: 12px 32px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+    }
+    
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: var(--success);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: transform 0.3s;
+      z-index: 2000;
+    }
+    
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    
+    .sync-indicator {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      font-size: 10px;
+      color: var(--text-muted);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .sync-indicator.show { opacity: 1; }
+    .sync-indicator.success { color: var(--success); }
+    
+    /* IA Coach Styles */
+    .coach-section {
+      padding: 16px 20px;
+    }
+    
+    .coach-card {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+    }
+    
+    .coach-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .coach-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      resize: vertical;
+    }
+    
+    .coach-textarea::placeholder {
+      color: var(--text-muted);
+    }
+    
+    .coach-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    .dropzone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 30px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+    }
+    
+    .dropzone-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+    
+    .dropzone-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    .dropzone-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+    
+    .file-list {
+      margin-top: 12px;
+    }
+    
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    
+    .file-item-icon {
+      font-size: 20px;
+    }
+    
+    .file-item-name {
+      flex: 1;
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .file-item-delete {
+      width: 24px;
+      height: 24px;
+      border: none;
+      border-radius: 4px;
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    .analyze-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--accent), #7c3aed);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+    
+    .analyze-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+    }
+    
+    .analyze-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .analysis-result {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 16px;
+      border: 1px solid var(--accent);
+    }
+    
+    .analysis-result h3 {
+      font-size: 16px;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+    
+    .analysis-content {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-primary);
+    }
+    
+    .analysis-content p {
+      margin-bottom: 12px;
+    }
+    
+    .analysis-content ul {
+      margin: 12px 0;
+      padding-left: 20px;
+    }
+    
+    .analysis-content li {
+      margin-bottom: 8px;
+    }
+    
+    .analysis-content strong {
+      color: var(--accent);
+    }
+    
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="sync-indicator" id="syncIndicator"><span id="syncText">Salvando...</span></div>
+  
+  <div class="container">
+    <header>
+      <div class="header-top">
+        <h1>Treinos</h1>
+        <div id="saveStatus" style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+          <span id="saveStatusDot" style="width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted);"></span>
+          <span id="saveStatusText">Carregando...</span>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Main Navigation -->
+    <div class="main-tabs">
+      <button class="main-tab active" onclick="showView('calendar')">📅 Agenda</button>
+      <button class="main-tab" onclick="showView('workouts')">💪 Treino</button>
+      <button class="main-tab" onclick="showView('coach')">🤖 IA Coach</button>
+    </div>
+    
+    <!-- Calendar View -->
+    <div id="calendarView" class="view active">
+      <!-- Como estou hoje - sempre visível -->
+      <div style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <span style="font-size: 18px;">💭</span>
+          <span style="font-size: 14px; font-weight: 600;">Como estou hoje</span>
+          <button onclick="saveEstado()" style="margin-left: auto; padding: 6px 12px; background: var(--accent); border: none; border-radius: 6px; color: white; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif;">Salvar</button>
+        </div>
+        <textarea id="estadoHojeMain" placeholder="Ex: Dormí bem, com energia, leve dor no ombro..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 14px; resize: none;"></textarea>
+      </div>
+      
+      <div class="calendar-header">
+        <button class="calendar-nav" onclick="changeMonth(-1)">
+          <button>←</button>
+        </button>
+        <span class="calendar-month" id="calendarMonth">Fevereiro 2026</span>
+        <div class="calendar-nav">
+          <button onclick="changeMonth(1)">→</button>
+        </div>
+      </div>
+      
+      <div class="calendar-grid">
+        <div class="calendar-weekdays">
+          <div class="weekday">DOM</div>
+          <div class="weekday">SEG</div>
+          <div class="weekday">TER</div>
+          <div class="weekday">QUA</div>
+          <div class="weekday">QUI</div>
+          <div class="weekday">SEX</div>
+          <div class="weekday">SÁB</div>
+        </div>
+        <div class="calendar-days" id="calendarDays"></div>
+      </div>
+      
+      <div class="activity-types">
+        <h3>Adicionar Atividade</h3>
+        <div class="activity-grid">
+          <button class="activity-btn" onclick="openActivityModal('corrida', '🏃')">
+            <span class="emoji">🏃</span>
+            Corrida
+          </button>
+          <button class="activity-btn" onclick="openActivityModal('surf', '🏄')">
+            <span class="emoji">🏄</span>
+            Surf
+          </button>
+          <button class="activity-btn" onclick="openActivityModal('tenis', '🎾')">
+            <span class="emoji">🎾</span>
+            Tênis
+          </button>
+          <button class="activity-btn" onclick="openActivityModal('bike', '🚴')">
+            <span class="emoji">🚴</span>
+            Bike
+          </button>
+          <button class="activity-btn" onclick="openActivityModal('fisio', '🏥')">
+            <span class="emoji">🏥</span>
+            Fisioterapia
+          </button>
+          <button class="activity-btn" onclick="openActivityModal('upper', '💪')">
+            <span class="emoji">💪</span>
+            Upper
+          </button>
+          <button class="activity-btn" onclick="openActivityModal('lower', '🦵')">
+            <span class="emoji">🦵</span>
+            Lower
+          </button>
+        </div>
+      </div>
+      
+      <div class="day-activities">
+        <div class="day-title" id="dayTitle">Selecione um dia</div>
+        <div id="dayActivities">
+          <p class="no-activities">Clique em um dia do calendário</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Workouts View -->
+    <div id="workoutsView" class="view">
+      <div class="workout-tabs">
+        <button class="workout-tab active" onclick="showWorkout('braco')">💪 Upper Body</button>
+        <button class="workout-tab" onclick="showWorkout('perna')">🦵 Lower Body</button>
+      </div>
+      
+      <!-- Upper Body -->
+      <div id="braco" class="workout active">
+        <div class="exercise" data-id="b1" data-name="Remada Aberta Curvada">
+          <div class="exercise-header">
+            <div class="exercise-number">1</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Remada Aberta Curvada</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> séries</span>
+                <span><strong>10-12</strong> reps</span>
+                <span>⏱ <strong>90s</strong></span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Puxe na direção do bolso, cotovelos a 45º</div>
+          <div class="weight-row">
+            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
+            <span class="weight-unit">kg</span>
+          </div>
+          <div class="weight-last" id="last-b1"></div>
+          <button class="timer-btn" onclick="startTimer(90)">⏱ Descanso 90s</button>
+        </div>
+        
+        <div class="exercise" data-id="b2" data-name="Crucifixo Inclinado">
+          <div class="exercise-header">
+            <div class="exercise-number">2</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Crucifixo Inclinado</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> séries</span>
+                <span><strong>10-12</strong> reps</span>
+                <span>⏱ <strong>90s</strong></span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Abra o peito, não desça a mão abaixo da linha do ombro</div>
+          <div class="weight-row">
+            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
+            <span class="weight-unit">kg</span>
+          </div>
+          <div class="weight-last" id="last-b2"></div>
+          <button class="timer-btn" onclick="startTimer(90)">⏱ Descanso 90s</button>
+        </div>
+        
+        <div class="exercise" data-id="b3" data-name="Remada Fechada Triângulo">
+          <div class="exercise-header">
+            <div class="exercise-number">3</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Remada Fechada Triângulo</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> séries</span>
+                <span><strong>10-12</strong> reps</span>
+                <span>⏱ <strong>90s</strong></span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Esmague as costas no final. Ombros longe da orelha</div>
+          <div class="weight-row">
+            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
+            <span class="weight-unit">kg</span>
+          </div>
+          <div class="weight-last" id="last-b3"></div>
+          <button class="timer-btn" onclick="startTimer(90)">⏱ Descanso 90s</button>
+        </div>
+        
+        <div class="exercise" data-id="b4" data-name="Crucifixo Inverso">
+          <div class="exercise-header">
+            <div class="exercise-number">4</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Crucifixo Inverso</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> séries</span>
+                <span><strong>15</strong> reps</span>
+                <span>⏱ <strong>60s</strong></span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Carga LEVE. Foco total na parte de trás do ombro</div>
+          <div class="weight-row">
+            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
+            <span class="weight-unit">kg</span>
+          </div>
+          <div class="weight-last" id="last-b4"></div>
+          <button class="timer-btn" onclick="startTimer(60)">⏱ Descanso 60s</button>
+        </div>
+        
+        <div class="exercise" data-id="b5" data-name="Face Pull">
+          <div class="exercise-header">
+            <div class="exercise-number">5</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Face Pull</div>
+              <div class="exercise-stats">
+                <span><strong>4</strong> séries</span>
+                <span><strong>15-20</strong> reps</span>
+                <span>⏱ <strong>60s</strong></span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Carga LEVE. Puxe na testa. Segure 2s atrás</div>
+          <div class="weight-row">
+            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
+            <span class="weight-unit">kg</span>
+          </div>
+          <div class="weight-last" id="last-b5"></div>
+          <button class="timer-btn" onclick="startTimer(60)">⏱ Descanso 60s</button>
+        </div>
+        
+        <div class="exercise" data-id="b6" data-name="Tríceps Corda">
+          <div class="exercise-header">
+            <div class="exercise-number">6</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Tríceps Corda</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> séries</span>
+                <span><strong>12-15</strong> reps</span>
+                <span>⏱ <strong>60s</strong></span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Estenda tudo lá embaixo abrindo a corda</div>
+          <div class="weight-row">
+            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
+            <span class="weight-unit">kg</span>
+          </div>
+          <div class="weight-last" id="last-b6"></div>
+          <button class="timer-btn" onclick="startTimer(60)">⏱ Descanso 60s</button>
+        </div>
+        
+        <div class="exercise" data-id="b7" data-name="Supino Reto Halteres">
+          <div class="exercise-header">
+            <div class="exercise-number">7</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Supino Reto Halteres</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> séries</span>
+                <span><strong>10-12</strong> reps</span>
+                <span>⏱ <strong>90s</strong></span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Cotovelos fechados (seta), não abertos (cruz)</div>
+          <div class="weight-row">
+            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
+            <span class="weight-unit">kg</span>
+          </div>
+          <div class="weight-last" id="last-b7"></div>
+          <button class="timer-btn" onclick="startTimer(90)">⏱ Descanso 90s</button>
+        </div>
+        
+        <div class="exercise" data-id="b8" data-name="Bíceps Barra W">
+          <div class="exercise-header">
+            <div class="exercise-number">8</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Bíceps Barra W</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> séries</span>
+                <span><strong>12-15</strong> reps</span>
+                <span>⏱ <strong>60s</strong></span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Cotovelos colados na costela. Sem balanço</div>
+          <div class="weight-row">
+            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
+            <span class="weight-unit">kg</span>
+          </div>
+          <div class="weight-last" id="last-b8"></div>
+          <button class="timer-btn" onclick="startTimer(60)">⏱ Descanso 60s</button>
+        </div>
+      </div>
+      
+      <!-- Lower Body -->
+      <div id="perna" class="workout">
+        <p class="section-title">🔥 Analgésico — Antes de tudo</p>
+        
+        <div class="exercise" data-id="p1" data-name="Isometria Abdução na Parede">
+          <div class="exercise-header">
+            <div class="exercise-number">1</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Isometria Abdução na Parede</div>
+              <div class="exercise-stats">
+                <span><strong>5</strong> séries</span>
+                <span><strong>45s</strong> hold</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">"Desliga" o sinal de dor do tendão para treinar o resto</div>
+        </div>
+        
+        <p class="section-title">🎯 Ativação Segura — Chão</p>
+        
+        <div class="exercise" data-id="p2" data-name="Ponte Bipodal no Chão">
+          <div class="exercise-header">
+            <div class="exercise-number">2</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Ponte Bipodal no Chão</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> séries</span>
+                <span><strong>15-20</strong> reps</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Apertar MUITO o glúteo lá em cima</div>
+        </div>
+        
+        <p class="section-title">⚡ Força Principal — Em pé</p>
+        
+        <div class="exercise" data-id="p3" data-name="Agachamento Espanhol">
+          <div class="exercise-header">
+            <div class="exercise-number">3</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Agachamento Espanhol</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> séries</span>
+                <span><strong>10</strong> reps</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Com elástico no joelho — substitui agachamento pesado</div>
+          <div class="weight-row">
+            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
+            <span class="weight-unit">kg</span>
+          </div>
+          <div class="weight-last" id="last-p3"></div>
+        </div>
+        
+        <div class="exercise" data-id="p4" data-name="Afundo com Flexão de Tronco">
+          <div class="exercise-header">
+            <div class="exercise-number">4</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Afundo com Flexão de Tronco</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> séries</span>
+                <span><strong>10</strong> reps</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">NÃO deixe o joelho entrar</div>
+          <div class="weight-row">
+            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
+            <span class="weight-unit">kg</span>
+          </div>
+          <div class="weight-last" id="last-p4"></div>
+        </div>
+        
+        <p class="section-title">🏁 Finalização — Máquinas</p>
+        
+        <div class="exercise" data-id="p5" data-name="Cadeira Flexora">
+          <div class="exercise-header">
+            <div class="exercise-number">5</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Cadeira Flexora</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> séries</span>
+                <span><strong>12-15</strong> reps</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="weight-row">
+            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
+            <span class="weight-unit">kg</span>
+          </div>
+          <div class="weight-last" id="last-p5"></div>
+        </div>
+        
+        <div class="exercise" data-id="p6" data-name="Panturrilha no Step">
+          <div class="exercise-header">
+            <div class="exercise-number">6</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Panturrilha no Step</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> séries</span>
+                <span><strong>15-20</strong> reps</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="weight-row">
+            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
+            <span class="weight-unit">kg</span>
+          </div>
+          <div class="weight-last" id="last-p6"></div>
+        </div>
+        
+        <div class="exercise" data-id="p7" data-name="Cadeira Solear">
+          <div class="exercise-header">
+            <div class="exercise-number">7</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Cadeira Solear</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> séries</span>
+                <span><strong>15-20</strong> reps</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="weight-row">
+            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
+            <span class="weight-unit">kg</span>
+          </div>
+          <div class="weight-last" id="last-p7"></div>
+        </div>
+      </div>
+    </div>
+    </div>
+    
+    <!-- IA Coach View -->
+    <div id="coachView" class="view">
+      <div class="coach-section">
+        <!-- Perfil do Usuário -->
+        <div class="coach-card">
+          <h3>👤 Meu Perfil <button onclick="saveProfile()" style="margin-left: auto; padding: 4px 10px; background: var(--accent); border: none; border-radius: 4px; color: white; font-size: 11px; cursor: pointer;">Salvar</button></h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div style="grid-column: span 2;">
+              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Nome</label>
+              <input type="text" id="profileNome" placeholder="Seu nome" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
+            </div>
+            <div>
+              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Idade</label>
+              <input type="number" id="profileIdade" placeholder="Ex: 30" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
+            </div>
+            <div>
+              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Altura (cm)</label>
+              <input type="number" id="profileAltura" placeholder="Ex: 175" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
+            </div>
+            <div style="grid-column: span 2;">
+              <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 4px;">Sexo</label>
+              <div style="display: flex; gap: 8px;">
+                <button onclick="selectSexo('masculino')" class="sexo-btn" data-sexo="masculino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">♂️ Masculino</button>
+                <button onclick="selectSexo('feminino')" class="sexo-btn" data-sexo="feminino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">♀️ Feminino</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Arquivos primeiro -->
+        <div class="coach-card">
+          <h3>📎 Arquivos (Exames, Laudos)</h3>
+          <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+            <div class="dropzone-icon">📄</div>
+            <div class="dropzone-text">Arraste arquivos aqui ou clique para selecionar</div>
+            <div class="dropzone-hint">PDF, TXT, imagens</div>
+          </div>
+          <input type="file" id="fileInput" multiple accept=".pdf,.txt,.png,.jpg,.jpeg" style="display: none" onchange="handleFiles(this.files)">
+          <div class="file-list" id="fileList"></div>
+        </div>
+        
+        <!-- Botão de análise logo após arquivos -->
+        <button class="analyze-btn" id="analyzeBtn" onclick="runAnalysis()">
+          <span id="analyzeBtnText">🤖 Analisar com IA</span>
+        </button>
+        
+        <!-- Resultado da análise -->
+        <div class="analysis-result" id="analysisResult" style="display: none;">
+          <h3>🤖 Análise do Coach IA</h3>
+          <div class="analysis-content" id="analysisContent"></div>
+        </div>
+        
+        <!-- Campos de texto depois -->
+        <div class="coach-card" style="margin-top: 16px;">
+          <h3>🎯 Meu Objetivo <button onclick="saveField('objetivo')" style="margin-left: auto; padding: 4px 10px; background: var(--accent); border: none; border-radius: 4px; color: white; font-size: 11px; cursor: pointer;">Salvar</button></h3>
+          <textarea class="coach-textarea" id="objetivoInput" placeholder="Ex: Ganhar massa muscular, perder gordura, melhorar resistência..."></textarea>
+        </div>
+        
+        <div class="coach-card">
+          <h3>🩹 Dores / Problemas <button onclick="saveField('dores')" style="margin-left: auto; padding: 4px 10px; background: var(--accent); border: none; border-radius: 4px; color: white; font-size: 11px; cursor: pointer;">Salvar</button></h3>
+          <textarea class="coach-textarea" id="doresInput" placeholder="Ex: Dor no ombro direito, tendinite no joelho, hérnia lombar..."></textarea>
+        </div>
+        
+        <div class="coach-card">
+          <h3>🏥 Informações Médicas <button onclick="addMedicalNote()" style="margin-left: auto; padding: 4px 10px; background: var(--success); border: none; border-radius: 4px; color: white; font-size: 11px; cursor: pointer;">+ Adicionar</button></h3>
+          <textarea class="coach-textarea" id="notaMedicaInput" placeholder="Adicione informações médicas, resultados de exames, diagnósticos... (cada nota fica salva no histórico)" style="min-height: 80px;"></textarea>
+          <div id="notasMedicasList" style="margin-top: 12px;"></div>
+        </div>
+        
+        <div class="coach-card">
+          <h3>📊 Histórico de Análises</h3>
+          <div id="analysisHistory" style="margin-top: 12px;">
+            <p style="color: var(--text-muted); font-size: 13px;">Nenhuma análise ainda</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="progress-bar" id="progressBar" style="display: none;">
+    <div class="progress-container">
+      <div class="progress-info">
+        <span id="progressText">0 de 8</span>
+        <span id="progressPercent">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <button id="finishBtn" onclick="finishWorkout()" style="display: none; margin-top: 12px; width: 100%; padding: 14px; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; border-radius: 8px; color: white; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">
+        🏆 Finalizar Treino
+      </button>
+    </div>
+  </div>
+  
+  <div class="timer-modal" id="timerModal">
+    <div class="timer-label">Descanso</div>
+    <div class="timer-display" id="timerDisplay">00:00</div>
+    <button class="timer-close" onclick="closeTimer()">Fechar</button>
+  </div>
+  
+  <div class="toast" id="toast">✅ Salvo!</div>
+  
+  <!-- Activity Modal -->
+  <div class="timer-modal" id="activityModal" onclick="if(event.target.id==='activityModal')closeActivityModal()">
+    <div style="background: var(--bg-secondary); border-radius: 16px; width: 90%; max-width: 400px; padding: 20px; border: 1px solid var(--border);">
+      <h3 style="font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+        <span id="activityModalEmoji">🏃</span>
+        <span id="activityModalTitle">Corrida</span>
+      </h3>
+      
+      <input type="hidden" id="activityModalType">
+      
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">⏱️ Duração (minutos)</label>
+        <input type="number" id="activityDuration" placeholder="30" style="width: 100%; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 16px; font-family: 'Inter', sans-serif;">
+      </div>
+      
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">⚡ Intensidade</label>
+        <div style="display: flex; gap: 8px;">
+          <button onclick="selectIntensity('leve')" class="intensity-btn" data-intensity="leve" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">Leve</button>
+          <button onclick="selectIntensity('moderado')" class="intensity-btn" data-intensity="moderado" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">Moderado</button>
+          <button onclick="selectIntensity('intenso')" class="intensity-btn" data-intensity="intenso" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">Intenso</button>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 16px;" id="fisioTreinoContainer" style="display: none;">
+        <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">📋 Treino de Fisioterapia</label>
+        <textarea id="fisioTreino" placeholder="Descreva os exercícios da fisio..." style="width: 100%; min-height: 80px; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">💬 Como saí (opcional)</label>
+        <textarea id="activityNotes" placeholder="Ex: Me senti bem, dor no joelho no final..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
+      </div>
+      
+      <div style="display: flex; gap: 10px;">
+        <button onclick="closeActivityModal()" style="flex: 1; padding: 14px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">Cancelar</button>
+        <button onclick="saveActivity()" style="flex: 2; padding: 14px; border: none; border-radius: 8px; background: var(--success); color: white; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">Salvar Atividade</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const SUPABASE_URL = 'https://gsxanzgwstlpfvnqcmiu.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzeGFuemd3c3RscGZ2bnFjbWl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2NjYyMDIsImV4cCI6MjA4MzI0MjIwMn0.OapNhZJbbeH0eEJWIU_zg4ihEvtxSC9rAG-dLBQCmvE';
+    
+    let currentWorkout = 'braco';
+    let currentDate = new Date();
+    let selectedDate = new Date();
+    let timerInterval = null;
+    let activities = {};
+    
+    const activityNames = {
+      'corrida': 'Corrida',
+      'surf': 'Surf',
+      'tenis': 'Tênis',
+      'bike': 'Bike',
+      'fisio': 'Fisioterapia',
+      'upper': 'Treino Upper',
+      'lower': 'Treino Lower'
+    };
+    
+    const activityEmojis = {
+      'corrida': '🏃',
+      'surf': '🏄',
+      'tenis': '🎾',
+      'bike': '🚴',
+      'fisio': '🏥',
+      'upper': '💪',
+      'lower': '🦵'
+    };
+    
+    let selectedIntensity = null;
+    
+    function openActivityModal(type, emoji) {
+      document.getElementById('activityModalType').value = type;
+      document.getElementById('activityModalEmoji').textContent = emoji;
+      document.getElementById('activityModalTitle').textContent = activityNames[type] || type;
+      document.getElementById('activityDuration').value = '';
+      document.getElementById('activityNotes').value = '';
+      document.getElementById('fisioTreino').value = '';
+      selectedIntensity = null;
+      
+      // Reset intensity buttons
+      document.querySelectorAll('.intensity-btn').forEach(btn => {
+        btn.style.background = 'var(--bg-tertiary)';
+        btn.style.borderColor = 'var(--border)';
+        btn.style.color = 'var(--text-secondary)';
+      });
+      
+      // Show/hide fisio field
+      const fisioContainer = document.getElementById('fisioTreinoContainer');
+      if (type === 'fisio') {
+        fisioContainer.style.display = 'block';
+      } else {
+        fisioContainer.style.display = 'none';
+      }
+      
+      document.getElementById('activityModal').classList.add('active');
+    }
+    
+    function closeActivityModal() {
+      document.getElementById('activityModal').classList.remove('active');
+    }
+    
+    function selectIntensity(level) {
+      selectedIntensity = level;
+      document.querySelectorAll('.intensity-btn').forEach(btn => {
+        if (btn.dataset.intensity === level) {
+          btn.style.background = 'var(--accent)';
+          btn.style.borderColor = 'var(--accent)';
+          btn.style.color = 'white';
+        } else {
+          btn.style.background = 'var(--bg-tertiary)';
+          btn.style.borderColor = 'var(--border)';
+          btn.style.color = 'var(--text-secondary)';
+        }
+      });
+    }
+    
+    async function saveActivity() {
+      const type = document.getElementById('activityModalType').value;
+      const duration = document.getElementById('activityDuration').value;
+      const notes = document.getElementById('activityNotes').value.trim();
+      const fisioTreino = document.getElementById('fisioTreino').value.trim();
+      
+      const dateStr = formatDate(selectedDate);
+      if (!activities[dateStr]) activities[dateStr] = [];
+      
+      const activity = {
+        type,
+        time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        duration: duration ? parseInt(duration) : null,
+        intensity: selectedIntensity,
+        notes: notes || null,
+        fisioTreino: fisioTreino || null
+      };
+      
+      activities[dateStr].push(activity);
+      await saveActivities();
+      renderCalendar();
+      renderDayActivities();
+      closeActivityModal();
+      showToast('✅ Atividade salva!');
+    }
+    
+    // ========== VIEWS ==========
+    
+    function showView(view) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(view + 'View').classList.add('active');
+      event.target.classList.add('active');
+      
+      document.getElementById('progressBar').style.display = view === 'workouts' ? 'block' : 'none';
+    }
+    
+    // ========== CALENDAR ==========
+    
+    function renderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                          'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+      document.getElementById('calendarMonth').textContent = `${monthNames[month]} ${year}`;
+      
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const daysInPrevMonth = new Date(year, month, 0).getDate();
+      
+      const today = new Date();
+      let html = '';
+      
+      // Previous month days
+      for (let i = firstDay - 1; i >= 0; i--) {
+        const day = daysInPrevMonth - i;
+        html += `<div class="calendar-day other-month">${day}</div>`;
+      }
+      
+      // Current month days
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
+        const isSelected = selectedDate.getDate() === day && selectedDate.getMonth() === month && selectedDate.getFullYear() === year;
+        const hasActivity = activities[dateStr] && activities[dateStr].length > 0;
+        
+        let classes = 'calendar-day';
+        if (isToday) classes += ' today';
+        if (isSelected) classes += ' selected';
+        if (hasActivity) classes += ' has-activity';
+        
+        html += `<div class="${classes}" onclick="selectDate(${year}, ${month}, ${day})">${day}</div>`;
+      }
+      
+      // Next month days
+      const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+      const remainingCells = totalCells - (firstDay + daysInMonth);
+      for (let day = 1; day <= remainingCells; day++) {
+        html += `<div class="calendar-day other-month">${day}</div>`;
+      }
+      
+      document.getElementById('calendarDays').innerHTML = html;
+    }
+    
+    function changeMonth(delta) {
+      currentDate.setMonth(currentDate.getMonth() + delta);
+      renderCalendar();
+    }
+    
+    function selectDate(year, month, day) {
+      selectedDate = new Date(year, month, day);
+      renderCalendar();
+      renderDayActivities();
+    }
+    
+    function formatDate(date) {
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    }
+    
+    function renderDayActivities() {
+      const dateStr = formatDate(selectedDate);
+      const dayActivities = activities[dateStr] || [];
+      
+      const weekdays = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+      document.getElementById('dayTitle').innerHTML = `<strong>${weekdays[selectedDate.getDay()]}, ${selectedDate.getDate()}/${selectedDate.getMonth() + 1}</strong>`;
+      
+      if (dayActivities.length === 0) {
+        document.getElementById('dayActivities').innerHTML = '<p class="no-activities">Nenhuma atividade registrada</p>';
+        return;
+      }
+      
+      document.getElementById('dayActivities').innerHTML = dayActivities.map((a, i) => `
+        <div class="activity-item" style="flex-wrap: wrap;">
+          <span class="emoji">${activityEmojis[a.type] || '🏋️'}</span>
+          <div class="activity-item-info">
+            <div class="activity-item-name">${activityNames[a.type] || a.type}</div>
+            <div class="activity-item-time">
+              ${a.time || ''}
+              ${a.duration ? ' • ' + a.duration + 'min' : ''}
+              ${a.intensity ? ' • ' + a.intensity : ''}
+            </div>
+          </div>
+          <button class="activity-delete" onclick="deleteActivity('${dateStr}', ${i})">✕</button>
+          ${a.notes ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: var(--bg-tertiary); border-radius: 6px; font-size: 12px; color: var(--text-secondary); margin-left: 36px;">💬 ' + a.notes + '</div>' : ''}
+          ${a.fisioTreino ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: rgba(139, 92, 246, 0.1); border-radius: 6px; font-size: 12px; color: var(--accent); margin-left: 36px; border-left: 2px solid var(--accent);">📋 ' + a.fisioTreino + '</div>' : ''}
+        </div>
+      `).join('');
+    }
+    
+    // ========== ACTIVITIES ==========
+    
+    function deleteActivity(dateStr, index) {
+      activities[dateStr].splice(index, 1);
+      if (activities[dateStr].length === 0) delete activities[dateStr];
+      saveActivities();
+      renderCalendar();
+      renderDayActivities();
+    }
+    
+    async function saveActivities() {
+      showSync('Salvando...');
+      try {
+        // Save to Supabase
+        const dateStr = formatDate(selectedDate);
+        const dayActivities = activities[dateStr] || [];
+        
+        // Delete existing and insert new
+        await fetch(`${SUPABASE_URL}/rest/v1/calendar_activities?date=eq.${dateStr}`, {
+          method: 'DELETE',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        
+        if (dayActivities.length > 0) {
+          await fetch(`${SUPABASE_URL}/rest/v1/calendar_activities`, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ date: dateStr, activities: dayActivities })
+          });
+        }
+        
+        showSync('✓ Salvo!', 'success');
+      } catch (e) {
+        console.error(e);
+        // Fallback to localStorage
+        localStorage.setItem('calendar-activities', JSON.stringify(activities));
+      }
+    }
+    
+    async function loadActivities() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/calendar_activities?select=*`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        const data = await res.json();
+        
+        activities = {};
+        data.forEach(row => {
+          activities[row.date] = row.activities;
+        });
+      } catch (e) {
+        // Fallback to localStorage
+        activities = JSON.parse(localStorage.getItem('calendar-activities') || '{}');
+      }
+      
+      renderCalendar();
+      renderDayActivities();
+    }
+    
+    // ========== WORKOUTS ==========
+    
+    function showWorkout(id) {
+      document.querySelectorAll('.workout').forEach(w => w.classList.remove('active'));
+      document.querySelectorAll('.workout-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      event.target.classList.add('active');
+      currentWorkout = id;
+      updateProgress();
+    }
+    
+    function toggleExercise(checkbox) {
+      const exercise = checkbox.closest('.exercise');
+      exercise.classList.toggle('done');
+      saveProgress();
+      updateProgress();
+    }
+    
+    function updateProgress() {
+      const workout = document.getElementById(currentWorkout);
+      const total = workout.querySelectorAll('.exercise').length;
+      const done = workout.querySelectorAll('.exercise.done').length;
+      const percent = Math.round((done / total) * 100);
+      
+      document.getElementById('progressText').textContent = `${done} de ${total}`;
+      document.getElementById('progressPercent').textContent = `${percent}%`;
+      document.getElementById('progressFill').style.width = `${percent}%`;
+      
+      // Mostrar botão de finalizar quando tiver pelo menos 1 exercício feito
+      const finishBtn = document.getElementById('finishBtn');
+      finishBtn.style.display = done > 0 ? 'block' : 'none';
+    }
+    
+    async function finishWorkout() {
+      const workout = document.getElementById(currentWorkout);
+      const exercises = workout.querySelectorAll('.exercise');
+      const exercisesDone = [];
+      
+      exercises.forEach(ex => {
+        if (ex.classList.contains('done')) {
+          const weightInput = ex.querySelector('.weight-input');
+          exercisesDone.push({
+            id: ex.dataset.id,
+            name: ex.dataset.name,
+            weight: weightInput ? parseFloat(weightInput.value) || null : null
+          });
+        }
+      });
+      
+      if (exercisesDone.length === 0) {
+        showToast('❌ Marque pelo menos 1 exercício');
+        return;
+      }
+      
+      showSync('Salvando treino...');
+      
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const workoutType = currentWorkout === 'braco' ? 'upper' : 'lower';
+        
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/workout_sessions`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify({
+            date: today,
+            workout_type: workoutType,
+            exercises_done: exercisesDone
+          })
+        });
+        
+        if (response.ok) {
+          showToast('🏆 Treino salvo!');
+          showSync('✓ Salvo!', 'success');
+          
+          // Também adiciona na agenda
+          const dateStr = today;
+          if (!activities[dateStr]) activities[dateStr] = [];
+          activities[dateStr].push({
+            type: workoutType,
+            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+          });
+          saveActivities();
+          
+          // Resetar exercícios
+          exercises.forEach(ex => ex.classList.remove('done'));
+          document.querySelectorAll('.weight-input').forEach(input => input.value = '');
+          saveProgress();
+          updateProgress();
+        } else {
+          throw new Error('Failed to save');
+        }
+      } catch (e) {
+        console.error(e);
+        showToast('❌ Erro ao salvar');
+      }
+    }
+    
+    function saveProgress() {
+      const progress = {};
+      document.querySelectorAll('.exercise').forEach(ex => {
+        progress[ex.dataset.id] = ex.classList.contains('done');
+      });
+      localStorage.setItem('workout-progress-v5', JSON.stringify(progress));
+      localStorage.setItem('workout-date', new Date().toDateString());
+    }
+    
+    function loadProgress() {
+      const savedDate = localStorage.getItem('workout-date');
+      if (savedDate !== new Date().toDateString()) {
+        localStorage.removeItem('workout-progress-v5');
+        return;
+      }
+      
+      const progress = JSON.parse(localStorage.getItem('workout-progress-v5') || '{}');
+      Object.keys(progress).forEach(id => {
+        const ex = document.querySelector(`[data-id="${id}"]`);
+        if (ex && progress[id]) ex.classList.add('done');
+      });
+      updateProgress();
+    }
+    
+    async function saveWeight(input) {
+      const exercise = input.closest('.exercise');
+      const weight = parseFloat(input.value);
+      if (!weight) return;
+      
+      showSync('Salvando...');
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/workout_logs`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            exercise_id: exercise.dataset.id,
+            exercise_name: exercise.dataset.name,
+            weight
+          })
+        });
+        showSync('✓ Salvo!', 'success');
+        loadLastWeights();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    
+    async function loadLastWeights() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/workout_logs?select=exercise_id,weight,created_at&order=created_at.desc`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        const data = await res.json();
+        
+        const latest = {};
+        data.forEach(log => {
+          if (!latest[log.exercise_id]) latest[log.exercise_id] = log;
+        });
+        
+        Object.keys(latest).forEach(id => {
+          const el = document.getElementById(`last-${id}`);
+          if (el) {
+            const date = new Date(latest[id].created_at).toLocaleDateString('pt-BR');
+            el.innerHTML = `Último: <strong>${latest[id].weight}kg</strong> (${date})`;
+          }
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    
+    // ========== TIMER ==========
+    
+    function startTimer(seconds) {
+      document.getElementById('timerModal').classList.add('active');
+      let remaining = seconds;
+      updateTimerDisplay(remaining);
+      
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        remaining--;
+        updateTimerDisplay(remaining);
+        if (remaining <= 0) {
+          clearInterval(timerInterval);
+          if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+          document.getElementById('timerDisplay').textContent = '✓ GO!';
+        }
+      }, 1000);
+    }
+    
+    function updateTimerDisplay(s) {
+      document.getElementById('timerDisplay').textContent = 
+        `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+    }
+    
+    function closeTimer() {
+      document.getElementById('timerModal').classList.remove('active');
+      if (timerInterval) clearInterval(timerInterval);
+    }
+    
+    // ========== UTILS ==========
+    
+    function showSync(text, status = '') {
+      const el = document.getElementById('syncIndicator');
+      document.getElementById('syncText').textContent = text;
+      el.className = 'sync-indicator show ' + status;
+      setTimeout(() => el.classList.remove('show'), 2000);
+    }
+    
+    function showToast(text) {
+      const toast = document.getElementById('toast');
+      toast.textContent = text;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+    
+    // ========== IA COACH ==========
+    
+    // API key movida para edge function
+    let uploadedFiles = [];
+    let selectedSexo = null;
+    let lastSaveTime = null;
+    let hasUnsavedChanges = false;
+    
+    // ========== SAVE STATUS ==========
+    
+    function updateSaveStatus(saved = true, time = null) {
+      const dot = document.getElementById('saveStatusDot');
+      const text = document.getElementById('saveStatusText');
+      
+      if (saved && time) {
+        lastSaveTime = time;
+        hasUnsavedChanges = false;
+        dot.style.background = 'var(--success)';
+        text.textContent = `Salvo às ${time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+      } else if (!saved) {
+        hasUnsavedChanges = true;
+        dot.style.background = 'var(--warning)';
+        text.textContent = 'Não salvo';
+      } else {
+        dot.style.background = 'var(--text-muted)';
+        text.textContent = 'Carregando...';
+      }
+    }
+    
+    function markUnsaved() {
+      updateSaveStatus(false);
+    }
+    
+    // ========== PROFILE ==========
+    
+    function selectSexo(sexo) {
+      selectedSexo = sexo;
+      document.querySelectorAll('.sexo-btn').forEach(btn => {
+        if (btn.dataset.sexo === sexo) {
+          btn.style.background = 'var(--accent)';
+          btn.style.borderColor = 'var(--accent)';
+          btn.style.color = 'white';
+        } else {
+          btn.style.background = 'var(--bg-tertiary)';
+          btn.style.borderColor = 'var(--border)';
+          btn.style.color = 'var(--text-secondary)';
+        }
+      });
+      markUnsaved();
+    }
+    
+    async function saveProfile() {
+      const nome = document.getElementById('profileNome').value.trim();
+      const idade = document.getElementById('profileIdade').value;
+      const altura = document.getElementById('profileAltura').value;
+      
+      showSync('Salvando...');
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            nome: nome || null,
+            idade: idade ? parseInt(idade) : null,
+            altura: altura ? parseInt(altura) : null,
+            sexo: selectedSexo,
+            updated_at: new Date().toISOString()
+          })
+        });
+        showSync('✓ Salvo!', 'success');
+        showToast('✅ Perfil salvo!');
+        updateSaveStatus(true, new Date());
+      } catch (e) {
+        console.error(e);
+        showToast('❌ Erro ao salvar');
+      }
+    }
+    
+    // Track changes for unsaved indicator
+    function setupChangeTracking() {
+      const inputs = ['profileNome', 'profileIdade', 'profileAltura', 'objetivoInput', 'doresInput', 'estadoHojeMain'];
+      inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('input', markUnsaved);
+        }
+      });
+    }
+    
+    // Dropzone
+    const dropzone = document.getElementById('dropzone');
+    
+    dropzone?.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+    
+    dropzone?.addEventListener('dragleave', () => {
+      dropzone.classList.remove('dragover');
+    });
+    
+    dropzone?.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+    
+    function handleFiles(files) {
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          uploadedFiles.push({
+            name: file.name,
+            type: file.type,
+            content: e.target.result
+          });
+          renderFileList();
+        };
+        
+        if (file.type === 'application/pdf') {
+          reader.readAsDataURL(file);
+        } else {
+          reader.readAsText(file);
+        }
+      });
+    }
+    
+    function renderFileList() {
+      const list = document.getElementById('fileList');
+      list.innerHTML = uploadedFiles.map((f, i) => `
+        <div class="file-item">
+          <span class="file-item-icon">${f.type.includes('pdf') ? '📄' : '📝'}</span>
+          <span class="file-item-name">${f.name}</span>
+          <button class="file-item-delete" onclick="removeFile(${i})">✕</button>
+        </div>
+      `).join('');
+    }
+    
+    function removeFile(index) {
+      uploadedFiles.splice(index, 1);
+      renderFileList();
+    }
+    
+    async function runAnalysis() {
+      const objetivo = document.getElementById('objetivoInput').value.trim();
+      const dores = document.getElementById('doresInput').value.trim();
+      const estado = document.getElementById('estadoHojeMain').value.trim();
+      
+      if (!objetivo && !dores && !estado) {
+        showToast('❌ Preencha pelo menos um campo');
+        return;
+      }
+      
+      const btn = document.getElementById('analyzeBtn');
+      const btnText = document.getElementById('analyzeBtnText');
+      btn.disabled = true;
+      btnText.innerHTML = '<div class="spinner"></div> Analisando...';
+      
+      // Buscar histórico de treinos
+      let workoutHistory = [];
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/workout_sessions?select=*&order=created_at.desc&limit=10`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        workoutHistory = await res.json();
+      } catch (e) {
+        console.error(e);
+      }
+      
+      // Buscar últimos pesos
+      let weightHistory = [];
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/workout_logs?select=*&order=created_at.desc&limit=30`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        weightHistory = await res.json();
+      } catch (e) {
+        console.error(e);
+      }
+      
+      // Montar prompt
+      const filesText = uploadedFiles.map(f => {
+        if (f.type.includes('pdf')) {
+          return `[Arquivo PDF: ${f.name}]`;
+        }
+        return `--- ${f.name} ---\n${f.content.substring(0, 5000)}`;
+      }).join('\n\n');
+      
+      const prompt = `Você é um coach de treino especializado. Analise o perfil do aluno e dê recomendações personalizadas.
+
+## PERFIL DO ALUNO
+
+**Objetivo:** ${objetivo || 'Não informado'}
+
+**Dores/Problemas:** ${dores || 'Nenhum informado'}
+
+**Estado Hoje:** ${estado || 'Não informado'}
+
+## TREINO ATUAL
+
+**Upper Body (Braço/Costas):**
+1. Remada Aberta Curvada - 3x10-12 (90s)
+2. Crucifixo Inclinado - 3x10-12 (90s)
+3. Remada Fechada Triângulo - 3x10-12 (90s)
+4. Crucifixo Inverso - 3x15 (60s)
+5. Face Pull - 4x15-20 (60s)
+6. Tríceps Corda - 3x12-15 (60s)
+7. Supino Reto Halteres - 3x10-12 (90s)
+8. Bíceps Barra W - 3x12-15 (60s)
+
+**Lower Body (Pernas):**
+1. Isometria Abdução na Parede - 5x45s (analgésico)
+2. Ponte Bipodal no Chão - 3x15-20
+3. Agachamento Espanhol - 3x10
+4. Afundo com Flexão de Tronco - 3x10
+5. Cadeira Flexora - 3x12-15
+6. Panturrilha no Step - 3x15-20
+7. Cadeira Solear - 3x15-20
+
+## HISTÓRICO RECENTE
+
+**Últimos treinos:** ${workoutHistory.length > 0 ? JSON.stringify(workoutHistory.slice(0, 5)) : 'Nenhum registrado'}
+
+**Últimos pesos:** ${weightHistory.length > 0 ? JSON.stringify(weightHistory.slice(0, 10)) : 'Nenhum registrado'}
+
+${filesText ? `## ARQUIVOS ANEXADOS\n${filesText}` : ''}
+
+## SUA ANÁLISE
+
+Por favor, forneça:
+1. **Avaliação geral** do estado atual do aluno
+2. **Adaptações recomendadas** no treino considerando as dores/limitações
+3. **Exercícios para evitar ou modificar**
+4. **Sugestões de progressão** baseadas no histórico
+5. **Recomendações para hoje** considerando o estado informado
+
+Seja específico e prático. Use linguagem direta e motivadora.`;
+
+      try {
+        const response = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt })
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('API Error:', errorText);
+          throw new Error(`API error: ${response.status} - ${errorText.substring(0, 100)}`);
+        }
+        
+        const data = await response.json();
+        if (data.error) throw new Error(data.error);
+        const analysis = data.content;
+        
+        // Mostrar resultado
+        document.getElementById('analysisContent').innerHTML = formatAnalysis(analysis);
+        document.getElementById('analysisResult').style.display = 'block';
+        
+        // Salvar no histórico
+        historicoAnalises.unshift({
+          texto: analysis,
+          data: new Date().toISOString()
+        });
+        renderAnalysisHistory();
+        
+        // Salvar no Supabase
+        try {
+          await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
+            method: 'PATCH',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              objetivo,
+              dores,
+              estado_hoje: estado,
+              ultima_analise: analysis,
+              historico_analises: historicoAnalises.slice(0, 20),
+              updated_at: new Date().toISOString()
+            })
+          });
+        } catch (e) {
+          console.error(e);
+        }
+        
+        showToast('✅ Análise concluída!');
+        
+      } catch (error) {
+        console.error('Analysis error:', error);
+        showToast('❌ Erro na análise: ' + error.message);
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = '🤖 Analisar com IA';
+      }
+    }
+    
+    function formatAnalysis(text) {
+      return text
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^### (.+)$/gm, '<h4 style="margin-top: 16px; color: var(--accent);">$1</h4>')
+        .replace(/^## (.+)$/gm, '<h4 style="margin-top: 16px; color: var(--accent);">$1</h4>')
+        .replace(/^# (.+)$/gm, '<h4 style="margin-top: 16px; color: var(--accent);">$1</h4>')
+        .replace(/^\d+\. (.+)$/gm, '<p style="margin-left: 16px;">• $1</p>')
+        .replace(/^- (.+)$/gm, '<p style="margin-left: 16px;">• $1</p>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>');
+    }
+    
+    async function saveField(field) {
+      let value, column;
+      
+      if (field === 'objetivo') {
+        value = document.getElementById('objetivoInput').value.trim();
+        column = 'objetivo';
+      } else if (field === 'dores') {
+        value = document.getElementById('doresInput').value.trim();
+        column = 'dores';
+      }
+      
+      showSync('Salvando...');
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ [column]: value, updated_at: new Date().toISOString() })
+        });
+        showSync('✓ Salvo!', 'success');
+        showToast('✅ ' + field.charAt(0).toUpperCase() + field.slice(1) + ' salvo!');
+        updateSaveStatus(true, new Date());
+      } catch (e) {
+        console.error(e);
+        showToast('❌ Erro ao salvar');
+      }
+    }
+    
+    let notasMedicas = [];
+    
+    async function addMedicalNote() {
+      const input = document.getElementById('notaMedicaInput');
+      const nota = input.value.trim();
+      if (!nota) {
+        showToast('❌ Digite uma nota');
+        return;
+      }
+      
+      const novaNota = {
+        texto: nota,
+        data: new Date().toISOString()
+      };
+      
+      notasMedicas.unshift(novaNota);
+      input.value = '';
+      
+      showSync('Salvando...');
+      try {
+        const notasText = notasMedicas.map(n => `[${new Date(n.data).toLocaleDateString('pt-BR')}] ${n.texto}`).join('\n\n');
+        await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ notas_medicas: notasText, updated_at: new Date().toISOString() })
+        });
+        showSync('✓ Salvo!', 'success');
+        showToast('✅ Nota adicionada!');
+        updateSaveStatus(true, new Date());
+        renderMedicalNotes();
+      } catch (e) {
+        console.error(e);
+        showToast('❌ Erro ao salvar');
+      }
+    }
+    
+    function renderMedicalNotes() {
+      const container = document.getElementById('notasMedicasList');
+      if (!container) return;
+      
+      if (notasMedicas.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px;">Nenhuma nota ainda</p>';
+        return;
+      }
+      
+      container.innerHTML = notasMedicas.map((n, i) => `
+        <div style="padding: 10px 12px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 8px; border-left: 3px solid var(--success);">
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">${new Date(n.data).toLocaleDateString('pt-BR')}</div>
+          <div style="font-size: 13px; color: var(--text-primary);">${n.texto}</div>
+        </div>
+      `).join('');
+    }
+    
+    let historicoAnalises = [];
+    
+    function renderAnalysisHistory() {
+      const container = document.getElementById('analysisHistory');
+      if (!container) return;
+      
+      if (historicoAnalises.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px;">Nenhuma análise ainda</p>';
+        return;
+      }
+      
+      container.innerHTML = historicoAnalises.slice(0, 5).map((a, i) => `
+        <div style="padding: 12px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 8px; cursor: pointer;" onclick="showAnalysis(${i})">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 13px; font-weight: 500;">Análise ${historicoAnalises.length - i}</span>
+            <span style="font-size: 11px; color: var(--text-muted);">${new Date(a.data).toLocaleDateString('pt-BR')}</span>
+          </div>
+          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${a.texto.substring(0, 100)}...</div>
+        </div>
+      `).join('');
+    }
+    
+    function showAnalysis(index) {
+      const analysis = historicoAnalises[index];
+      document.getElementById('analysisContent').innerHTML = formatAnalysis(analysis.texto);
+      document.getElementById('analysisResult').style.display = 'block';
+      document.getElementById('analysisResult').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    async function saveEstado() {
+      const estado = document.getElementById('estadoHojeMain').value.trim();
+      showSync('Salvando...');
+      
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            estado_hoje: estado,
+            updated_at: new Date().toISOString()
+          })
+        });
+        showSync('✓ Salvo!', 'success');
+        showToast('✅ Estado salvo!');
+        updateSaveStatus(true, new Date());
+        
+        // Campo estadoHojeMain já está atualizado
+      } catch (e) {
+        console.error(e);
+        showToast('❌ Erro ao salvar');
+      }
+    }
+    
+    async function loadProfile() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1&select=*`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        const data = await res.json();
+        
+        if (data.length > 0) {
+          const profile = data[0];
+          
+          // Campos de perfil
+          const nomeInput = document.getElementById('profileNome');
+          const idadeInput = document.getElementById('profileIdade');
+          const alturaInput = document.getElementById('profileAltura');
+          
+          if (nomeInput && profile.nome) nomeInput.value = profile.nome;
+          if (idadeInput && profile.idade) idadeInput.value = profile.idade;
+          if (alturaInput && profile.altura) alturaInput.value = profile.altura;
+          if (profile.sexo) selectSexo(profile.sexo);
+          
+          // Estado de hoje na main
+          const estadoMain = document.getElementById('estadoHojeMain');
+          if (estadoMain && profile.estado_hoje) estadoMain.value = profile.estado_hoje;
+          
+          // Campos do IA Coach
+          const objetivoInput = document.getElementById('objetivoInput');
+          const doresInput = document.getElementById('doresInput');
+          
+          if (objetivoInput && profile.objetivo) objetivoInput.value = profile.objetivo;
+          if (doresInput && profile.dores) doresInput.value = profile.dores;
+          
+          if (profile.ultima_analise) {
+            const content = document.getElementById('analysisContent');
+            const result = document.getElementById('analysisResult');
+            if (content && result) {
+              content.innerHTML = formatAnalysis(profile.ultima_analise);
+              result.style.display = 'block';
+            }
+          }
+          
+          // Carregar notas médicas
+          if (profile.notas_medicas) {
+            const linhas = profile.notas_medicas.split('\n\n').filter(l => l.trim());
+            notasMedicas = linhas.map(l => {
+              const match = l.match(/\[(\d{2}\/\d{2}\/\d{4})\] (.+)/s);
+              if (match) {
+                const [d, m, y] = match[1].split('/');
+                return { data: new Date(y, m-1, d).toISOString(), texto: match[2] };
+              }
+              return { data: new Date().toISOString(), texto: l };
+            });
+            renderMedicalNotes();
+          }
+          
+          // Carregar histórico de análises
+          if (profile.historico_analises && Array.isArray(profile.historico_analises)) {
+            historicoAnalises = profile.historico_analises;
+            renderAnalysisHistory();
+          }
+          
+          // Atualizar status de salvamento com a última atualização
+          if (profile.updated_at) {
+            updateSaveStatus(true, new Date(profile.updated_at));
+          } else {
+            updateSaveStatus(true, new Date());
+          }
+        } else {
+          updateSaveStatus(false);
+        }
+        
+        setupChangeTracking();
+      } catch (e) {
+        console.error(e);
+        updateSaveStatus(false);
+      }
+    }
+    
+    // ========== INIT ==========
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      loadActivities();
+      loadProgress();
+      loadLastWeights();
+      loadProfile();
+      selectDate(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+    });
+  </script>
+</body>
+</html>
