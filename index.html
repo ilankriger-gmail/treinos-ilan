@@ -778,7 +778,8 @@
     }
     
     .analysis-content strong {
-      color: var(--accent);
+      color: var(--text-primary);
+      font-weight: 600;
     }
     
     .spinner {
@@ -2163,12 +2164,12 @@ Seja específico e prático. Use linguagem direta e motivadora.`;
     function formatAnalysis(text) {
       return text
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/^### (.+)$/gm, '<h4 style="margin-top: 16px; color: var(--accent);">$1</h4>')
-        .replace(/^## (.+)$/gm, '<h4 style="margin-top: 16px; color: var(--accent);">$1</h4>')
-        .replace(/^# (.+)$/gm, '<h4 style="margin-top: 16px; color: var(--accent);">$1</h4>')
-        .replace(/^\d+\. (.+)$/gm, '<p style="margin-left: 16px;">• $1</p>')
-        .replace(/^- (.+)$/gm, '<p style="margin-left: 16px;">• $1</p>')
-        .replace(/\n\n/g, '</p><p>')
+        .replace(/^### (.+)$/gm, '<h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--accent);">$1</h4>')
+        .replace(/^## (.+)$/gm, '<h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--accent);">$1</h4>')
+        .replace(/^# (.+)$/gm, '<h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--accent);">$1</h4>')
+        .replace(/^\d+\. (.+)$/gm, '<p style="margin-left: 16px; margin-bottom: 6px;">• $1</p>')
+        .replace(/^- (.+)$/gm, '<p style="margin-left: 16px; margin-bottom: 6px;">• $1</p>')
+        .replace(/\n\n/g, '<div style="margin-bottom: 14px;"></div>')
         .replace(/\n/g, '<br>');
     }
     

@@ -2,7 +2,7 @@ export const config = {
   runtime: 'edge',
 };
 
-const GEMINI_API_KEY = 'AIzaSyAO3AJquxLLz4kwBob6BfJPL6cFBGtdqAQ';
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
 export default async function handler(req) {
   if (req.method === 'OPTIONS') {
@@ -21,42 +21,42 @@ export default async function handler(req) {
 
   try {
     const { prompt } = await req.json();
-    
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          maxOutputTokens: 2000,
-          temperature: 0.7
-        }
-      })
+        model: 'claude-opus-4-6',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }],
+      }),
     });
 
     if (!response.ok) {
       const error = await response.text();
-      return new Response(JSON.stringify({ error }), { 
+      return new Response(JSON.stringify({ error }), {
         status: response.status,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
     }
 
     const data = await response.json();
-    const content = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sem resposta';
-    
+    const content = data.content?.[0]?.text || 'Sem resposta';
+
     return new Response(JSON.stringify({ content }), {
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      }
+        'Access-Control-Allow-Origin': '*',
+      },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { 
+    return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }
