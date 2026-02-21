@@ -3282,17 +3282,53 @@
       handleFiles(e.dataTransfer.files);
     });
     
+    function compressImage(dataUrl, maxWidth, quality) {
+      return new Promise(function(resolve) {
+        var img = new Image();
+        img.onload = function() {
+          var canvas = document.createElement('canvas');
+          var w = img.width;
+          var h = img.height;
+          if (w > maxWidth) {
+            h = Math.round(h * maxWidth / w);
+            w = maxWidth;
+          }
+          canvas.width = w;
+          canvas.height = h;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = function() { resolve(dataUrl); };
+        img.src = dataUrl;
+      });
+    }
+
     function handleFiles(files) {
       Array.from(files).forEach(function(file) {
         var reader = new FileReader();
         reader.onload = function(e) {
-          uploadedFiles.push({
-            name: file.name,
-            type: file.type,
-            content: e.target.result
-          });
-          renderFileList();
-          saveUploadedFiles();
+          var result = e.target.result;
+
+          if (file.type.startsWith('image/')) {
+            compressImage(result, 800, 0.7).then(function(compressed) {
+              uploadedFiles.push({
+                name: file.name,
+                type: file.type,
+                content: compressed
+              });
+              renderFileList();
+              saveUploadedFiles();
+            });
+          } else {
+            uploadedFiles.push({
+              name: file.name,
+              type: file.type,
+              content: result
+            });
+            renderFileList();
+            saveUploadedFiles();
+          }
         };
 
         if (file.type.startsWith('text/')) {
@@ -3306,8 +3342,14 @@
     function saveUploadedFiles() {
       try {
         localStorage.setItem('uploaded-files', JSON.stringify(uploadedFiles));
+        showToast('Arquivo salvo!');
       } catch (e) {
         console.error('Erro ao salvar arquivos:', e);
+        if (e.name === 'QuotaExceededError' || e.code === 22) {
+          showToast('Sem espaço para salvar. Remova arquivos antigos.', 'error');
+        } else {
+          showToast('Erro ao salvar arquivo', 'error');
+        }
       }
     }
 
