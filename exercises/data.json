@@ -1,0 +1,654 @@
+{
+  "b1": {
+    "dataId": "b1",
+    "ptName": "Remada Aberta Curvada",
+    "name": "barbell bent over row",
+    "bodyPart": "back",
+    "equipment": "barbell",
+    "target": "upper back",
+    "secondaryMuscles": [
+      "biceps",
+      "forearms"
+    ],
+    "instructions": [
+      "Stand with your feet shoulder-width apart and knees slightly bent.",
+      "Bend forward at the hips while keeping your back straight and chest up.",
+      "Grasp the barbell with an overhand grip, hands slightly wider than shoulder-width apart.",
+      "Pull the barbell towards your lower chest by retracting your shoulder blades and squeezing your back muscles.",
+      "Pause for a moment at the top, then slowly lower the barbell back to the starting position.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "b1.gif",
+    "source": "exercisedb"
+  },
+  "b2": {
+    "dataId": "b2",
+    "ptName": "Crucifixo Inclinado",
+    "name": "dumbbell incline fly",
+    "bodyPart": "chest",
+    "equipment": "dumbbell",
+    "target": "pectorals",
+    "secondaryMuscles": [
+      "shoulders"
+    ],
+    "instructions": [
+      "Set an incline bench to a 45-degree angle.",
+      "Sit on the bench with a dumbbell in each hand, palms facing each other.",
+      "Lie back on the bench and press the dumbbells up to the starting position, directly above your chest.",
+      "Lower the dumbbells out to the sides in a wide arc until you feel a stretch in your chest.",
+      "Pause for a moment, then squeeze your chest muscles to bring the dumbbells back up to the starting position.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "b2.gif",
+    "source": "exercisedb"
+  },
+  "b3": {
+    "dataId": "b3",
+    "ptName": "Remada Fechada Triangulo",
+    "name": "cable seated row",
+    "bodyPart": "back",
+    "equipment": "cable",
+    "target": "upper back",
+    "secondaryMuscles": [
+      "biceps",
+      "forearms"
+    ],
+    "instructions": [
+      "Sit on the cable row machine with your feet flat on the footrests and your knees slightly bent.",
+      "Grasp the handles with an overhand grip, keeping your back straight and your shoulders relaxed.",
+      "Pull the handles towards your body, squeezing your shoulder blades together.",
+      "Pause for a moment at the peak of the movement, then slowly release the handles back to the starting position.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "b3.gif",
+    "source": "exercisedb"
+  },
+  "b4": {
+    "dataId": "b4",
+    "ptName": "Crucifixo Inverso",
+    "name": "dumbbell reverse fly",
+    "bodyPart": "shoulders",
+    "equipment": "dumbbell",
+    "target": "delts",
+    "secondaryMuscles": [
+      "trapezius",
+      "rhomboids"
+    ],
+    "instructions": [
+      "Stand with your feet shoulder-width apart and hold a dumbbell in each hand.",
+      "Bend your knees slightly and hinge forward at the hips, keeping your back straight.",
+      "Extend your arms straight down in front of you, palms facing each other.",
+      "Keeping a slight bend in your elbows, raise your arms out to the sides until they are parallel to the ground.",
+      "Pause for a moment at the top, then slowly lower your arms back down to the starting position.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "b4.gif",
+    "source": "exercisedb"
+  },
+  "b5": {
+    "dataId": "b5",
+    "ptName": "Face Pull",
+    "name": "cable standing cross-over high reverse fly",
+    "bodyPart": "shoulders",
+    "equipment": "cable",
+    "target": "delts",
+    "secondaryMuscles": [
+      "trapezius",
+      "rhomboids",
+      "rear deltoids"
+    ],
+    "instructions": [
+      "Attach a D-handle to each side of a cable machine at shoulder height.",
+      "Stand in the middle of the cable machine with your feet shoulder-width apart.",
+      "Grasp the handles with an overhand grip and extend your arms out to the sides, palms facing forward.",
+      "Keep a slight bend in your elbows and maintain a straight back throughout the exercise.",
+      "Engage your shoulder muscles and squeeze your shoulder blades together as you pull the handles towards the front of your body.",
+      "Pause for a moment at the peak of the movement, then slowly return to the starting position.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "b5.gif",
+    "source": "exercisedb"
+  },
+  "b6": {
+    "dataId": "b6",
+    "ptName": "Triceps Corda",
+    "name": "cable pushdown",
+    "bodyPart": "upper arms",
+    "equipment": "cable",
+    "target": "triceps",
+    "secondaryMuscles": [
+      "forearms"
+    ],
+    "instructions": [
+      "Attach a straight bar to a high pulley cable machine.",
+      "Stand facing the machine with your feet shoulder-width apart and a slight bend in your knees.",
+      "Grasp the bar with an overhand grip, hands shoulder-width apart.",
+      "Keep your elbows close to your sides and your upper arms stationary.",
+      "Exhale and push the bar down until your elbows are fully extended.",
+      "Pause for a moment, then inhale and slowly return the bar to the starting position.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "b6.gif",
+    "source": "exercisedb"
+  },
+  "b7": {
+    "dataId": "b7",
+    "ptName": "Supino Reto Halteres",
+    "name": "dumbbell bench press",
+    "bodyPart": "chest",
+    "equipment": "dumbbell",
+    "target": "pectorals",
+    "secondaryMuscles": [
+      "triceps",
+      "shoulders"
+    ],
+    "instructions": [
+      "Lie flat on a bench with your feet flat on the ground and your back pressed against the bench.",
+      "Hold a dumbbell in each hand, with your palms facing forward and your arms extended above your chest.",
+      "Lower the dumbbells slowly to the sides of your chest, keeping your elbows at a 90-degree angle.",
+      "Pause for a moment, then push the dumbbells back up to the starting position, fully extending your arms.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "b7.gif",
+    "source": "exercisedb"
+  },
+  "b8": {
+    "dataId": "b8",
+    "ptName": "Biceps Barra W",
+    "name": "ez barbell curl",
+    "bodyPart": "upper arms",
+    "equipment": "ez barbell",
+    "target": "biceps",
+    "secondaryMuscles": [
+      "forearms"
+    ],
+    "instructions": [
+      "Stand up straight with your feet shoulder-width apart and hold the ez barbell with an underhand grip, palms facing up.",
+      "Keep your elbows close to your torso and your upper arms stationary throughout the movement.",
+      "Exhale as you curl the barbell up towards your shoulders, contracting your biceps.",
+      "Pause for a moment at the top, then inhale as you slowly lower the barbell back down to the starting position.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "b8.gif",
+    "source": "exercisedb"
+  },
+  "p1": {
+    "dataId": "p1",
+    "ptName": "Isometria Abducao Parede",
+    "name": "side hip abduction",
+    "bodyPart": "upper legs",
+    "equipment": "body weight",
+    "target": "abductors",
+    "secondaryMuscles": [
+      "glutes",
+      "quadriceps"
+    ],
+    "instructions": [
+      "Stand with your feet shoulder-width apart and your hands on your hips.",
+      "Shift your weight to one leg and lift the opposite leg out to the side, keeping it straight.",
+      "Pause for a moment at the top, then slowly lower your leg back down to the starting position.",
+      "Repeat on the other side.",
+      "Continue alternating sides for the desired number of repetitions."
+    ],
+    "gifFile": "p1.gif",
+    "source": "exercisedb"
+  },
+  "p2": {
+    "dataId": "p2",
+    "ptName": "Ponte Bipodal",
+    "name": "low glute bridge on floor",
+    "bodyPart": "upper legs",
+    "equipment": "body weight",
+    "target": "glutes",
+    "secondaryMuscles": [
+      "hamstrings",
+      "core"
+    ],
+    "instructions": [
+      "Lie flat on your back with your knees bent and feet flat on the ground.",
+      "Place your arms by your sides, palms facing down.",
+      "Engage your glutes and core, then lift your hips off the ground until your body forms a straight line from your knees to your shoulders.",
+      "Pause for a moment at the top, squeezing your glutes.",
+      "Slowly lower your hips back down to the starting position.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "p2.gif",
+    "source": "exercisedb"
+  },
+  "p3": {
+    "dataId": "p3",
+    "ptName": "Agachamento Espanhol",
+    "name": "squat to overhead reach",
+    "bodyPart": "upper legs",
+    "equipment": "body weight",
+    "target": "quads",
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings",
+      "core"
+    ],
+    "instructions": [
+      "Stand with your feet shoulder-width apart and toes slightly turned out.",
+      "Lower your body down into a squat position by bending your knees and pushing your hips back.",
+      "As you come up from the squat, extend your arms overhead, reaching towards the ceiling.",
+      "Return to the starting position by lowering your arms and bending your knees to squat down again.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "p3.gif",
+    "source": "exercisedb"
+  },
+  "p4": {
+    "dataId": "p4",
+    "ptName": "Afundo c/ Flexao Tronco",
+    "name": "dumbbell lunge",
+    "bodyPart": "upper legs",
+    "equipment": "dumbbell",
+    "target": "glutes",
+    "secondaryMuscles": [
+      "quadriceps",
+      "hamstrings",
+      "calves"
+    ],
+    "instructions": [
+      "Stand with your feet shoulder-width apart, holding a dumbbell in each hand.",
+      "Take a step forward with your right foot, lowering your body into a lunge position.",
+      "Keep your back straight and your chest up as you lower your body.",
+      "Push through your right heel to return to the starting position.",
+      "Repeat with your left leg.",
+      "Alternate legs for the desired number of repetitions."
+    ],
+    "gifFile": "p4.gif",
+    "source": "exercisedb"
+  },
+  "p5": {
+    "dataId": "p5",
+    "ptName": "Cadeira Flexora",
+    "name": "lever lying leg curl",
+    "bodyPart": "upper legs",
+    "equipment": "leverage machine",
+    "target": "hamstrings",
+    "secondaryMuscles": [
+      "calves"
+    ],
+    "instructions": [
+      "Adjust the machine to fit your body and select the desired weight.",
+      "Lie face down on the machine with your legs straight and your heels against the padded lever.",
+      "Grasp the handles or the sides of the machine for stability.",
+      "Keeping your upper body stationary, exhale and curl your legs up as far as possible without lifting your hips off the pad.",
+      "Hold the contracted position for a brief pause as you squeeze your hamstrings.",
+      "Inhale and slowly lower the lever back to the starting position.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "p5.gif",
+    "source": "exercisedb"
+  },
+  "p6": {
+    "dataId": "p6",
+    "ptName": "Panturrilha no Step",
+    "name": "standing calf raise (on a staircase)",
+    "bodyPart": "lower legs",
+    "equipment": "body weight",
+    "target": "calves",
+    "secondaryMuscles": [
+      "ankles",
+      "feet"
+    ],
+    "instructions": [
+      "Stand on the edge of a step or a sturdy platform with your heels hanging off and your toes on the step.",
+      "Hold onto a railing or wall for balance if needed.",
+      "Slowly raise your heels as high as possible, lifting your body weight onto the balls of your feet.",
+      "Pause for a moment at the top, then slowly lower your heels back down to the starting position.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "p6.gif",
+    "source": "exercisedb"
+  },
+  "p7": {
+    "dataId": "p7",
+    "ptName": "Cadeira Solear",
+    "name": "barbell seated calf raise",
+    "bodyPart": "lower legs",
+    "equipment": "barbell",
+    "target": "calves",
+    "secondaryMuscles": [
+      "hamstrings"
+    ],
+    "instructions": [
+      "Sit on a bench with your feet flat on the floor and a barbell resting on your thighs.",
+      "Place the balls of your feet on a raised platform, such as a block or step.",
+      "Lower your heels as far as possible, feeling a stretch in your calves.",
+      "Raise your heels as high as possible, contracting your calves.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "p7.gif",
+    "source": "exercisedb"
+  },
+  "m1-1": {
+    "dataId": "m1-1",
+    "ptName": "Cat-Cow",
+    "name": "upper back stretch",
+    "bodyPart": "back",
+    "equipment": "body weight",
+    "target": "upper back",
+    "secondaryMuscles": [
+      "shoulders"
+    ],
+    "instructions": [
+      "Stand up straight with your feet shoulder-width apart.",
+      "Extend your arms straight in front of you, parallel to the ground.",
+      "Interlace your fingers and rotate your palms away from your body.",
+      "Slowly raise your arms overhead, keeping them straight and parallel to each other.",
+      "As you raise your arms, squeeze your shoulder blades together.",
+      "Hold the stretch for 15-30 seconds, then release and repeat."
+    ],
+    "gifFile": "m1-1.gif",
+    "source": "exercisedb"
+  },
+  "m1-2": {
+    "dataId": "m1-2",
+    "ptName": "World's Greatest Stretch",
+    "name": "lunge with twist",
+    "bodyPart": "waist",
+    "equipment": "body weight",
+    "target": "abs",
+    "secondaryMuscles": [
+      "quadriceps",
+      "glutes",
+      "hamstrings"
+    ],
+    "instructions": [
+      "Start by standing with your feet shoulder-width apart.",
+      "Take a step forward with your right foot, lowering your body into a lunge position.",
+      "As you lunge, twist your torso to the right, bringing your left elbow towards your right knee.",
+      "Pause for a moment, then return to the starting position.",
+      "Repeat on the other side, stepping forward with your left foot and twisting your torso to the left.",
+      "Continue alternating sides for the desired number of repetitions."
+    ],
+    "gifFile": "m1-2.gif",
+    "source": "exercisedb"
+  },
+  "m1-3": {
+    "dataId": "m1-3",
+    "ptName": "90/90 Hip Switch",
+    "name": "band lying hip internal rotation",
+    "bodyPart": "upper legs",
+    "equipment": "band",
+    "target": "glutes",
+    "secondaryMuscles": [
+      "hamstrings",
+      "quadriceps"
+    ],
+    "instructions": [
+      "Lie on your back with your legs straight and a resistance band looped around your feet.",
+      "Bend your knees and bring them towards your chest, keeping your feet together.",
+      "Slowly rotate your knees outwards, away from each other, while keeping your feet together.",
+      "Pause for a moment at the end of the rotation, then slowly return to the starting position.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "m1-3.gif",
+    "source": "exercisedb"
+  },
+  "m1-4": {
+    "dataId": "m1-4",
+    "ptName": "Toracica Quadrupedia",
+    "name": "exercise ball back extension with rotation",
+    "bodyPart": "back",
+    "equipment": "stability ball",
+    "target": "spine",
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "instructions": [
+      "Start by lying face down on the stability ball with your hips resting on the ball and your feet firmly planted on the ground.",
+      "Place your hands behind your head or cross them over your chest.",
+      "Engage your core and slowly lift your upper body off the ball, extending your back until your body forms a straight line from your head to your heels.",
+      "Pause for a moment at the top, then slowly rotate your torso to one side, keeping your hips and legs stable.",
+      "Return to the center and repeat the rotation to the other side.",
+      "Lower your upper body back down to the starting position and repeat for the desired number of repetitions."
+    ],
+    "gifFile": "m1-4.gif",
+    "source": "exercisedb"
+  },
+  "m1-5": {
+    "dataId": "m1-5",
+    "ptName": "Bretzel Stretch",
+    "name": "side lying floor stretch",
+    "bodyPart": "back",
+    "equipment": "body weight",
+    "target": "lats",
+    "secondaryMuscles": [
+      "obliques",
+      "glutes"
+    ],
+    "instructions": [
+      "Lie on your side with your legs straight and your bottom arm extended straight overhead.",
+      "Bend your top knee and place your foot on the ground in front of your bottom leg.",
+      "Reach your top arm over your head and grab onto something stable, like a wall or a piece of furniture.",
+      "Slowly lift your bottom leg off the ground, keeping it straight, until you feel a stretch in your side.",
+      "Hold the stretch for 20-30 seconds, then slowly lower your leg back down.",
+      "Repeat on the other side."
+    ],
+    "gifFile": "m1-5.gif",
+    "source": "exercisedb"
+  },
+  "m2-1": {
+    "dataId": "m2-1",
+    "ptName": "Shoulder CARs",
+    "name": "wrist circles",
+    "bodyPart": "lower arms",
+    "equipment": "body weight",
+    "target": "forearms",
+    "secondaryMuscles": [
+      "hands",
+      "wrists"
+    ],
+    "instructions": [
+      "Extend your arms straight out in front of you.",
+      "Make a fist with both hands.",
+      "Rotate your wrists in a circular motion, keeping your arms still.",
+      "Continue the wrist circles for the desired number of repetitions."
+    ],
+    "gifFile": "m2-1.gif",
+    "source": "exercisedb"
+  },
+  "m2-2": {
+    "dataId": "m2-2",
+    "ptName": "Hip CARs",
+    "name": "circles knee stretch",
+    "bodyPart": "lower legs",
+    "equipment": "body weight",
+    "target": "calves",
+    "secondaryMuscles": [
+      "hamstrings",
+      "quadriceps"
+    ],
+    "instructions": [
+      "Stand with your feet shoulder-width apart and your hands on your hips.",
+      "Bend your knees slightly and lift your heels off the ground, balancing on the balls of your feet.",
+      "Keeping your knees bent, rotate your knees in a circular motion, first clockwise and then counterclockwise.",
+      "Perform the movement for the desired number of repetitions."
+    ],
+    "gifFile": "m2-2.gif",
+    "source": "exercisedb"
+  },
+  "m2-3": {
+    "dataId": "m2-3",
+    "ptName": "Scorpion Stretch",
+    "name": "exercise ball one leg prone lower body rotation",
+    "bodyPart": "upper legs",
+    "equipment": "stability ball",
+    "target": "glutes",
+    "secondaryMuscles": [
+      "hamstrings",
+      "quadriceps",
+      "core"
+    ],
+    "instructions": [
+      "Lie face down on the stability ball with your hips resting on the ball and your legs extended straight behind you.",
+      "Place your hands on the ground in front of you for support.",
+      "Engage your glutes and core muscles to stabilize your body.",
+      "Slowly lift one leg off the ground, keeping it straight and parallel to the floor.",
+      "Rotate your leg outward, away from your body, while keeping your hips and upper body stable.",
+      "Pause for a moment at the end of the rotation, then slowly return your leg to the starting position.",
+      "Repeat the rotation with the other leg.",
+      "Continue alternating legs for the desired number of repetitions."
+    ],
+    "gifFile": "m2-3.gif",
+    "source": "exercisedb"
+  },
+  "m2-4": {
+    "dataId": "m2-4",
+    "ptName": "Deep Squat Hold",
+    "name": "squat to overhead reach",
+    "bodyPart": "upper legs",
+    "equipment": "body weight",
+    "target": "quads",
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings",
+      "core"
+    ],
+    "instructions": [
+      "Stand with your feet shoulder-width apart and toes slightly turned out.",
+      "Lower your body down into a squat position by bending your knees and pushing your hips back.",
+      "As you come up from the squat, extend your arms overhead, reaching towards the ceiling.",
+      "Return to the starting position by lowering your arms and bending your knees to squat down again.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "m2-4.gif",
+    "source": "exercisedb"
+  },
+  "m2-5": {
+    "dataId": "m2-5",
+    "ptName": "Pigeon Stretch",
+    "name": "assisted side lying adductor stretch",
+    "bodyPart": "upper legs",
+    "equipment": "assisted",
+    "target": "adductors",
+    "secondaryMuscles": [
+      "hamstrings",
+      "glutes"
+    ],
+    "instructions": [
+      "Lie on your side with your legs straight and stacked on top of each other.",
+      "Bend your bottom leg slightly for stability.",
+      "Place your top foot on a stable surface, such as a bench or step.",
+      "Keeping your top leg straight, slowly lower it towards the ground, feeling a stretch in your inner thigh.",
+      "Hold the stretch for 20-30 seconds.",
+      "Return to the starting position and repeat on the other side."
+    ],
+    "gifFile": "m2-5.gif",
+    "source": "exercisedb"
+  },
+  "m3-1": {
+    "dataId": "m3-1",
+    "ptName": "Inchworm",
+    "name": "inchworm",
+    "bodyPart": "waist",
+    "equipment": "body weight",
+    "target": "abs",
+    "secondaryMuscles": [
+      "shoulders",
+      "hamstrings"
+    ],
+    "instructions": [
+      "Start in a standing position with your feet hip-width apart.",
+      "Bend forward at the waist and place your hands on the ground in front of you.",
+      "Walk your hands forward until you are in a high plank position, with your body in a straight line from head to toe.",
+      "Pause for a moment, then walk your hands back towards your feet, keeping your legs as straight as possible.",
+      "Once your hands reach your feet, stand back up to the starting position.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "m3-1.gif",
+    "source": "exercisedb"
+  },
+  "m3-2": {
+    "dataId": "m3-2",
+    "ptName": "Spiderman c/ Rotacao",
+    "name": "squat to overhead reach with twist",
+    "bodyPart": "upper legs",
+    "equipment": "body weight",
+    "target": "quads",
+    "secondaryMuscles": [
+      "glutes",
+      "hamstrings",
+      "core"
+    ],
+    "instructions": [
+      "Stand with your feet shoulder-width apart and toes slightly turned out.",
+      "Lower your body into a squat position by bending your knees and pushing your hips back.",
+      "As you come up from the squat, raise your arms overhead and twist your torso to one side.",
+      "Return to the starting position and repeat the squat, this time twisting your torso to the opposite side.",
+      "Continue alternating sides with each squat repetition."
+    ],
+    "gifFile": "m3-2.gif",
+    "source": "exercisedb"
+  },
+  "m3-3": {
+    "dataId": "m3-3",
+    "ptName": "Cossack Squat",
+    "name": "weighted cossack squats (male)",
+    "bodyPart": "upper legs",
+    "equipment": "weighted",
+    "target": "glutes",
+    "secondaryMuscles": [
+      "quadriceps",
+      "hamstrings",
+      "calves"
+    ],
+    "instructions": [
+      "Stand with your feet wider than shoulder-width apart and toes pointing slightly outward.",
+      "Hold a weight in front of your chest with both hands.",
+      "Shift your weight to one side and lower your body by bending the knee of the side you shifted towards, while keeping the other leg straight.",
+      "Go as low as you can while maintaining balance and keeping your chest up.",
+      "Push through the heel of the bent leg to return to the starting position.",
+      "Repeat on the other side, alternating between legs."
+    ],
+    "gifFile": "m3-3.gif",
+    "source": "exercisedb"
+  },
+  "m3-4": {
+    "dataId": "m3-4",
+    "ptName": "Wall Slides",
+    "name": "push-up (wall)",
+    "bodyPart": "chest",
+    "equipment": "body weight",
+    "target": "pectorals",
+    "secondaryMuscles": [
+      "triceps",
+      "deltoids"
+    ],
+    "instructions": [
+      "Stand facing a wall, about arm's length away.",
+      "Place your hands on the wall at shoulder height, slightly wider than shoulder-width apart.",
+      "Step back a few feet, keeping your body straight and your feet hip-width apart.",
+      "Bend your elbows and lower your chest towards the wall, keeping your body in a straight line.",
+      "Push back up to the starting position, straightening your arms.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "gifFile": "m3-4.gif",
+    "source": "exercisedb"
+  },
+  "m3-5": {
+    "dataId": "m3-5",
+    "ptName": "Child's Pose c/ Rotacao",
+    "name": "upper back stretch",
+    "bodyPart": "back",
+    "equipment": "body weight",
+    "target": "upper back",
+    "secondaryMuscles": [
+      "shoulders"
+    ],
+    "instructions": [
+      "Stand up straight with your feet shoulder-width apart.",
+      "Extend your arms straight in front of you, parallel to the ground.",
+      "Interlace your fingers and rotate your palms away from your body.",
+      "Slowly raise your arms overhead, keeping them straight and parallel to each other.",
+      "As you raise your arms, squeeze your shoulder blades together.",
+      "Hold the stretch for 15-30 seconds, then release and repeat."
+    ],
+    "gifFile": "m3-5.gif",
+    "source": "exercisedb"
+  }
+}
