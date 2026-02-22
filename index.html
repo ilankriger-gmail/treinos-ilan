@@ -542,7 +542,86 @@
     .weight-unit { color: var(--text-muted); font-size: 12px; }
     .weight-last { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
     .weight-last strong { color: var(--accent); }
-    
+
+    .exercise-record-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.2s;
+    }
+    .exercise-record-btn:hover {
+      border-color: #ef4444;
+      color: #ef4444;
+    }
+    .exercise-record-btn.recording {
+      border-color: #ef4444;
+      color: #ef4444;
+      animation: pulse-record 1s infinite;
+    }
+    @keyframes pulse-record {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .record-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .record-overlay video {
+      width: 100%;
+      max-width: 500px;
+      border-radius: 12px;
+      transform: scaleX(-1);
+    }
+    .record-countdown {
+      position: absolute;
+      font-size: 72px;
+      font-weight: 800;
+      color: white;
+      text-shadow: 0 0 30px rgba(127, 90, 240, 0.8);
+      z-index: 10001;
+    }
+    .record-timer {
+      margin-top: 16px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #ef4444;
+      font-family: 'Inter', sans-serif;
+    }
+    .record-exercise-name {
+      margin-top: 12px;
+      font-size: 16px;
+      color: white;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+    .record-cancel-btn {
+      margin-top: 20px;
+      padding: 10px 24px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+    }
+
     .checkbox {
       width: 36px;
       height: 36px;
@@ -3031,6 +3110,19 @@
       });
 
       saveExerciseConfigs();
+
+      // Add record button to all exercises
+      document.querySelectorAll('.exercise[data-id]').forEach(function(ex) {
+        if (ex.querySelector('.exercise-record-btn')) return;
+        var recordBtn = document.createElement('button');
+        recordBtn.className = 'exercise-record-btn';
+        recordBtn.innerHTML = '📹 Gravar Execução';
+        recordBtn.onclick = function(e) {
+          e.stopPropagation();
+          startExerciseRecording(ex.dataset.id, ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '');
+        };
+        ex.appendChild(recordBtn);
+      });
     }
 
     function updateExConfig(id, field, value) {
@@ -3286,7 +3378,26 @@
       'passada': 'walking lunge', 'step up': 'step-up',
       'encolhimento': 'shrug', 'trapezio': 'shrug',
       'voador': 'pec deck', 'cross over': 'cable crossover',
-      'cabo': 'cable', 'hack': 'hack squat', 'smith': 'smith machine'
+      'cabo': 'cable', 'hack': 'hack squat', 'smith': 'smith machine',
+      'cat-cow': 'cat stretch', 'cat cow': 'cat stretch',
+      'world greatest stretch': 'lunge', 'greatest stretch': 'lunge',
+      '90/90': 'seated hip internal rotation', '90 90': 'seated hip internal rotation',
+      'hip switch': 'seated hip internal rotation',
+      'toracica': 'thoracic rotation', 'torácica': 'thoracic rotation',
+      'rotacao toracica': 'thoracic rotation',
+      'bretzel': 'lying crossover stretch',
+      'shoulder cars': 'arm circles', 'shoulder car': 'arm circles',
+      'hip cars': 'hip circles', 'hip car': 'hip circles',
+      'scorpion': 'lying crossover stretch', 'scorpion stretch': 'lying crossover stretch',
+      'deep squat': 'bodyweight squat', 'deep squat hold': 'bodyweight squat',
+      'pigeon': 'pigeon stretch', 'pigeon stretch': 'pigeon stretch',
+      'pombo': 'pigeon stretch',
+      'inchworm': 'inchworm',
+      'spiderman': 'lunge', 'homem aranha': 'lunge',
+      'cossack': 'side lunge', 'cossack squat': 'side lunge',
+      'wall slide': 'wall slide', 'wall slides': 'wall slide',
+      'child pose': 'child pose', 'childs pose': 'child pose',
+      'posicao de crianca': 'child pose'
     };
 
     async function loadExerciseDB() {
@@ -3579,6 +3690,224 @@
       }
     }
 
+    // ========== VIDEO RECORDING FOR FORM ANALYSIS ==========
+
+    var activeRecording = null;
+
+    async function startExerciseRecording(exerciseId, exerciseName) {
+      try {
+        var stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment', width: { ideal: 720 }, height: { ideal: 1280 } },
+          audio: false
+        });
+
+        // Create overlay
+        var overlay = document.createElement('div');
+        overlay.className = 'record-overlay';
+        overlay.id = 'recordOverlay';
+
+        var video = document.createElement('video');
+        video.autoplay = true;
+        video.playsInline = true;
+        video.muted = true;
+        video.srcObject = stream;
+
+        var countdown = document.createElement('div');
+        countdown.className = 'record-countdown';
+        countdown.id = 'recordCountdown';
+
+        var timer = document.createElement('div');
+        timer.className = 'record-timer';
+        timer.id = 'recordTimer';
+        timer.style.display = 'none';
+
+        var exLabel = document.createElement('div');
+        exLabel.className = 'record-exercise-name';
+        exLabel.textContent = exerciseName;
+
+        var cancelBtn = document.createElement('button');
+        cancelBtn.className = 'record-cancel-btn';
+        cancelBtn.textContent = 'Cancelar';
+        cancelBtn.onclick = function() { stopExerciseRecording(true); };
+
+        overlay.appendChild(video);
+        overlay.appendChild(countdown);
+        overlay.appendChild(timer);
+        overlay.appendChild(exLabel);
+        overlay.appendChild(cancelBtn);
+        document.body.appendChild(overlay);
+
+        activeRecording = { stream: stream, exerciseId: exerciseId, exerciseName: exerciseName, cancelled: false };
+
+        // Countdown 3-2-1
+        for (var i = 3; i >= 1; i--) {
+          if (activeRecording.cancelled) return;
+          countdown.textContent = i;
+          await new Promise(function(r) { setTimeout(r, 1000); });
+        }
+        countdown.textContent = '🔴 REC';
+        countdown.style.fontSize = '24px';
+        timer.style.display = 'block';
+
+        // Start recording
+        var mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+        var chunks = [];
+        mediaRecorder.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
+
+        activeRecording.mediaRecorder = mediaRecorder;
+        activeRecording.chunks = chunks;
+        mediaRecorder.start();
+
+        // Timer countdown from 15
+        var remaining = 15;
+        timer.textContent = remaining + 's';
+        var timerInterval = setInterval(function() {
+          remaining--;
+          timer.textContent = remaining + 's';
+          if (remaining <= 0) {
+            clearInterval(timerInterval);
+            stopExerciseRecording(false);
+          }
+        }, 1000);
+        activeRecording.timerInterval = timerInterval;
+
+      } catch (e) {
+        console.error('Camera error:', e);
+        showToast('Erro ao acessar câmera: ' + e.message);
+      }
+    }
+
+    function stopExerciseRecording(cancelled) {
+      if (!activeRecording) return;
+      activeRecording.cancelled = cancelled;
+
+      if (activeRecording.timerInterval) clearInterval(activeRecording.timerInterval);
+
+      if (activeRecording.mediaRecorder && activeRecording.mediaRecorder.state !== 'inactive') {
+        activeRecording.mediaRecorder.onstop = function() {
+          if (!cancelled && activeRecording.chunks.length > 0) {
+            var blob = new Blob(activeRecording.chunks, { type: 'video/webm' });
+            extractFramesAndAnalyze(blob, activeRecording.exerciseName);
+          }
+          cleanupRecording();
+        };
+        activeRecording.mediaRecorder.stop();
+      } else {
+        cleanupRecording();
+      }
+
+      // Stop all tracks
+      if (activeRecording.stream) {
+        activeRecording.stream.getTracks().forEach(function(t) { t.stop(); });
+      }
+    }
+
+    function cleanupRecording() {
+      var overlay = document.getElementById('recordOverlay');
+      if (overlay) overlay.remove();
+      activeRecording = null;
+    }
+
+    async function extractFramesAndAnalyze(videoBlob, exerciseName) {
+      showToast('Processando vídeo...');
+
+      try {
+        var videoUrl = URL.createObjectURL(videoBlob);
+        var video = document.createElement('video');
+        video.src = videoUrl;
+        video.muted = true;
+
+        await new Promise(function(resolve, reject) {
+          video.onloadedmetadata = resolve;
+          video.onerror = reject;
+        });
+
+        var duration = video.duration;
+        var frameCount = 5;
+        var interval = duration / (frameCount + 1);
+        var frames = [];
+
+        var canvas = document.createElement('canvas');
+        canvas.width = 480;
+        canvas.height = 640;
+        var ctx = canvas.getContext('2d');
+
+        for (var i = 1; i <= frameCount; i++) {
+          var time = interval * i;
+          video.currentTime = time;
+          await new Promise(function(resolve) {
+            video.onseeked = resolve;
+          });
+
+          // Draw scaled to canvas
+          var scale = Math.min(canvas.width / video.videoWidth, canvas.height / video.videoHeight);
+          var w = video.videoWidth * scale;
+          var h = video.videoHeight * scale;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(video, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+
+          var dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+          frames.push(dataUrl.split(',')[1]); // base64 only
+        }
+
+        URL.revokeObjectURL(videoUrl);
+
+        // Send frames to Coach AI for analysis
+        analyzeExerciseForm(frames, exerciseName);
+
+      } catch (e) {
+        console.error('Frame extraction error:', e);
+        showToast('Erro ao processar vídeo');
+      }
+    }
+
+    async function analyzeExerciseForm(frames, exerciseName) {
+      // Switch to coach view and start chat if needed
+      showView('coach');
+      if (!chatActive) {
+        await startCoachChat();
+      }
+
+      // Build message with frames
+      var content = [];
+      content.push({ type: 'text', text: 'Analise minha execução do exercício "' + exerciseName + '". Estas são 5 frames capturados durante a execução. Avalie minha postura, alinhamento, amplitude de movimento e dê feedback específico sobre o que estou fazendo certo e o que posso melhorar. Seja direto e prático.' });
+
+      frames.forEach(function(base64, idx) {
+        content.push({
+          type: 'image',
+          source: {
+            type: 'base64',
+            media_type: 'image/jpeg',
+            data: base64
+          }
+        });
+      });
+
+      // Add to chat as user message
+      chatMessages.push({ role: 'user', content: content });
+      addChatBubble('📹 Analisando execução: ' + exerciseName + ' (5 frames)', 'user');
+      addTypingIndicator();
+      scrollChatToBottom();
+
+      var sendBtn = document.getElementById('chatSendBtn');
+      sendBtn.disabled = true;
+
+      try {
+        var system = buildSystemPrompt();
+        var response = await callCoachAPI(chatMessages);
+        chatMessages.push({ role: 'assistant', content: response });
+        removeTypingIndicator();
+        renderAssistantMessage(response);
+        saveChatToStorage();
+      } catch (e) {
+        removeTypingIndicator();
+        addChatBubble('Erro ao analisar execução: ' + e.message, 'assistant');
+        console.error('Analysis error:', e);
+      } finally {
+        sendBtn.disabled = false;
+      }
+    }
+
     // ========== CHAT COMMANDS ==========
 
     function handleChatCommand(text) {
@@ -3721,7 +4050,17 @@
       var cleaned = [];
       for (var i = 0; i < messages.length; i++) {
         if (cleaned.length > 0 && messages[i].role === cleaned[cleaned.length - 1].role) {
-          cleaned[cleaned.length - 1].content += '\n\n' + messages[i].content;
+          // Handle array content (e.g. image messages) — skip merging, keep as-is
+          var prev = cleaned[cleaned.length - 1].content;
+          var curr = messages[i].content;
+          if (typeof prev === 'string' && typeof curr === 'string') {
+            cleaned[cleaned.length - 1].content = prev + '\n\n' + curr;
+          } else {
+            // Convert both to arrays and concatenate
+            var prevArr = Array.isArray(prev) ? prev : [{ type: 'text', text: prev }];
+            var currArr = Array.isArray(curr) ? curr : [{ type: 'text', text: curr }];
+            cleaned[cleaned.length - 1].content = prevArr.concat(currArr);
+          }
         } else {
           cleaned.push({ role: messages[i].role, content: messages[i].content });
         }
@@ -4127,6 +4466,16 @@
       // Load image for the new exercise
       loadSingleExerciseImage(exDiv);
 
+      // Add record button
+      var recordBtn = document.createElement('button');
+      recordBtn.className = 'exercise-record-btn';
+      recordBtn.innerHTML = '📹 Gravar Execução';
+      recordBtn.onclick = function(e) {
+        e.stopPropagation();
+        startExerciseRecording(id, name);
+      };
+      exDiv.appendChild(recordBtn);
+
       showToast('Exercício ' + name + ' adicionado!');
     }
 
@@ -4165,6 +4514,18 @@
             '<div class="weight-last" id="last-' + c.id + '"></div>';
 
           container.appendChild(exDiv);
+
+          // Add record button
+          var recordBtn = document.createElement('button');
+          recordBtn.className = 'exercise-record-btn';
+          recordBtn.innerHTML = '📹 Gravar Execução';
+          (function(exId, exName) {
+            recordBtn.onclick = function(e) {
+              e.stopPropagation();
+              startExerciseRecording(exId, exName);
+            };
+          })(c.id, c.name);
+          exDiv.appendChild(recordBtn);
         });
       } catch(e) { console.error('loadCustomExercises:', e); }
     }
