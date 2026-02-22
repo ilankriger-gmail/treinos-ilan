@@ -6,6 +6,8 @@
   <title>Treinos</title>
   <meta name="theme-color" content="#1a1a2e">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -742,6 +744,18 @@
     .weight-last { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
     .weight-last strong { color: var(--accent); }
 
+    .sets-container { padding: 4px 0 0; }
+    .set-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+    .set-row:last-child { border-bottom: none; }
+    .set-label { width: 20px; font-size: 12px; color: var(--text-muted); text-align: center; flex-shrink: 0; }
+    .set-weight, .set-reps { width: 56px; padding: 6px 4px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 13px; text-align: center; font-family: 'Inter', sans-serif; }
+    .set-weight:focus, .set-reps:focus { outline: none; border-color: var(--accent); }
+    .set-x { color: var(--text-muted); font-size: 12px; }
+    .set-check { width: 28px; height: 28px; border-radius: 6px; border: 2px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+    .set-row.done .set-check { background: var(--success); border-color: var(--success); }
+    .set-row.done .set-check::after { content: '✓'; color: white; font-size: 14px; }
+    .set-row.done { opacity: 0.6; }
+
     .exercise-record-btn {
       display: flex;
       align-items: center;
@@ -794,6 +808,27 @@
       color: white;
       text-shadow: 0 0 30px rgba(127, 90, 240, 0.8);
       z-index: 10001;
+    }
+    .record-countdown-picker {
+      display: flex;
+      gap: 12px;
+      z-index: 10001;
+    }
+    .record-countdown-picker button {
+      padding: 14px 28px;
+      background: rgba(127, 90, 240, 0.3);
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .record-countdown-picker button:hover,
+    .record-countdown-picker button:active {
+      background: var(--accent);
     }
     .record-timer {
       margin-top: 16px;
@@ -3396,10 +3431,43 @@
     function toggleExercise(checkbox) {
       const exercise = checkbox.closest('.exercise');
       exercise.classList.toggle('done');
-
-      // Auto-start session timer on first check
       if (exercise.classList.contains('done') && !sessionTimerRunning && sessionElapsedSeconds === 0) {
         startSessionTimer();
+      }
+      saveProgress();
+      updateProgress();
+    }
+
+    function toggleSet(checkEl) {
+      var setRow = checkEl.closest('.set-row');
+      var exercise = checkEl.closest('.exercise');
+      setRow.classList.toggle('done');
+
+      // Auto-start session timer on first set check
+      if (setRow.classList.contains('done') && !sessionTimerRunning && sessionElapsedSeconds === 0) {
+        startSessionTimer();
+      }
+
+      // Auto-copy weight/reps to next empty set
+      if (setRow.classList.contains('done')) {
+        var weight = setRow.querySelector('.set-weight').value;
+        var reps = setRow.querySelector('.set-reps').value;
+        var nextRow = setRow.nextElementSibling;
+        if (nextRow && nextRow.classList.contains('set-row') && !nextRow.classList.contains('done')) {
+          var nextWeight = nextRow.querySelector('.set-weight');
+          var nextReps = nextRow.querySelector('.set-reps');
+          if (nextWeight && !nextWeight.value && weight) nextWeight.value = weight;
+          if (nextReps && !nextReps.value && reps) nextReps.value = reps;
+        }
+      }
+
+      // Check if all sets are done → mark exercise done
+      var allSets = exercise.querySelectorAll('.set-row');
+      var doneSets = exercise.querySelectorAll('.set-row.done');
+      if (doneSets.length === allSets.length) {
+        exercise.classList.add('done');
+      } else {
+        exercise.classList.remove('done');
       }
 
       saveProgress();
@@ -3409,17 +3477,17 @@
     function updateProgress() {
       const workout = document.getElementById(currentWorkout);
       if (!workout) return;
-      const total = workout.querySelectorAll('.exercise').length;
-      if (total === 0) return; // cardio/surf/tenis/fisio have no .exercise elements
-      const done = workout.querySelectorAll('.exercise.done').length;
-      const percent = Math.round((done / total) * 100);
+      const totalSets = workout.querySelectorAll('.set-row').length;
+      if (totalSets === 0) return; // cardio/surf/tenis/fisio have no sets
+      const doneSets = workout.querySelectorAll('.set-row.done').length;
+      const percent = Math.round((doneSets / totalSets) * 100);
 
-      document.getElementById('progressText').textContent = `${done} de ${total}`;
+      document.getElementById('progressText').textContent = `${doneSets} de ${totalSets} séries`;
       document.getElementById('progressPercent').textContent = `${percent}%`;
       document.getElementById('progressFill').style.width = `${percent}%`;
 
       const finishBtn = document.getElementById('finishBtn');
-      finishBtn.style.display = done > 0 ? 'block' : 'none';
+      finishBtn.style.display = doneSets > 0 ? 'block' : 'none';
     }
 
     async function finishWorkout() {
@@ -3428,18 +3496,25 @@
       const exercisesDone = [];
 
       exercises.forEach(ex => {
-        if (ex.classList.contains('done')) {
-          const weightInput = ex.querySelector('.weight-input');
-          exercisesDone.push({
-            id: ex.dataset.id,
-            name: ex.dataset.name,
-            weight: weightInput ? parseFloat(weightInput.value) || null : null
+        var doneSets = ex.querySelectorAll('.set-row.done');
+        if (doneSets.length === 0) return;
+        var sets = [];
+        doneSets.forEach(function(row) {
+          sets.push({
+            set: parseInt(row.dataset.set),
+            weight: parseFloat(row.querySelector('.set-weight')?.value) || null,
+            reps: parseInt(row.querySelector('.set-reps')?.value) || null
           });
-        }
+        });
+        exercisesDone.push({
+          id: ex.dataset.id,
+          name: ex.dataset.name,
+          sets: sets
+        });
       });
 
       if (exercisesDone.length === 0) {
-        showToast('Marque pelo menos 1 exercicio');
+        showToast('Marque pelo menos 1 serie');
         return;
       }
 
@@ -3483,8 +3558,16 @@
           saveActivities();
 
           // Reset exercises
-          exercises.forEach(ex => ex.classList.remove('done'));
-          document.querySelectorAll('.weight-input').forEach(input => input.value = '');
+          exercises.forEach(ex => {
+            ex.classList.remove('done');
+            ex.querySelectorAll('.set-row').forEach(function(row) {
+              row.classList.remove('done');
+              var w = row.querySelector('.set-weight');
+              var r = row.querySelector('.set-reps');
+              if (w) w.value = '';
+              if (r) r.value = '';
+            });
+          });
           saveProgress();
           updateProgress();
         } else {
@@ -3498,24 +3581,50 @@
     
     function saveProgress() {
       const progress = {};
-      document.querySelectorAll('.exercise').forEach(ex => {
-        progress[ex.dataset.id] = ex.classList.contains('done');
+      document.querySelectorAll('.exercise[data-id]').forEach(ex => {
+        var id = ex.dataset.id;
+        var setsData = {};
+        ex.querySelectorAll('.set-row').forEach(function(row) {
+          var setNum = row.dataset.set;
+          setsData[setNum] = {
+            done: row.classList.contains('done'),
+            weight: row.querySelector('.set-weight')?.value || '',
+            reps: row.querySelector('.set-reps')?.value || ''
+          };
+        });
+        progress[id] = { sets: setsData };
       });
-      localStorage.setItem('workout-progress-v5', JSON.stringify(progress));
+      localStorage.setItem('workout-progress-v6', JSON.stringify(progress));
       localStorage.setItem('workout-date', new Date().toDateString());
     }
     
     function loadProgress() {
       const savedDate = localStorage.getItem('workout-date');
       if (savedDate !== new Date().toDateString()) {
+        localStorage.removeItem('workout-progress-v6');
         localStorage.removeItem('workout-progress-v5');
         return;
       }
-      
-      const progress = JSON.parse(localStorage.getItem('workout-progress-v5') || '{}');
+
+      const progress = JSON.parse(localStorage.getItem('workout-progress-v6') || '{}');
       Object.keys(progress).forEach(id => {
         const ex = document.querySelector(`[data-id="${id}"]`);
-        if (ex && progress[id]) ex.classList.add('done');
+        if (!ex || !progress[id].sets) return;
+        var setsData = progress[id].sets;
+        Object.keys(setsData).forEach(function(setNum) {
+          var row = ex.querySelector('.set-row[data-set="' + setNum + '"]');
+          if (!row) return;
+          var s = setsData[setNum];
+          if (s.weight) row.querySelector('.set-weight').value = s.weight;
+          if (s.reps) row.querySelector('.set-reps').value = s.reps;
+          if (s.done) row.classList.add('done');
+        });
+        // Check if all sets done → exercise done
+        var allSets = ex.querySelectorAll('.set-row');
+        var doneSets = ex.querySelectorAll('.set-row.done');
+        if (allSets.length > 0 && doneSets.length === allSets.length) {
+          ex.classList.add('done');
+        }
       });
       updateProgress();
     }
@@ -3577,13 +3686,13 @@
             const unit = config && config.type === 'tempo' ? 's' : 'kg';
             el.innerHTML = 'Último: <strong>' + latest[id].weight + unit + '</strong> (' + date + ')';
           }
-          // Pre-fill weight input if empty
+          // Pre-fill set weight inputs if empty
           var exercise = document.querySelector('[data-id="' + id + '"]');
           if (exercise) {
-            var weightInput = exercise.querySelector('.weight-input');
-            if (weightInput && !weightInput.value) {
-              weightInput.value = latest[id].weight;
-            }
+            exercise.querySelectorAll('.set-row').forEach(function(row) {
+              var wi = row.querySelector('.set-weight');
+              if (wi && !wi.value) wi.value = latest[id].weight;
+            });
           }
         });
       } catch (e) {
@@ -3673,23 +3782,42 @@
         `;
         insertRef.insertAdjacentElement('afterend', toggle);
 
-        // Ensure weight-row exists
-        let weightRow = ex.querySelector('.weight-row');
-        if (!weightRow) {
-          weightRow = document.createElement('div');
-          weightRow.className = 'weight-row';
-          weightRow.innerHTML = `
-            <input type="number" class="weight-input" placeholder="${config.type === 'tempo' ? 'Seg' : 'Peso'}" step="${config.type === 'tempo' ? '1' : '0.5'}" onchange="saveWeight(this)">
-            <span class="weight-unit">${config.type === 'tempo' ? 's' : 'kg'}</span>
-          `;
-          const lastDiv = ex.querySelector('[id^="last-"]');
-          if (lastDiv) {
-            ex.insertBefore(weightRow, lastDiv);
-          } else {
-            ex.appendChild(weightRow);
-          }
+        // Remove old checkbox from header
+        var oldCheckbox = ex.querySelector('.exercise-header .checkbox');
+        if (oldCheckbox) oldCheckbox.remove();
+
+        // Remove old weight-row
+        var oldWeightRow = ex.querySelector('.weight-row');
+        if (oldWeightRow) oldWeightRow.remove();
+
+        // Build set rows
+        var numSets = config.sets || 3;
+        var setsContainer = document.createElement('div');
+        setsContainer.className = 'sets-container';
+        var weightPlaceholder = config.type === 'tempo' ? 'seg' : 'kg';
+        var repsPlaceholder = 'reps';
+        for (var s = 1; s <= numSets; s++) {
+          var setRow = document.createElement('div');
+          setRow.className = 'set-row';
+          setRow.dataset.set = s;
+          setRow.innerHTML =
+            '<span class="set-label">' + s + '</span>' +
+            '<input type="number" class="set-weight" placeholder="' + weightPlaceholder + '" step="' + (config.type === 'tempo' ? '1' : '0.5') + '">' +
+            '<span class="set-x">\u00d7</span>' +
+            '<input type="number" class="set-reps" placeholder="' + repsPlaceholder + '">' +
+            '<div class="set-check" onclick="toggleSet(this)"></div>';
+          setsContainer.appendChild(setRow);
+        }
+        var lastDiv = ex.querySelector('[id^="last-"]');
+        if (lastDiv) {
+          ex.insertBefore(setsContainer, lastDiv);
         } else {
-          applyWeightRowType(weightRow, config.type);
+          var timerBtn = ex.querySelector('.timer-btn');
+          if (timerBtn) {
+            ex.insertBefore(setsContainer, timerBtn);
+          } else {
+            ex.appendChild(setsContainer);
+          }
         }
       });
 
@@ -3727,6 +3855,49 @@
           timerBtn.setAttribute('onclick', `startTimer(${rest})`);
         }
       }
+
+      // Rebuild set rows if sets count changed
+      if (field === 'sets') {
+        rebuildSetRows(id);
+      }
+    }
+
+    function rebuildSetRows(id) {
+      var ex = document.querySelector('[data-id="' + id + '"]');
+      if (!ex) return;
+      var config = exerciseConfigs[id] || {};
+      var numSets = config.sets || 3;
+      var oldContainer = ex.querySelector('.sets-container');
+      if (oldContainer) oldContainer.remove();
+
+      var setsContainer = document.createElement('div');
+      setsContainer.className = 'sets-container';
+      var weightPlaceholder = config.type === 'tempo' ? 'seg' : 'kg';
+      for (var s = 1; s <= numSets; s++) {
+        var setRow = document.createElement('div');
+        setRow.className = 'set-row';
+        setRow.dataset.set = s;
+        setRow.innerHTML =
+          '<span class="set-label">' + s + '</span>' +
+          '<input type="number" class="set-weight" placeholder="' + weightPlaceholder + '" step="' + (config.type === 'tempo' ? '1' : '0.5') + '">' +
+          '<span class="set-x">\u00d7</span>' +
+          '<input type="number" class="set-reps" placeholder="reps">' +
+          '<div class="set-check" onclick="toggleSet(this)"></div>';
+        setsContainer.appendChild(setRow);
+      }
+      var lastDiv = ex.querySelector('[id^="last-"]');
+      if (lastDiv) {
+        ex.insertBefore(setsContainer, lastDiv);
+      } else {
+        var timerBtn = ex.querySelector('.timer-btn');
+        if (timerBtn) {
+          ex.insertBefore(setsContainer, timerBtn);
+        } else {
+          ex.appendChild(setsContainer);
+        }
+      }
+      saveProgress();
+      updateProgress();
     }
 
     function setExType(id, type, btn) {
@@ -3742,49 +3913,60 @@
       const label = document.getElementById(`reps-label-${id}`);
       if (label) label.textContent = type === 'tempo' ? 'seg' : 'reps';
 
-      // Update weight row
+      // Update set row placeholders
       const ex = document.querySelector(`[data-id="${id}"]`);
-      const weightRow = ex?.querySelector('.weight-row');
-      if (weightRow) applyWeightRowType(weightRow, type);
-    }
-
-    function applyWeightRowType(weightRow, type) {
-      const input = weightRow.querySelector('.weight-input');
-      const unit = weightRow.querySelector('.weight-unit');
-      if (input) {
-        input.placeholder = type === 'tempo' ? 'Seg' : 'Peso';
-        input.step = type === 'tempo' ? '1' : '0.5';
+      if (ex) {
+        ex.querySelectorAll('.set-weight').forEach(function(input) {
+          input.placeholder = type === 'tempo' ? 'seg' : 'kg';
+          input.step = type === 'tempo' ? '1' : '0.5';
+        });
       }
-      if (unit) unit.textContent = type === 'tempo' ? 's' : 'kg';
     }
 
     // ========== TIMER ==========
     
+    function playBeep() {
+      try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = 660;
+        gain.gain.value = 0.3;
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+      } catch(e) {}
+    }
+
     function startTimer(seconds) {
       document.getElementById('timerModal').classList.add('active');
       let remaining = seconds;
       updateTimerDisplay(remaining);
-      
+
       if (timerInterval) clearInterval(timerInterval);
       timerInterval = setInterval(() => {
         remaining--;
         updateTimerDisplay(remaining);
         if (remaining <= 0) {
           clearInterval(timerInterval);
+          timerInterval = null;
+          playBeep();
           if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+          showToast('Descanso acabou! Proxima serie!');
           document.getElementById('timerDisplay').textContent = '✓ GO!';
         }
       }, 1000);
     }
-    
+
     function updateTimerDisplay(s) {
-      document.getElementById('timerDisplay').textContent = 
+      var display = document.getElementById('timerDisplay');
+      if (display) display.textContent =
         `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
     }
-    
+
     function closeTimer() {
       document.getElementById('timerModal').classList.remove('active');
-      if (timerInterval) clearInterval(timerInterval);
     }
     
     // ========== UTILS ==========
@@ -4216,7 +4398,18 @@
         cancelBtn.textContent = 'Cancelar';
         cancelBtn.onclick = function() { stopExerciseRecording(true); };
 
+        var picker = document.createElement('div');
+        picker.className = 'record-countdown-picker';
+        picker.id = 'recordCountdownPicker';
+        [3, 5, 10].forEach(function(sec) {
+          var btn = document.createElement('button');
+          btn.textContent = sec + 's';
+          btn.onclick = function() { startRecordingCountdown(sec); };
+          picker.appendChild(btn);
+        });
+
         overlay.appendChild(video);
+        overlay.appendChild(picker);
         overlay.appendChild(countdown);
         overlay.appendChild(timer);
         overlay.appendChild(exLabel);
@@ -4225,42 +4418,51 @@
 
         activeRecording = { stream: stream, exerciseId: exerciseId, exerciseName: exerciseName, cancelled: false };
 
-        // Countdown 3-2-1
-        for (var i = 3; i >= 1; i--) {
-          if (activeRecording.cancelled) return;
-          countdown.textContent = i;
-          await new Promise(function(r) { setTimeout(r, 1000); });
-        }
-        countdown.textContent = '🔴 REC';
-        countdown.style.fontSize = '24px';
-        timer.style.display = 'block';
-
-        // Start recording
-        var mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-        var chunks = [];
-        mediaRecorder.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
-
-        activeRecording.mediaRecorder = mediaRecorder;
-        activeRecording.chunks = chunks;
-        mediaRecorder.start();
-
-        // Timer countdown from 15
-        var remaining = 15;
-        timer.textContent = remaining + 's';
-        var timerInterval = setInterval(function() {
-          remaining--;
-          timer.textContent = remaining + 's';
-          if (remaining <= 0) {
-            clearInterval(timerInterval);
-            stopExerciseRecording(false);
-          }
-        }, 1000);
-        activeRecording.timerInterval = timerInterval;
-
       } catch (e) {
         console.error('Camera error:', e);
         showToast('Erro ao acessar câmera: ' + e.message);
       }
+    }
+
+    async function startRecordingCountdown(seconds) {
+      if (!activeRecording || activeRecording.cancelled) return;
+
+      var picker = document.getElementById('recordCountdownPicker');
+      if (picker) picker.style.display = 'none';
+
+      var countdown = document.getElementById('recordCountdown');
+      var timer = document.getElementById('recordTimer');
+
+      for (var i = seconds; i >= 1; i--) {
+        if (activeRecording.cancelled) return;
+        countdown.textContent = i;
+        await new Promise(function(r) { setTimeout(r, 1000); });
+      }
+      if (activeRecording.cancelled) return;
+      countdown.textContent = '🔴 REC';
+      countdown.style.fontSize = '24px';
+      timer.style.display = 'block';
+
+      var stream = activeRecording.stream;
+      var mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+      var chunks = [];
+      mediaRecorder.ondataavailable = function(e) { if (e.data.size > 0) chunks.push(e.data); };
+
+      activeRecording.mediaRecorder = mediaRecorder;
+      activeRecording.chunks = chunks;
+      mediaRecorder.start();
+
+      var remaining = 15;
+      timer.textContent = remaining + 's';
+      var recInterval = setInterval(function() {
+        remaining--;
+        timer.textContent = remaining + 's';
+        if (remaining <= 0) {
+          clearInterval(recInterval);
+          stopExerciseRecording(false);
+        }
+      }, 1000);
+      activeRecording.timerInterval = recInterval;
     }
 
     function stopExerciseRecording(cancelled) {
@@ -4906,6 +5108,20 @@
       exDiv.className = 'exercise';
       exDiv.dataset.id = id;
       exDiv.dataset.name = name;
+      var numSets = parseInt(sets) || 3;
+      var setsHtml = '<div class="sets-container">';
+      for (var si = 1; si <= numSets; si++) {
+        setsHtml +=
+          '<div class="set-row" data-set="' + si + '">' +
+            '<span class="set-label">' + si + '</span>' +
+            '<input type="number" class="set-weight" placeholder="kg" step="0.5">' +
+            '<span class="set-x">\u00d7</span>' +
+            '<input type="number" class="set-reps" placeholder="reps">' +
+            '<div class="set-check" onclick="toggleSet(this)"></div>' +
+          '</div>';
+      }
+      setsHtml += '</div>';
+
       exDiv.innerHTML =
         '<div class="exercise-header">' +
           '<div class="exercise-number">' + (existingCount + 1) + '</div>' +
@@ -4916,19 +5132,15 @@
               '<span><strong>' + reps + '</strong> reps</span>' +
             '</div>' +
           '</div>' +
-          '<div class="checkbox" onclick="toggleExercise(this)"></div>' +
         '</div>' +
         (note ? '<div class="exercise-note">' + escapeHtml(note) + '</div>' : '') +
-        '<div class="weight-row">' +
-          '<input type="number" class="weight-input" placeholder="Peso" step="0.5" value="' + (s.weight || '') + '" onchange="saveWeight(this)">' +
-          '<span class="weight-unit">kg</span>' +
-        '</div>' +
+        setsHtml +
         '<div class="weight-last" id="last-' + id + '"></div>';
 
       container.appendChild(exDiv);
 
       // Save config
-      exerciseConfigs[id] = { sets: parseInt(sets), reps: reps, rest: 60, type: 'kg' };
+      exerciseConfigs[id] = { sets: numSets, reps: reps, rest: 60, type: 'kg' };
       saveExerciseConfigs();
 
       // Init controls for the new exercise
@@ -4940,14 +5152,8 @@
       }
 
       // Save to custom exercises list for persistence
-      customExercises.push({ id: id, name: name, group: group, note: note, sets: parseInt(sets), reps: reps });
+      customExercises.push({ id: id, name: name, group: group, note: note, sets: numSets, reps: reps });
       localStorage.setItem('custom-exercises', JSON.stringify(customExercises));
-
-      // Save weight to Supabase if provided
-      if (s.weight) {
-        var newWeightInput = exDiv.querySelector('.weight-input');
-        if (newWeightInput) saveWeight(newWeightInput);
-      }
 
       // Load image for the new exercise
       loadSingleExerciseImage(exDiv);
@@ -5544,14 +5750,16 @@
     
     function formatAnalysis(text) {
       return text
+        .replace(/\n{3,}/g, '\n\n')
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
         .replace(/^### (.+)$/gm, '<h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--accent);">$1</h4>')
         .replace(/^## (.+)$/gm, '<h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--accent);">$1</h4>')
         .replace(/^# (.+)$/gm, '<h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--accent);">$1</h4>')
         .replace(/^\d+\. (.+)$/gm, '<p style="margin-left: 16px; margin-bottom: 6px;">• $1</p>')
         .replace(/^- (.+)$/gm, '<p style="margin-left: 16px; margin-bottom: 6px;">• $1</p>')
-        .replace(/\n\n/g, '<div style="margin-bottom: 14px;"></div>')
-        .replace(/\n/g, '<br>');
+        .replace(/\n\n/g, '<div style="margin-bottom: 8px;"></div>')
+        .replace(/\n/g, '<br>')
+        .replace(/<br>\s*<div/g, '<div');
     }
     
     async function saveField(field) {
