@@ -1002,6 +1002,14 @@
       border-bottom-left-radius: 4px;
     }
 
+    .coach-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+
     .chat-bubble.assistant p { margin-bottom: 8px; }
     .chat-bubble.assistant p:last-child { margin-bottom: 0; }
     .chat-bubble.assistant strong { color: var(--accent); }
@@ -1412,7 +1420,7 @@
     <!-- Main Navigation -->
     <div class="main-tabs">
       <button class="main-tab active" onclick="showView('calendar')">📅 Agenda</button>
-      <button class="main-tab" onclick="showView('coach')">🤖 AI Coach</button>
+      <button class="main-tab" onclick="showView('coach')">🤖 Coach AI</button>
       <button class="main-tab" onclick="showView('workouts')">💪 Treino</button>
     </div>
     
@@ -1881,11 +1889,11 @@
       <div id="chatArea" style="display: none;" class="chat-container">
         <div style="padding: 8px 20px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); display: flex; align-items: center; gap: 10px;">
           <button onclick="exitChat()" aria-label="Voltar ao dashboard" style="padding: 8px 14px; background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px;">← Voltar</button>
-          <span style="font-size: 13px; color: var(--text-muted);">Coach IA</span>
+          <span style="font-size: 13px; color: var(--text-muted);">Coach AI</span>
         </div>
         <div class="chat-messages" id="chatMessages"></div>
         <div class="chat-input-area">
-          <textarea class="chat-input" id="chatInput" aria-label="Mensagem para o coach" placeholder="Mensagem ou /ajuda..." rows="1" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendChatMessage()}" oninput="autoResizeChatInput(this)"></textarea>
+          <textarea class="chat-input" id="chatInput" aria-label="Mensagem para o Coach AI" placeholder="Mensagem para Coach AI..." rows="1" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendChatMessage()}" oninput="autoResizeChatInput(this)"></textarea>
           <button class="chat-send-btn" id="chatSendBtn" aria-label="Enviar mensagem" onclick="sendChatMessage()">➤</button>
         </div>
       </div>
@@ -1896,7 +1904,7 @@
         <div class="dashboard-cards" id="dashboardCards"></div>
 
         <button class="chat-start-btn" onclick="startCoachChat()">
-          🤖 Iniciar Conversa com Coach
+          🤖 Iniciar Conversa com Coach AI
         </button>
 
         <!-- Arquivos -->
@@ -2875,7 +2883,7 @@
     // System prompt for the coach
     function buildSystemPrompt() {
       var sg = 'suggestion';
-      return 'Voce e um coach de treino pessoal interativo. Voce conversa em portugues brasileiro, de forma direta e motivadora.\n\n' +
+      return 'Voce e o Coach AI, um coach de treino pessoal interativo. Seu nome e Coach AI. Voce conversa em portugues brasileiro, de forma direta e motivadora.\n\n' +
         'REGRAS:\n' +
         '1. Na PRIMEIRA mensagem, faca 2-3 perguntas sobre como o aluno esta hoje, o que quer treinar, e como se sente.\n' +
         '2. Depois das respostas, de sugestoes praticas e personalizadas.\n' +
@@ -2907,8 +2915,30 @@
         'exercise_name: Nome do exercicio\ndetail: Instrucoes de execucao\n' +
         'sets: 3\nreps: 12\nweight: 0\nworkout_group: upper|lower\n' +
         '</' + sg + '>\n\n' +
+        'Para REMOVER exercicio existente:\n' +
+        '<' + sg + '>\n' +
+        'type: exercicio\naction: remove\nlabel: Nome do exercicio\n' +
+        'exercise_name: Nome EXATO do exercicio (da lista abaixo)\ndetail: Motivo da remocao\n' +
+        '</' + sg + '>\n\n' +
+        'Para SUBSTITUIR exercicio por outro:\n' +
+        '<' + sg + '>\n' +
+        'type: exercicio\naction: replace\nlabel: Nome do exercicio novo\n' +
+        'exercise_name: Nome EXATO do exercicio que sera substituido (da lista abaixo)\n' +
+        'detail: Instrucoes do exercicio substituto\n' +
+        'sets: 3\nreps: 12\nweight: 0\nworkout_group: upper|lower\n' +
+        '</' + sg + '>\n\n' +
+        'Para REORDENAR exercicio (mudar posicao na lista):\n' +
+        '<' + sg + '>\n' +
+        'type: exercicio\naction: reorder\nlabel: Nome do exercicio\n' +
+        'exercise_name: Nome EXATO do exercicio (da lista abaixo)\nposition: 1\n' +
+        'detail: Motivo da mudanca de ordem\n' +
+        '</' + sg + '>\n\n' +
         'Tipos validos de activity_type: corrida, surf, tenis, bike, fisio, upper, lower, caminhada, descanso, mobilidade\n' +
         'Use <' + sg + '> APENAS quando tiver sugestoes concretas e acionaveis. Nao use em perguntas iniciais.\n\n' +
+        'GESTAO DE TREINOS DE MUSCULACAO:\n' +
+        'Voce tem controle total sobre os treinos de musculacao do aluno. Pode modificar sets/reps/peso, adicionar exercicios novos, remover exercicios desnecessarios, substituir exercicios e mudar a ordem dos exercicios.\n' +
+        'Quando o aluno pedir mudancas no treino (ex: "muda meu treino", "troca exercicio tal", "tira esse exercicio", "muda a ordem"), use os blocos de sugestao com action: modify, add, remove, replace ou reorder.\n' +
+        'Seja proativo: se perceber que o treino pode melhorar com base no objetivo, dores ou historico do aluno, sugira mudancas.\n\n' +
         'EXERCICIOS ATUAIS DO ALUNO (use estes nomes exatos para exercise_name):\n' +
         buildExerciseNameList().join(', ');
     }
@@ -3029,7 +3059,7 @@
         chatMessages = [];
         chatActive = false;
         localStorage.removeItem('chat-messages');
-        addChatBubble('Erro ao conectar com o coach: ' + e.message, 'assistant');
+        addChatBubble('Erro ao conectar com o Coach AI: ' + e.message, 'assistant');
         console.error('Coach API error:', e);
       } finally {
         chatInput.disabled = false;
@@ -3212,7 +3242,7 @@
       if (role === 'user') {
         bubble.textContent = text;
       } else {
-        bubble.innerHTML = formatAnalysis(text);
+        bubble.innerHTML = '<div class="coach-name">🤖 Coach AI</div>' + formatAnalysis(text);
       }
       container.appendChild(bubble);
       scrollChatToBottom();
@@ -3237,7 +3267,7 @@
       if (cleanText) {
         const bubble = document.createElement('div');
         bubble.className = 'chat-bubble assistant';
-        bubble.innerHTML = formatAnalysis(cleanText);
+        bubble.innerHTML = '<div class="coach-name">🤖 Coach AI</div>' + formatAnalysis(cleanText);
         container.appendChild(bubble);
       }
 
@@ -3276,8 +3306,11 @@
       card.className = 'suggestion-card';
       card.id = 'suggestion-' + idx;
 
-      const emoji = s.activity_type ? (activityEmojis[s.activity_type] || '📋') : '💡';
-      const badge = s.type === 'atividade' ? 'Atividade' : (s.type === 'exercicio' ? 'Exercício' : 'Sugestão');
+      var action = (s.action || '').toLowerCase();
+      const emojiMap = { remove: '🗑️', replace: '🔄', reorder: '↕️' };
+      const badgeMap = { remove: 'Remover', replace: 'Substituir', reorder: 'Reordenar' };
+      const emoji = s.activity_type ? (activityEmojis[s.activity_type] || '📋') : (emojiMap[action] || '💡');
+      const badge = s.type === 'atividade' ? 'Atividade' : (s.type === 'exercicio' ? (badgeMap[action] || 'Exercício') : 'Sugestão');
 
       let detailHtml = s.detail || '';
       if (s.date) {
@@ -3287,6 +3320,7 @@
         var dayName = dayNames[dateObj.getDay()];
         detailHtml = '📅 ' + dayName + ' ' + dateParts[2] + '/' + dateParts[1] + (detailHtml ? ' — ' + detailHtml : '');
       }
+      if (s.position && action === 'reorder') detailHtml += (detailHtml ? ' | ' : '') + '→ Posição ' + s.position;
       if (s.sets) detailHtml += ' | ' + s.sets + ' series';
       if (s.reps) detailHtml += ' x ' + s.reps + ' reps';
       if (s.weight) detailHtml += ' | ' + s.weight + 'kg';
@@ -3336,6 +3370,38 @@
     }
 
     function applyExerciseSuggestion(s) {
+      var action = (s.action || 'modify').toLowerCase();
+
+      // Handle remove action
+      if (action === 'remove') {
+        return removeExercise(s.exercise_name || s.label);
+      }
+
+      // Handle reorder action
+      if (action === 'reorder') {
+        return reorderExercise(s.exercise_name || s.label, parseInt(s.position) || 1);
+      }
+
+      // Handle replace action: remove old, add new
+      if (action === 'replace') {
+        var oldEl = findExerciseByName(s.exercise_name || '');
+        if (oldEl) {
+          var oldName = oldEl.dataset.name || oldEl.querySelector('.exercise-name')?.textContent || '';
+          var group = s.workout_group || (oldEl.closest('#perna') ? 'lower' : 'upper');
+          removeExercise(s.exercise_name);
+          s.workout_group = group;
+          s.exercise_name = s.label;
+          addNewExercise(s);
+          showToast(oldName + ' substituído por ' + s.label + '!');
+          return true;
+        } else {
+          // Old exercise not found, just add the new one
+          addNewExercise(s);
+          return true;
+        }
+      }
+
+      // Handle modify/add actions
       var exerciseEl = findExerciseByName(s.exercise_name || s.label);
       if (exerciseEl) {
         // Update existing exercise
@@ -3363,6 +3429,86 @@
         addNewExercise(s);
         return true;
       }
+    }
+
+    function removeExercise(name) {
+      var exerciseEl = findExerciseByName(name);
+      if (!exerciseEl) {
+        showToast('Exercício "' + name + '" não encontrado.');
+        return false;
+      }
+
+      var id = exerciseEl.dataset.id;
+      var exName = exerciseEl.dataset.name || exerciseEl.querySelector('.exercise-name')?.textContent || name;
+
+      // Remove from DOM
+      exerciseEl.remove();
+
+      // Remove from exerciseConfigs
+      delete exerciseConfigs[id];
+      saveExerciseConfigs();
+
+      // Remove from custom exercises if it's a custom one
+      if (id.startsWith('c')) {
+        try {
+          var custom = JSON.parse(localStorage.getItem('custom-exercises') || '[]');
+          custom = custom.filter(function(c) { return c.id !== id; });
+          localStorage.setItem('custom-exercises', JSON.stringify(custom));
+        } catch(e) {}
+      }
+
+      // Renumber remaining exercises in the container
+      var containers = [document.getElementById('braco'), document.getElementById('perna')];
+      containers.forEach(function(container) {
+        if (!container) return;
+        var exercises = container.querySelectorAll('.exercise');
+        exercises.forEach(function(ex, i) {
+          var numEl = ex.querySelector('.exercise-number');
+          if (numEl) numEl.textContent = (i + 1);
+        });
+      });
+
+      showToast('Exercício ' + exName + ' removido!');
+      return true;
+    }
+
+    function reorderExercise(name, newPosition) {
+      var exerciseEl = findExerciseByName(name);
+      if (!exerciseEl) {
+        showToast('Exercício "' + name + '" não encontrado.');
+        return false;
+      }
+
+      var container = exerciseEl.parentElement;
+      var exercises = Array.from(container.querySelectorAll('.exercise'));
+      var currentIndex = exercises.indexOf(exerciseEl);
+      var targetIndex = Math.max(0, Math.min(newPosition - 1, exercises.length - 1));
+
+      if (currentIndex === targetIndex) {
+        showToast('Exercício já está na posição ' + newPosition + '.');
+        return true;
+      }
+
+      // Remove from current position
+      exerciseEl.remove();
+
+      // Insert at new position
+      var updatedExercises = container.querySelectorAll('.exercise');
+      if (targetIndex >= updatedExercises.length) {
+        container.appendChild(exerciseEl);
+      } else {
+        container.insertBefore(exerciseEl, updatedExercises[targetIndex]);
+      }
+
+      // Renumber all exercises
+      container.querySelectorAll('.exercise').forEach(function(ex, i) {
+        var numEl = ex.querySelector('.exercise-number');
+        if (numEl) numEl.textContent = (i + 1);
+      });
+
+      var exName = exerciseEl.dataset.name || exerciseEl.querySelector('.exercise-name')?.textContent || name;
+      showToast(exName + ' movido para posição ' + (targetIndex + 1) + '!');
+      return true;
     }
 
     function addNewExercise(s) {
@@ -3475,8 +3621,11 @@
       card.classList.add('accepted');
 
       if (s.type === 'exercicio') {
-        card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Exercício atualizado</span>';
+        var exAction = (s.action || 'modify').toLowerCase();
+        var exLabelMap = { remove: 'Exercício removido', replace: 'Exercício substituído', add: 'Exercício adicionado', reorder: 'Exercício reordenado' };
+        var exLabel = exLabelMap[exAction] || 'Exercício atualizado';
         applyExerciseSuggestion(s);
+        card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">' + exLabel + '</span>';
         return;
       }
 
@@ -3572,7 +3721,7 @@
       const typing = document.createElement('div');
       typing.className = 'chat-typing';
       typing.id = 'chatTyping';
-      typing.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+      typing.innerHTML = '<div class="coach-name">🤖 Coach AI</div><div style="display:flex;gap:4px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
       container.appendChild(typing);
       scrollChatToBottom();
     }
