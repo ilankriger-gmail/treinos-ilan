@@ -1826,6 +1826,28 @@
       scrollbar-color: rgba(255,255,255,0.08) transparent;
     }
 
+    /* Coach FAB */
+    .coach-fab {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 48px;
+      height: 48px;
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 99;
+      transition: background 0.2s;
+    }
+    .coach-fab:hover { background: var(--accent-dark); }
+    .coach-fab.visible { display: flex; }
+
     /* 6.4 Touch feedback on calendar */
     .calendar-day:active { background: var(--bg-hover); }
     .activity-btn:active { background: var(--bg-hover); }
@@ -2737,6 +2759,8 @@
     </div>
   </div>
   
+  <button class="coach-fab" id="coachFab" onclick="openCoachFromFab()" aria-label="Abrir Coach AI">🤖</button>
+
   <div class="timer-modal" id="timerModal">
     <div class="timer-label">Descanso</div>
     <div class="timer-display" id="timerDisplay">00:00</div>
@@ -2959,7 +2983,11 @@
     
     // ========== VIEWS ==========
     
+    var currentView = 'calendar';
+    var previousView = null;
+
     function showView(view) {
+      currentView = view;
       document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
       document.querySelectorAll('.main-tab').forEach(function(t) { t.classList.remove('active'); });
       document.getElementById(view + 'View').classList.add('active');
@@ -2968,6 +2996,14 @@
       var tabMap = { 'calendar': 0, 'coach': 1, 'workouts': 2 };
       var tabs = document.querySelectorAll('.main-tab');
       if (tabs[tabMap[view]]) tabs[tabMap[view]].classList.add('active');
+
+      // Show FAB on non-coach tabs, hide on coach
+      var fab = document.getElementById('coachFab');
+      if (view === 'coach') {
+        fab.classList.remove('visible');
+      } else {
+        fab.classList.add('visible');
+      }
 
       if (view === 'workouts') {
         renderWeeklySchedule();
@@ -4371,6 +4407,18 @@
       document.getElementById('chatArea').style.display = 'none';
       document.getElementById('chatStartArea').style.display = 'block';
       renderDashboardCards();
+      // Return to previous view if came from FAB
+      if (previousView && previousView !== 'coach') {
+        var returnTo = previousView;
+        previousView = null;
+        showView(returnTo);
+      }
+    }
+
+    function openCoachFromFab() {
+      previousView = currentView;
+      showView('coach');
+      startCoachChat();
     }
 
     async function startCoachChat() {
@@ -6347,6 +6395,9 @@
       });
       // Load exercise images after a delay (non-blocking)
       setTimeout(loadExerciseImages, 1000);
+
+      // Show coach FAB on initial view (calendar)
+      document.getElementById('coachFab').classList.add('visible');
 
       // Render weekly schedule
       renderWeeklySchedule();
