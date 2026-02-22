@@ -2,7 +2,7 @@ export const config = {
   runtime: 'edge',
 };
 
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const ANTHROPIC_API_KEY = (process.env.ANTHROPIC_API_KEY || '').trim();
 
 export default async function handler(req) {
   if (req.method === 'OPTIONS') {
@@ -60,9 +60,9 @@ export default async function handler(req) {
 
     if (!response.ok) {
       const error = await response.text();
-      return new Response(JSON.stringify({ error }), {
+      return new Response(JSON.stringify({ error, _debug: { keyLen: ANTHROPIC_API_KEY.length, keyEnd: ANTHROPIC_API_KEY.slice(-4), status: response.status } }), {
         status: response.status,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
 

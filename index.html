@@ -41,12 +41,14 @@
       color: var(--text-primary);
       min-height: 100vh;
       line-height: 1.5;
+      overflow-x: hidden;
     }
     
     .container {
       max-width: 600px;
       margin: 0 auto;
       padding-bottom: 100px;
+      overflow-x: hidden;
     }
     
     header {
@@ -191,7 +193,7 @@
     }
     
     /* Views */
-    .view { display: none; }
+    .view { display: none; max-width: 100%; overflow-x: hidden; }
     .view.active { display: block; }
     
     /* Calendar View */
@@ -953,6 +955,7 @@
       font-size: 14px;
       line-height: 1.6;
       word-wrap: break-word;
+      overflow-wrap: break-word;
       box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     }
 
@@ -1158,11 +1161,12 @@
     .suggestion-reject:hover { background: rgba(239, 68, 68, 0.1); }
 
     .exercise-img {
-      width: 60px;
-      height: 60px;
+      width: 48px;
+      height: 48px;
       border-radius: 8px;
       object-fit: cover;
       background: var(--bg-tertiary);
+      flex-shrink: 0;
     }
 
     /* Editable exercise stat inputs */
@@ -1853,7 +1857,7 @@
         </div>
         <div class="chat-messages" id="chatMessages"></div>
         <div class="chat-input-area">
-          <textarea class="chat-input" id="chatInput" aria-label="Mensagem para o coach" placeholder="Digite sua mensagem..." rows="1" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendChatMessage()}" oninput="autoResizeChatInput(this)"></textarea>
+          <textarea class="chat-input" id="chatInput" aria-label="Mensagem para o coach" placeholder="Mensagem ou /ajuda..." rows="1" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendChatMessage()}" oninput="autoResizeChatInput(this)"></textarea>
           <button class="chat-send-btn" id="chatSendBtn" aria-label="Enviar mensagem" onclick="sendChatMessage()">➤</button>
         </div>
       </div>
@@ -2708,17 +2712,99 @@
     let chatMessages = []; // multi-turn history
     let chatActive = false;
 
+    // ========== DYNAMIC WORKOUT DATA ==========
+
+    function buildDynamicWorkoutText() {
+      var upper = [];
+      var lower = [];
+      document.querySelectorAll('#braco .exercise[data-id]').forEach(function(ex) {
+        var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
+        var id = ex.dataset.id;
+        var cfg = exerciseConfigs[id] || {};
+        var sets = cfg.sets || 3;
+        var reps = cfg.reps || '10';
+        var unit = cfg.type === 'tempo' ? 's' : 'reps';
+        upper.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : ''));
+      });
+      document.querySelectorAll('#perna .exercise[data-id]').forEach(function(ex) {
+        var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
+        var id = ex.dataset.id;
+        var cfg = exerciseConfigs[id] || {};
+        var sets = cfg.sets || 3;
+        var reps = cfg.reps || '10';
+        var unit = cfg.type === 'tempo' ? 's' : 'reps';
+        lower.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : ''));
+      });
+      return 'Upper: ' + (upper.join(', ') || 'Nenhum') + '\n' +
+             'Lower: ' + (lower.join(', ') || 'Nenhum');
+    }
+
+    function buildExerciseNameList() {
+      var names = [];
+      document.querySelectorAll('.exercise[data-id]').forEach(function(ex) {
+        var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
+        var group = ex.closest('#braco') ? 'upper' : 'lower';
+        if (name) names.push(name + ' (' + group + ')');
+      });
+      // Include custom exercises
+      try {
+        var custom = JSON.parse(localStorage.getItem('custom-exercises') || '[]');
+        custom.forEach(function(c) {
+          if (c.name) names.push(c.name + ' (' + (c.group || 'upper') + ', custom)');
+        });
+      } catch(e) {}
+      return names;
+    }
+
     // Exercise image cache
     const exerciseImageCache = {};
     const exerciseNameMap = {
-      'remada': 'row', 'crucifixo': 'fly', 'supino': 'bench press',
-      'biceps': 'bicep curl', 'triceps': 'tricep', 'agachamento': 'squat',
-      'afundo': 'lunge', 'panturrilha': 'calf raise', 'ponte': 'bridge',
+      'remada aberta': 'bent over row', 'remada fechada': 'cable row',
+      'remada': 'row', 'crucifixo inclinado': 'incline fly',
+      'crucifixo inverso': 'reverse fly', 'crucifixo': 'fly',
+      'supino reto': 'bench press', 'supino inclinado': 'incline bench press',
+      'supino': 'bench press',
+      'biceps barra': 'barbell curl', 'biceps': 'bicep curl',
+      'triceps corda': 'tricep pushdown', 'triceps': 'tricep',
+      'agachamento espanhol': 'spanish squat', 'agachamento': 'squat',
+      'afundo': 'lunge', 'panturrilha': 'calf raise',
+      'ponte bipodal': 'glute bridge', 'ponte': 'bridge',
       'face pull': 'face pull', 'cadeira flexora': 'leg curl',
-      'cadeira solear': 'seated calf raise', 'corrida': 'running',
+      'cadeira solear': 'seated calf raise', 'solear': 'seated calf raise',
+      'isometria': 'isometric', 'corrida': 'running',
       'abdominais': 'crunch', 'prancha': 'plank', 'leg press': 'leg press',
-      'elevacao lateral': 'lateral raise', 'desenvolvimento': 'shoulder press'
+      'elevacao lateral': 'lateral raise', 'desenvolvimento': 'shoulder press',
+      'rosca': 'curl', 'extensao': 'extension', 'pulley': 'lat pulldown'
     };
+
+    function loadExerciseImages() {
+      document.querySelectorAll('.exercise[data-id]').forEach(function(ex) {
+        loadSingleExerciseImage(ex);
+      });
+    }
+
+    async function loadSingleExerciseImage(ex) {
+      // Skip if already has image
+      if (ex.querySelector('.exercise-img')) return;
+      var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
+      if (!name) return;
+
+      var url = await fetchExerciseImage(name);
+      if (url) {
+        var header = ex.querySelector('.exercise-header');
+        var numberEl = header?.querySelector('.exercise-number');
+        if (header && numberEl) {
+          var img = document.createElement('img');
+          img.className = 'exercise-img';
+          img.src = url;
+          img.alt = name;
+          img.loading = 'lazy';
+          img.onerror = function() { this.remove(); };
+          // Insert after number, before info
+          numberEl.insertAdjacentElement('afterend', img);
+        }
+      }
+    }
 
     function toggleChatProfile() {
       const details = document.getElementById('chatProfileDetails');
@@ -2759,11 +2845,19 @@
         '</' + sg + '>\n\n' +
         '<' + sg + '>\n' +
         'type: exercicio\naction: modify\nlabel: Nome do exercicio\n' +
-        'exercise_name: Nome do exercicio\ndetail: O que mudar no exercicio\n' +
-        'sets: 3\nreps: 12\nweight: 20\n' +
+        'exercise_name: Nome EXATO do exercicio (da lista abaixo)\ndetail: O que mudar no exercicio\n' +
+        'sets: 3\nreps: 12\nweight: 20\nworkout_group: upper|lower\n' +
+        '</' + sg + '>\n\n' +
+        'Para adicionar exercicio NOVO:\n' +
+        '<' + sg + '>\n' +
+        'type: exercicio\naction: add\nlabel: Nome do exercicio novo\n' +
+        'exercise_name: Nome do exercicio\ndetail: Instrucoes de execucao\n' +
+        'sets: 3\nreps: 12\nweight: 0\nworkout_group: upper|lower\n' +
         '</' + sg + '>\n\n' +
         'Tipos validos de activity_type: corrida, surf, tenis, bike, fisio, upper, lower\n' +
-        'Use <' + sg + '> APENAS quando tiver sugestoes concretas e acionaveis. Nao use em perguntas iniciais.';
+        'Use <' + sg + '> APENAS quando tiver sugestoes concretas e acionaveis. Nao use em perguntas iniciais.\n\n' +
+        'EXERCICIOS ATUAIS DO ALUNO (use estes nomes exatos para exercise_name):\n' +
+        buildExerciseNameList().join(', ');
     }
 
     async function gatherCoachContext() {
@@ -2810,8 +2904,7 @@
         'Dores/Problemas: ' + dores + '\n' +
         'Estado hoje: ' + estado + '\n\n' +
         '## TREINO ATUAL\n' +
-        'Upper: Remada Aberta 3x10-12, Crucifixo Inclinado 3x10-12, Remada Fechada 3x10-12, Crucifixo Inverso 3x15, Face Pull 4x15-20, Triceps Corda 3x12-15, Supino Reto 3x10-12, Biceps Barra W 3x12-15\n' +
-        'Lower: Isometria Abducao 5x45s, Ponte Bipodal 3x15-20, Agachamento Espanhol 3x10, Afundo 3x10, Cadeira Flexora 3x12-15, Panturrilha Step 3x15-20, Solear 3x15-20\n\n' +
+        buildDynamicWorkoutText() + '\n\n' +
         '## HISTORICO RECENTE\n' +
         (workoutHistory.length > 0 ? JSON.stringify(workoutHistory.slice(0, 5)) : 'Nenhum') + '\n\n' +
         '## ULTIMOS PESOS\n' +
@@ -2879,12 +2972,110 @@
         saveChatToStorage();
       } catch (e) {
         removeTypingIndicator();
+        // Reset chatMessages so user can retry without consecutive user messages
+        chatMessages = [];
+        chatActive = false;
+        localStorage.removeItem('chat-messages');
         addChatBubble('Erro ao conectar com o coach: ' + e.message, 'assistant');
         console.error('Coach API error:', e);
       } finally {
         chatInput.disabled = false;
         chatSendBtn.disabled = false;
         chatInput.focus();
+      }
+    }
+
+    // ========== CHAT COMMANDS ==========
+
+    function handleChatCommand(text) {
+      var cmd = text.toLowerCase().split(/\s+/)[0];
+      switch (cmd) {
+        case '/ajuda': cmdAjuda(); return true;
+        case '/treino': cmdTreino(); return true;
+        case '/reset': cmdReset(); return true;
+        case '/relatorio': cmdRelatorio(); return true;
+        default: return false;
+      }
+    }
+
+    function cmdAjuda() {
+      var helpText = '**Comandos disponíveis:**\n\n' +
+        '`/treino` — Mostra seu treino atual com séries, reps e pesos\n' +
+        '`/relatorio` — Pede um relatório completo ao coach (perfil, progresso, recomendações)\n' +
+        '`/reset` — Limpa a conversa e recomeça do zero\n' +
+        '`/ajuda` — Lista estes comandos';
+      addChatBubble(helpText, 'assistant');
+    }
+
+    function cmdTreino() {
+      var text = '**Treino Atual Configurado:**\n\n';
+      text += '**💪 Upper Body:**\n';
+      document.querySelectorAll('#braco .exercise[data-id]').forEach(function(ex, i) {
+        var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
+        var id = ex.dataset.id;
+        var cfg = exerciseConfigs[id] || {};
+        var sets = cfg.sets || 3;
+        var reps = cfg.reps || '10';
+        var unit = cfg.type === 'tempo' ? 's' : '';
+        var weight = ex.querySelector('.weight-input')?.value;
+        text += (i + 1) + '. ' + name + ' — ' + sets + 'x' + reps + unit;
+        if (weight) text += ' | ' + weight + (cfg.type === 'tempo' ? 's' : 'kg');
+        text += '\n';
+      });
+      text += '\n**🦵 Lower Body:**\n';
+      document.querySelectorAll('#perna .exercise[data-id]').forEach(function(ex, i) {
+        var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
+        var id = ex.dataset.id;
+        var cfg = exerciseConfigs[id] || {};
+        var sets = cfg.sets || 3;
+        var reps = cfg.reps || '10';
+        var unit = cfg.type === 'tempo' ? 's' : '';
+        var weight = ex.querySelector('.weight-input')?.value;
+        text += (i + 1) + '. ' + name + ' — ' + sets + 'x' + reps + unit;
+        if (weight) text += ' | ' + weight + (cfg.type === 'tempo' ? 's' : 'kg');
+        text += '\n';
+      });
+      addChatBubble(text, 'assistant');
+    }
+
+    function cmdReset() {
+      chatMessages = [];
+      localStorage.removeItem('chat-messages');
+      localStorage.removeItem('chat-date');
+      document.getElementById('chatMessages').innerHTML = '';
+      addChatBubble('Conversa reiniciada. Clique em "Voltar" e inicie novamente para um novo contexto.', 'assistant');
+    }
+
+    async function cmdRelatorio() {
+      addTypingIndicator();
+      scrollChatToBottom();
+      var sendBtn = document.getElementById('chatSendBtn');
+      sendBtn.disabled = true;
+
+      try {
+        var context = await gatherCoachContext();
+        var relatorioPrompt = 'Gere um RELATÓRIO COMPLETO e detalhado sobre este aluno. Inclua:\n' +
+          '1. Resumo do perfil e estado atual\n' +
+          '2. Análise do progresso recente (baseado no histórico e calendário)\n' +
+          '3. Pontos fortes e pontos de atenção\n' +
+          '4. Recomendações específicas para os próximos treinos\n' +
+          '5. Sugestões de ajuste na rotina\n\n' +
+          'Contexto do aluno:\n' + context;
+
+        chatMessages.push({ role: 'user', content: relatorioPrompt });
+        var response = await callCoachAPI(chatMessages);
+        chatMessages.push({ role: 'assistant', content: response });
+        removeTypingIndicator();
+        renderAssistantMessage(response);
+        saveChatToStorage();
+      } catch (e) {
+        removeTypingIndicator();
+        chatMessages.pop();
+        addChatBubble('Erro ao gerar relatório: ' + e.message, 'assistant');
+        console.error(e);
+      } finally {
+        sendBtn.disabled = false;
+        scrollChatToBottom();
       }
     }
 
@@ -2895,6 +3086,15 @@
 
       input.value = '';
       input.style.height = 'auto';
+
+      // Check for commands
+      if (text.startsWith('/')) {
+        if (handleChatCommand(text)) return;
+        // Unknown command
+        addChatBubble('Comando desconhecido. Use `/ajuda` para ver os comandos disponíveis.', 'assistant');
+        return;
+      }
+
       addChatBubble(text, 'user');
 
       chatMessages.push({ role: 'user', content: text });
@@ -2923,19 +3123,28 @@
     }
 
     async function callCoachAPI(messages) {
+      // Ensure messages alternate user/assistant (merge consecutive user messages)
+      var cleaned = [];
+      for (var i = 0; i < messages.length; i++) {
+        if (cleaned.length > 0 && messages[i].role === cleaned[cleaned.length - 1].role) {
+          cleaned[cleaned.length - 1].content += '\n\n' + messages[i].content;
+        } else {
+          cleaned.push({ role: messages[i].role, content: messages[i].content });
+        }
+      }
       var response = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           system: buildSystemPrompt(),
-          messages: messages
+          messages: cleaned
         })
       });
 
       if (!response.ok) {
         var errorText = await response.text();
         console.error('API response error:', response.status, errorText);
-        throw new Error('API ' + response.status + ': ' + errorText.substring(0, 100));
+        throw new Error('API ' + response.status + ': ' + errorText.substring(0, 300));
       }
 
       var data = await response.json();
@@ -3041,10 +3250,176 @@
       return card;
     }
 
+    function findExerciseByName(name) {
+      if (!name) return null;
+      var nameLower = name.toLowerCase().trim();
+      var exercises = document.querySelectorAll('.exercise[data-id]');
+      // Exact match first
+      for (var i = 0; i < exercises.length; i++) {
+        var exName = (exercises[i].dataset.name || exercises[i].querySelector('.exercise-name')?.textContent || '').toLowerCase().trim();
+        if (exName === nameLower) return exercises[i];
+      }
+      // Fuzzy: check if one contains the other
+      for (var i = 0; i < exercises.length; i++) {
+        var exName = (exercises[i].dataset.name || exercises[i].querySelector('.exercise-name')?.textContent || '').toLowerCase().trim();
+        if (exName.includes(nameLower) || nameLower.includes(exName)) return exercises[i];
+      }
+      // Word overlap
+      var searchWords = nameLower.split(/\s+/);
+      for (var i = 0; i < exercises.length; i++) {
+        var exName = (exercises[i].dataset.name || exercises[i].querySelector('.exercise-name')?.textContent || '').toLowerCase().trim();
+        var exWords = exName.split(/\s+/);
+        var overlap = searchWords.filter(function(w) { return exWords.indexOf(w) !== -1; }).length;
+        if (overlap >= 2 || (overlap >= 1 && searchWords.length === 1)) return exercises[i];
+      }
+      return null;
+    }
+
+    function applyExerciseSuggestion(s) {
+      var exerciseEl = findExerciseByName(s.exercise_name || s.label);
+      if (exerciseEl) {
+        // Update existing exercise
+        var id = exerciseEl.dataset.id;
+        if (!exerciseConfigs[id]) exerciseConfigs[id] = {};
+        if (s.sets) {
+          exerciseConfigs[id].sets = parseInt(s.sets);
+          var setsInput = exerciseEl.querySelector('.stat-input');
+          if (setsInput) setsInput.value = s.sets;
+        }
+        if (s.reps) {
+          exerciseConfigs[id].reps = s.reps;
+          var inputs = exerciseEl.querySelectorAll('.stat-input');
+          if (inputs.length >= 2) inputs[1].value = s.reps;
+        }
+        if (s.weight) {
+          var weightInput = exerciseEl.querySelector('.weight-input');
+          if (weightInput) weightInput.value = s.weight;
+        }
+        saveExerciseConfigs();
+        showToast('Exercício ' + (s.exercise_name || s.label) + ' atualizado!');
+        return true;
+      } else {
+        // Add new exercise
+        addNewExercise(s);
+        return true;
+      }
+    }
+
+    function addNewExercise(s) {
+      var group = (s.workout_group || 'upper').toLowerCase();
+      var container = group === 'lower' ? document.getElementById('perna') : document.getElementById('braco');
+      if (!container) return;
+
+      // Generate unique id
+      var customExercises = [];
+      try { customExercises = JSON.parse(localStorage.getItem('custom-exercises') || '[]'); } catch(e) {}
+      var nextNum = customExercises.length + 1;
+      var id = 'c' + nextNum;
+
+      var sets = s.sets || 3;
+      var reps = s.reps || '10';
+      var name = s.exercise_name || s.label || 'Novo Exercício';
+      var note = s.detail || '';
+
+      var existingCount = container.querySelectorAll('.exercise').length;
+
+      var exDiv = document.createElement('div');
+      exDiv.className = 'exercise';
+      exDiv.dataset.id = id;
+      exDiv.dataset.name = name;
+      exDiv.innerHTML =
+        '<div class="exercise-header">' +
+          '<div class="exercise-number">' + (existingCount + 1) + '</div>' +
+          '<div class="exercise-info">' +
+            '<div class="exercise-name">' + escapeHtml(name) + '</div>' +
+            '<div class="exercise-stats">' +
+              '<span><strong>' + sets + '</strong> séries</span>' +
+              '<span><strong>' + reps + '</strong> reps</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="checkbox" onclick="toggleExercise(this)"></div>' +
+        '</div>' +
+        (note ? '<div class="exercise-note">' + escapeHtml(note) + '</div>' : '') +
+        '<div class="weight-row">' +
+          '<input type="number" class="weight-input" placeholder="Peso" step="0.5" value="' + (s.weight || '') + '" onchange="saveWeight(this)">' +
+          '<span class="weight-unit">kg</span>' +
+        '</div>' +
+        '<div class="weight-last" id="last-' + id + '"></div>';
+
+      container.appendChild(exDiv);
+
+      // Save config
+      exerciseConfigs[id] = { sets: parseInt(sets), reps: reps, rest: 60, type: 'kg' };
+      saveExerciseConfigs();
+
+      // Init controls for the new exercise
+      var statsEl = exDiv.querySelector('.exercise-stats');
+      if (statsEl) {
+        statsEl.innerHTML =
+          '<span><input type="number" class="stat-input" value="' + sets + '" min="1" max="20" onchange="updateExConfig(\'' + id + '\', \'sets\', this.value)"> séries</span>' +
+          '<span><input type="text" class="stat-input stat-input-wide" value="' + reps + '" onchange="updateExConfig(\'' + id + '\', \'reps\', this.value)"> <span id="reps-label-' + id + '">reps</span></span>';
+      }
+
+      // Save to custom exercises list for persistence
+      customExercises.push({ id: id, name: name, group: group, note: note, sets: parseInt(sets), reps: reps });
+      localStorage.setItem('custom-exercises', JSON.stringify(customExercises));
+
+      // Load image for the new exercise
+      loadSingleExerciseImage(exDiv);
+
+      showToast('Exercício ' + name + ' adicionado!');
+    }
+
+    function loadCustomExercises() {
+      try {
+        var custom = JSON.parse(localStorage.getItem('custom-exercises') || '[]');
+        custom.forEach(function(c) {
+          // Check if already exists in DOM
+          if (document.querySelector('[data-id="' + c.id + '"]')) return;
+          var container = c.group === 'lower' ? document.getElementById('perna') : document.getElementById('braco');
+          if (!container) return;
+
+          var existingCount = container.querySelectorAll('.exercise').length;
+
+          var exDiv = document.createElement('div');
+          exDiv.className = 'exercise';
+          exDiv.dataset.id = c.id;
+          exDiv.dataset.name = c.name;
+          exDiv.innerHTML =
+            '<div class="exercise-header">' +
+              '<div class="exercise-number">' + (existingCount + 1) + '</div>' +
+              '<div class="exercise-info">' +
+                '<div class="exercise-name">' + escapeHtml(c.name) + '</div>' +
+                '<div class="exercise-stats">' +
+                  '<span><strong>' + (c.sets || 3) + '</strong> séries</span>' +
+                  '<span><strong>' + (c.reps || '10') + '</strong> reps</span>' +
+                '</div>' +
+              '</div>' +
+              '<div class="checkbox" onclick="toggleExercise(this)"></div>' +
+            '</div>' +
+            (c.note ? '<div class="exercise-note">' + escapeHtml(c.note) + '</div>' : '') +
+            '<div class="weight-row">' +
+              '<input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">' +
+              '<span class="weight-unit">kg</span>' +
+            '</div>' +
+            '<div class="weight-last" id="last-' + c.id + '"></div>';
+
+          container.appendChild(exDiv);
+        });
+      } catch(e) { console.error('loadCustomExercises:', e); }
+    }
+
     async function acceptSuggestion(idx, btn) {
       const card = btn.closest('.suggestion-card');
       const s = JSON.parse(card.dataset.suggestion);
       card.classList.add('accepted');
+
+      if (s.type === 'exercicio') {
+        card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Exercício atualizado</span>';
+        applyExerciseSuggestion(s);
+        return;
+      }
+
       card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Adicionado ao calendario</span>';
 
       const validTypes = ['corrida', 'surf', 'tenis', 'bike', 'fisio', 'upper', 'lower'];
@@ -3828,6 +4203,7 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
+      loadCustomExercises();
       initExerciseControls();
       loadUploadedFiles();
       loadProgress();
@@ -3837,6 +4213,8 @@
       Promise.all([loadActivities(), loadProfile()]).then(function() {
         renderDashboardCards();
       });
+      // Load exercise images after a delay (non-blocking)
+      setTimeout(loadExerciseImages, 1000);
     });
   </script>
 </body>
