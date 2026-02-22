@@ -404,15 +404,18 @@
     .workout-tabs {
       display: flex;
       padding: 12px 20px;
-      gap: 8px;
+      gap: 6px;
       border-bottom: 1px solid var(--border);
-      flex-wrap: wrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
+    .workout-tabs::-webkit-scrollbar { display: none; }
 
     .workout-tab {
-      flex: 1 1 auto;
-      min-width: 0;
-      padding: 10px 8px;
+      flex: 0 0 auto;
+      white-space: nowrap;
+      padding: 10px 12px;
       border: 1px solid var(--border);
       border-radius: 8px;
       font-size: 13px;
@@ -422,11 +425,207 @@
       color: var(--text-secondary);
       font-family: 'Inter', sans-serif;
     }
-    
+
     .workout-tab.active {
       background: var(--accent-dim);
       border-color: var(--accent);
       color: var(--accent);
+    }
+
+    .workout-tab-separator {
+      flex: 0 0 auto;
+      width: 1px;
+      background: var(--border);
+      margin: 4px 2px;
+    }
+
+    /* Weekly Schedule Banner */
+    .schedule-banner {
+      padding: 14px 20px;
+      background: var(--accent-dim);
+      border-bottom: 1px solid var(--border);
+    }
+    .schedule-today {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text-primary);
+    }
+    .schedule-week {
+      display: flex;
+      gap: 6px;
+      justify-content: space-between;
+    }
+    .schedule-day {
+      flex: 1;
+      text-align: center;
+      padding: 6px 2px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: var(--surface);
+      border: 1px solid transparent;
+    }
+    .schedule-day.today {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+      font-weight: 700;
+    }
+    .schedule-day .day-label { display: block; font-size: 10px; opacity: 0.7; }
+    .schedule-day .day-type { display: block; font-size: 13px; margin-top: 2px; }
+
+    /* Session Timer Bar */
+    .session-timer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 10px 20px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+    .session-timer-display {
+      font-size: 22px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-primary);
+    }
+    .session-timer-bar button {
+      padding: 6px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .session-timer-bar button.running {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    /* Cardio Section */
+    .cardio-type-btns {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .cardio-type-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+    .cardio-type-btn.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .cardio-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .cardio-field label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .cardio-field input, .cardio-field textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+    }
+    .cardio-field textarea { resize: vertical; min-height: 60px; }
+    .pace-display {
+      text-align: center;
+      padding: 16px;
+      background: var(--accent-dim);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    .pace-display .pace-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .pace-display .pace-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Simple Activity Form */
+    .simple-activity-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .simple-activity-form label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .simple-activity-form input,
+    .simple-activity-form textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+    }
+    .simple-activity-form textarea { resize: vertical; min-height: 60px; }
+    .effort-slider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .effort-slider input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+    }
+    .effort-slider .effort-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      min-width: 30px;
+      text-align: center;
+    }
+    .simple-finish-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      margin-top: 4px;
     }
     
     /* Workout Content */
@@ -1722,12 +1921,29 @@
     
     <!-- Workouts View -->
     <div id="workoutsView" class="view">
+      <div id="weeklyScheduleBanner" class="schedule-banner">
+        <div id="todaySchedule" class="schedule-today"></div>
+        <div id="weekOverview" class="schedule-week"></div>
+      </div>
+
+      <div id="sessionTimerBar" class="session-timer-bar" style="display:none">
+        <span id="sessionTimerDisplay" class="session-timer-display">00:00</span>
+        <button id="sessionTimerToggle" onclick="toggleSessionTimer()">Iniciar</button>
+      </div>
+
       <div class="workout-tabs">
-        <button class="workout-tab active" onclick="showWorkout('braco', this)">💪 Upper Body</button>
-        <button class="workout-tab" onclick="showWorkout('perna', this)">🦵 Lower Body</button>
+        <button class="workout-tab active" onclick="showWorkout('braco', this)">💪 Upper</button>
+        <button class="workout-tab" onclick="showWorkout('perna', this)">🦵 Lower</button>
+        <div class="workout-tab-separator"></div>
         <button class="workout-tab" onclick="showWorkout('mob1', this)">🧘 Mob 1</button>
         <button class="workout-tab" onclick="showWorkout('mob2', this)">🧘 Mob 2</button>
         <button class="workout-tab" onclick="showWorkout('mob3', this)">🧘 Mob 3</button>
+        <div class="workout-tab-separator"></div>
+        <button class="workout-tab" onclick="showWorkout('cardio', this)">🏃 Cardio</button>
+        <div class="workout-tab-separator"></div>
+        <button class="workout-tab" onclick="showWorkout('surf', this)">🏄 Surf</button>
+        <button class="workout-tab" onclick="showWorkout('tenis', this)">🎾 Tenis</button>
+        <button class="workout-tab" onclick="showWorkout('fisio', this)">🏥 Fisio</button>
       </div>
       
       <!-- Upper Body -->
@@ -2280,9 +2496,114 @@
           <div class="exercise-note">Posicao de crianca com braco passando por baixo do tronco</div>
         </div>
       </div>
+
+      <!-- Cardio -->
+      <div id="cardio" class="workout">
+        <div class="cardio-type-btns">
+          <button class="cardio-type-btn active" onclick="selectCardioType('corrida', this)">🏃 Corrida</button>
+          <button class="cardio-type-btn" onclick="selectCardioType('caminhada', this)">🚶 Caminhada</button>
+        </div>
+        <div class="pace-display">
+          <div class="pace-value" id="paceValue">--:--</div>
+          <div class="pace-label">min/km</div>
+        </div>
+        <div class="cardio-form-grid">
+          <div class="cardio-field">
+            <label>Tempo (min)</label>
+            <input type="number" id="cardioTempo" placeholder="30" min="0" step="1" oninput="calcularPace()">
+          </div>
+          <div class="cardio-field">
+            <label>Distancia (km)</label>
+            <input type="number" id="cardioDistancia" placeholder="5.0" min="0" step="0.1" oninput="calcularPace()">
+          </div>
+        </div>
+        <div class="cardio-field" style="margin-bottom: 12px;">
+          <label>Notas</label>
+          <textarea id="cardioNotas" placeholder="Como foi o treino..."></textarea>
+        </div>
+        <div class="cardio-field" style="margin-bottom: 16px;">
+          <label>Esforco (0-10)</label>
+          <div class="effort-slider">
+            <input type="range" id="cardioEsforco" min="0" max="10" value="5">
+            <span class="effort-value" id="cardioEsforcoVal">5</span>
+          </div>
+        </div>
+        <button class="simple-finish-btn" onclick="finishSimpleActivity('cardio')">Salvar Cardio</button>
+      </div>
+
+      <!-- Surf -->
+      <div id="surf" class="workout">
+        <div class="simple-activity-form">
+          <div>
+            <label>Duracao (min)</label>
+            <input type="number" id="surfDuracao" placeholder="90" min="0" step="1">
+          </div>
+          <div>
+            <label>Como foi</label>
+            <textarea id="surfNotas" placeholder="Ondas, local, como se sentiu..."></textarea>
+          </div>
+          <div>
+            <label>Esforco (0-10)</label>
+            <div class="effort-slider">
+              <input type="range" id="surfEsforco" min="0" max="10" value="5">
+              <span class="effort-value" id="surfEsforcoVal">5</span>
+            </div>
+          </div>
+          <button class="simple-finish-btn" onclick="finishSimpleActivity('surf')">Salvar Surf</button>
+        </div>
+      </div>
+
+      <!-- Tenis -->
+      <div id="tenis" class="workout">
+        <div class="simple-activity-form">
+          <div>
+            <label>Duracao (min)</label>
+            <input type="number" id="tenisDuracao" placeholder="60" min="0" step="1">
+          </div>
+          <div>
+            <label>Como foi</label>
+            <textarea id="tenisNotas" placeholder="Tipo de jogo, parceiros..."></textarea>
+          </div>
+          <div>
+            <label>Esforco (0-10)</label>
+            <div class="effort-slider">
+              <input type="range" id="tenisEsforco" min="0" max="10" value="5">
+              <span class="effort-value" id="tenisEsforcoVal">5</span>
+            </div>
+          </div>
+          <button class="simple-finish-btn" onclick="finishSimpleActivity('tenis')">Salvar Tenis</button>
+        </div>
+      </div>
+
+      <!-- Fisio -->
+      <div id="fisio" class="workout">
+        <div class="simple-activity-form">
+          <div>
+            <label>Duracao (min)</label>
+            <input type="number" id="fisioDuracao" placeholder="45" min="0" step="1">
+          </div>
+          <div>
+            <label>Exercicios da fisio</label>
+            <textarea id="fisioExercicios" placeholder="Quais exercicios fez na fisio..."></textarea>
+          </div>
+          <div>
+            <label>Notas</label>
+            <textarea id="fisioNotas" placeholder="Como se sentiu, evolucao..."></textarea>
+          </div>
+          <div>
+            <label>Esforco (0-10)</label>
+            <div class="effort-slider">
+              <input type="range" id="fisioEsforco" min="0" max="10" value="5">
+              <span class="effort-value" id="fisioEsforcoVal">5</span>
+            </div>
+          </div>
+          <button class="simple-finish-btn" onclick="finishSimpleActivity('fisio')">Salvar Fisio</button>
+        </div>
+      </div>
+
     </div>
     </div>
-    
+
     <!-- IA Coach View -->
     <div id="coachView" class="view">
       <!-- Profile collapsible header -->
@@ -2456,6 +2777,23 @@
     let selectedDate = new Date();
     let timerInterval = null;
     let activities = {};
+
+    // Session timer state
+    let sessionTimerInterval = null;
+    let sessionStartTime = null;
+    let sessionElapsedSeconds = 0;
+    let sessionTimerRunning = false;
+    let cardioSelectedType = 'corrida';
+
+    // Weekly schedule: day of week (1=Mon) -> activity types
+    const WEEKLY_SCHEDULE = {
+      1: ['tenis'],
+      3: ['surf', 'fisio'],
+      5: ['fisio'],
+      6: ['surf']
+    };
+
+    const SIMPLE_ACTIVITY_TYPES = ['cardio', 'surf', 'tenis', 'fisio'];
     
     const activityNames = {
       'corrida': 'Corrida',
@@ -2612,7 +2950,18 @@
       var tabs = document.querySelectorAll('.main-tab');
       if (tabs[tabMap[view]]) tabs[tabMap[view]].classList.add('active');
 
-      document.getElementById('progressBar').style.display = view === 'workouts' ? 'block' : 'none';
+      if (view === 'workouts') {
+        renderWeeklySchedule();
+        var isSimple = SIMPLE_ACTIVITY_TYPES.includes(currentWorkout);
+        document.getElementById('progressBar').style.display = isSimple ? 'none' : 'block';
+        // Show timer bar if running
+        if (sessionTimerRunning || sessionElapsedSeconds > 0) {
+          document.getElementById('sessionTimerBar').style.display = 'flex';
+        }
+      } else {
+        document.getElementById('progressBar').style.display = 'none';
+        document.getElementById('sessionTimerBar').style.display = 'none';
+      }
     }
     
     // ========== CALENDAR ==========
@@ -2809,67 +3158,167 @@
       if (typeof renderDashboardCards === 'function') renderDashboardCards();
     }
 
-    // ========== WORKOUTS ==========
-    
-    function showWorkout(id, btn) {
-      document.querySelectorAll('.workout').forEach(w => w.classList.remove('active'));
-      document.querySelectorAll('.workout-tab').forEach(t => t.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
+    // ========== WEEKLY SCHEDULE ==========
+
+    function renderWeeklySchedule() {
+      const now = new Date();
+      const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon...
+      const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
+      const scheduleEmojis = { tenis: '🎾', surf: '🏄', fisio: '🏥', upper: '💪', lower: '🦵', mobilidade: '🧘', cardio: '🏃' };
+
+      // Today banner
+      const todaySchedule = WEEKLY_SCHEDULE[dayOfWeek];
+      const todayEl = document.getElementById('todaySchedule');
+      if (todaySchedule && todaySchedule.length > 0) {
+        const items = todaySchedule.map(t => (scheduleEmojis[t] || '') + ' ' + t.charAt(0).toUpperCase() + t.slice(1)).join(' + ');
+        todayEl.textContent = 'Hoje: ' + items;
+      } else {
+        todayEl.textContent = 'Hoje: livre (musculacao, mobilidade ou cardio)';
+      }
+
+      // Week overview row
+      const weekEl = document.getElementById('weekOverview');
+      let html = '';
+      for (let d = 0; d < 7; d++) {
+        const sched = WEEKLY_SCHEDULE[d];
+        const isToday = d === dayOfWeek;
+        const emojis = sched ? sched.map(t => scheduleEmojis[t] || '').join('') : '🏋️';
+        html += `<div class="schedule-day${isToday ? ' today' : ''}">
+          <span class="day-label">${dayNames[d]}</span>
+          <span class="day-type">${emojis}</span>
+        </div>`;
+      }
+      weekEl.innerHTML = html;
+    }
+
+    // ========== SESSION TIMER ==========
+
+    function startSessionTimer() {
+      if (sessionTimerRunning) return;
+      sessionTimerRunning = true;
+      sessionStartTime = Date.now() - (sessionElapsedSeconds * 1000);
+      sessionStorage.setItem('session-timer-start', sessionStartTime);
+      document.getElementById('sessionTimerBar').style.display = 'flex';
+      const btn = document.getElementById('sessionTimerToggle');
+      btn.textContent = 'Pausar';
+      btn.classList.add('running');
+      sessionTimerInterval = setInterval(updateSessionTimerDisplay, 1000);
+    }
+
+    function toggleSessionTimer() {
+      if (sessionTimerRunning) {
+        // Pause
+        clearInterval(sessionTimerInterval);
+        sessionElapsedSeconds = Math.floor((Date.now() - sessionStartTime) / 1000);
+        sessionTimerRunning = false;
+        const btn = document.getElementById('sessionTimerToggle');
+        btn.textContent = 'Retomar';
+        btn.classList.remove('running');
+      } else {
+        startSessionTimer();
+      }
+    }
+
+    function updateSessionTimerDisplay() {
+      const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
+      const min = Math.floor(elapsed / 60);
+      const sec = elapsed % 60;
+      document.getElementById('sessionTimerDisplay').textContent =
+        String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+    }
+
+    function stopSessionTimer() {
+      clearInterval(sessionTimerInterval);
+      const totalSeconds = sessionTimerRunning
+        ? Math.floor((Date.now() - sessionStartTime) / 1000)
+        : sessionElapsedSeconds;
+      resetSessionTimer();
+      return Math.round(totalSeconds / 60);
+    }
+
+    function resetSessionTimer() {
+      clearInterval(sessionTimerInterval);
+      sessionTimerInterval = null;
+      sessionStartTime = null;
+      sessionElapsedSeconds = 0;
+      sessionTimerRunning = false;
+      sessionStorage.removeItem('session-timer-start');
+      const bar = document.getElementById('sessionTimerBar');
+      if (bar) bar.style.display = 'none';
+      const display = document.getElementById('sessionTimerDisplay');
+      if (display) display.textContent = '00:00';
+      const btn = document.getElementById('sessionTimerToggle');
+      if (btn) { btn.textContent = 'Iniciar'; btn.classList.remove('running'); }
+    }
+
+    // ========== CARDIO ==========
+
+    function selectCardioType(type, btn) {
+      cardioSelectedType = type;
+      document.querySelectorAll('.cardio-type-btn').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
-      currentWorkout = id;
-      updateProgress();
     }
-    
-    function toggleExercise(checkbox) {
-      const exercise = checkbox.closest('.exercise');
-      exercise.classList.toggle('done');
-      saveProgress();
-      updateProgress();
+
+    function calcularPace() {
+      const tempo = parseFloat(document.getElementById('cardioTempo').value);
+      const dist = parseFloat(document.getElementById('cardioDistancia').value);
+      const paceEl = document.getElementById('paceValue');
+      if (tempo > 0 && dist > 0) {
+        const paceMin = tempo / dist;
+        const min = Math.floor(paceMin);
+        const sec = Math.round((paceMin - min) * 60);
+        paceEl.textContent = String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+      } else {
+        paceEl.textContent = '--:--';
+      }
     }
-    
-    function updateProgress() {
-      const workout = document.getElementById(currentWorkout);
-      const total = workout.querySelectorAll('.exercise').length;
-      const done = workout.querySelectorAll('.exercise.done').length;
-      const percent = Math.round((done / total) * 100);
-      
-      document.getElementById('progressText').textContent = `${done} de ${total}`;
-      document.getElementById('progressPercent').textContent = `${percent}%`;
-      document.getElementById('progressFill').style.width = `${percent}%`;
-      
-      // Mostrar botão de finalizar quando tiver pelo menos 1 exercício feito
-      const finishBtn = document.getElementById('finishBtn');
-      finishBtn.style.display = done > 0 ? 'block' : 'none';
+
+    // ========== SIMPLE ACTIVITIES ==========
+
+    function buildSimpleActivityData(type) {
+      if (type === 'cardio') {
+        return {
+          tipo: cardioSelectedType,
+          tempo_min: parseFloat(document.getElementById('cardioTempo').value) || 0,
+          distancia_km: parseFloat(document.getElementById('cardioDistancia').value) || 0,
+          pace: document.getElementById('paceValue').textContent,
+          notas: document.getElementById('cardioNotas').value,
+          esforco: parseInt(document.getElementById('cardioEsforco').value)
+        };
+      }
+      const duracao = parseFloat(document.getElementById(type + 'Duracao').value) || 0;
+      const notas = document.getElementById(type + 'Notas').value;
+      const esforco = parseInt(document.getElementById(type + 'Esforco').value);
+      const data = { duracao_min: duracao, notas, esforco };
+      if (type === 'fisio') {
+        data.exercicios = document.getElementById('fisioExercicios').value;
+      }
+      return data;
     }
-    
-    async function finishWorkout() {
-      const workout = document.getElementById(currentWorkout);
-      const exercises = workout.querySelectorAll('.exercise');
-      const exercisesDone = [];
-      
-      exercises.forEach(ex => {
-        if (ex.classList.contains('done')) {
-          const weightInput = ex.querySelector('.weight-input');
-          exercisesDone.push({
-            id: ex.dataset.id,
-            name: ex.dataset.name,
-            weight: weightInput ? parseFloat(weightInput.value) || null : null
-          });
-        }
-      });
-      
-      if (exercisesDone.length === 0) {
-        showToast('❌ Marque pelo menos 1 exercício');
+
+    async function finishSimpleActivity(type) {
+      const data = buildSimpleActivityData(type);
+      const durationMin = type === 'cardio' ? data.tempo_min : data.duracao_min;
+
+      if (type === 'cardio' && data.tempo_min <= 0) {
+        showToast('Preencha o tempo');
         return;
       }
-      
-      showSync('Salvando treino...');
-      
+      if (type !== 'cardio' && data.duracao_min <= 0) {
+        showToast('Preencha a duracao');
+        return;
+      }
+
+      // Stop session timer if running
+      const timerMin = stopSessionTimer();
+
+      showSync('Salvando...');
       try {
         const today = new Date().toISOString().split('T')[0];
-        const workoutTypeMap = { braco: 'upper', perna: 'lower', mob1: 'mobilidade', mob2: 'mobilidade', mob3: 'mobilidade' };
-        const workoutType = workoutTypeMap[currentWorkout] || 'upper';
-        
+        const workoutTypeMap = { cardio: 'cardio', surf: 'surf', tenis: 'tenis', fisio: 'fisioterapia' };
+        const workoutType = workoutTypeMap[type] || type;
+        const label = type === 'cardio' ? data.tipo : type;
+
         const response = await fetch(`${SUPABASE_URL}/rest/v1/workout_sessions`, {
           method: 'POST',
           headers: {
@@ -2881,15 +3330,152 @@
           body: JSON.stringify({
             date: today,
             workout_type: workoutType,
-            exercises_done: exercisesDone
+            exercises_done: data,
+            duration_minutes: durationMin || timerMin
           })
         });
-        
+
         if (response.ok) {
-          showToast('🏆 Treino salvo!');
-          showSync('✓ Salvo!', 'success');
-          
-          // Também adiciona na agenda
+          showToast('Salvo!');
+          showSync('Salvo!', 'success');
+
+          // Add to calendar
+          if (!activities[today]) activities[today] = [];
+          activities[today].push({
+            type: workoutType,
+            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+          });
+          saveActivities();
+
+          // Clear form
+          if (type === 'cardio') {
+            document.getElementById('cardioTempo').value = '';
+            document.getElementById('cardioDistancia').value = '';
+            document.getElementById('cardioNotas').value = '';
+            document.getElementById('cardioEsforco').value = 5;
+            document.getElementById('cardioEsforcoVal').textContent = '5';
+            document.getElementById('paceValue').textContent = '--:--';
+          } else {
+            document.getElementById(type + 'Duracao').value = '';
+            document.getElementById(type + 'Notas').value = '';
+            document.getElementById(type + 'Esforco').value = 5;
+            document.getElementById(type + 'EsforcoVal').textContent = '5';
+            if (type === 'fisio') document.getElementById('fisioExercicios').value = '';
+          }
+        } else {
+          throw new Error('Failed to save');
+        }
+      } catch (e) {
+        console.error(e);
+        showToast('Erro ao salvar');
+      }
+    }
+
+    // ========== WORKOUTS ==========
+
+    function showWorkout(id, btn) {
+      document.querySelectorAll('.workout').forEach(w => w.classList.remove('active'));
+      document.querySelectorAll('.workout-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      if (btn) btn.classList.add('active');
+      currentWorkout = id;
+
+      // Scroll active tab into view
+      if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+
+      // Show/hide progress bar for simple activities
+      const isSimple = SIMPLE_ACTIVITY_TYPES.includes(id);
+      document.getElementById('progressBar').style.display = isSimple ? 'none' : 'block';
+
+      // Show timer bar only for exercise-based workouts
+      if (!isSimple && (sessionTimerRunning || sessionElapsedSeconds > 0)) {
+        document.getElementById('sessionTimerBar').style.display = 'flex';
+      }
+
+      updateProgress();
+    }
+
+    function toggleExercise(checkbox) {
+      const exercise = checkbox.closest('.exercise');
+      exercise.classList.toggle('done');
+
+      // Auto-start session timer on first check
+      if (exercise.classList.contains('done') && !sessionTimerRunning && sessionElapsedSeconds === 0) {
+        startSessionTimer();
+      }
+
+      saveProgress();
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const workout = document.getElementById(currentWorkout);
+      if (!workout) return;
+      const total = workout.querySelectorAll('.exercise').length;
+      if (total === 0) return; // cardio/surf/tenis/fisio have no .exercise elements
+      const done = workout.querySelectorAll('.exercise.done').length;
+      const percent = Math.round((done / total) * 100);
+
+      document.getElementById('progressText').textContent = `${done} de ${total}`;
+      document.getElementById('progressPercent').textContent = `${percent}%`;
+      document.getElementById('progressFill').style.width = `${percent}%`;
+
+      const finishBtn = document.getElementById('finishBtn');
+      finishBtn.style.display = done > 0 ? 'block' : 'none';
+    }
+
+    async function finishWorkout() {
+      const workout = document.getElementById(currentWorkout);
+      const exercises = workout.querySelectorAll('.exercise');
+      const exercisesDone = [];
+
+      exercises.forEach(ex => {
+        if (ex.classList.contains('done')) {
+          const weightInput = ex.querySelector('.weight-input');
+          exercisesDone.push({
+            id: ex.dataset.id,
+            name: ex.dataset.name,
+            weight: weightInput ? parseFloat(weightInput.value) || null : null
+          });
+        }
+      });
+
+      if (exercisesDone.length === 0) {
+        showToast('Marque pelo menos 1 exercicio');
+        return;
+      }
+
+      // Stop session timer and get duration
+      const durationMin = stopSessionTimer();
+
+      showSync('Salvando treino...');
+
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const workoutTypeMap = { braco: 'upper', perna: 'lower', mob1: 'mobilidade', mob2: 'mobilidade', mob3: 'mobilidade' };
+        const workoutType = workoutTypeMap[currentWorkout] || 'upper';
+
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/workout_sessions`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify({
+            date: today,
+            workout_type: workoutType,
+            exercises_done: exercisesDone,
+            duration_minutes: durationMin || null
+          })
+        });
+
+        if (response.ok) {
+          showToast('Treino salvo!');
+          showSync('Salvo!', 'success');
+
+          // Add to calendar
           const dateStr = today;
           if (!activities[dateStr]) activities[dateStr] = [];
           activities[dateStr].push({
@@ -2897,8 +3483,8 @@
             time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
           });
           saveActivities();
-          
-          // Resetar exercícios
+
+          // Reset exercises
           exercises.forEach(ex => ex.classList.remove('done'));
           document.querySelectorAll('.weight-input').forEach(input => input.value = '');
           saveProgress();
@@ -2908,7 +3494,7 @@
         }
       } catch (e) {
         console.error(e);
-        showToast('❌ Erro ao salvar');
+        showToast('Erro ao salvar');
       }
     }
     
@@ -5491,6 +6077,31 @@
       });
       // Load exercise images after a delay (non-blocking)
       setTimeout(loadExerciseImages, 1000);
+
+      // Render weekly schedule
+      renderWeeklySchedule();
+
+      // Effort slider live updates
+      document.querySelectorAll('input[type="range"][id$="Esforco"]').forEach(function(slider) {
+        slider.addEventListener('input', function() {
+          var valEl = document.getElementById(slider.id + 'Val');
+          if (valEl) valEl.textContent = slider.value;
+        });
+      });
+
+      // Restore session timer if running
+      var savedStart = sessionStorage.getItem('session-timer-start');
+      if (savedStart) {
+        sessionStartTime = parseInt(savedStart);
+        sessionElapsedSeconds = Math.floor((Date.now() - sessionStartTime) / 1000);
+        sessionTimerRunning = true;
+        document.getElementById('sessionTimerBar').style.display = 'flex';
+        var btn = document.getElementById('sessionTimerToggle');
+        btn.textContent = 'Pausar';
+        btn.classList.add('running');
+        sessionTimerInterval = setInterval(updateSessionTimerDisplay, 1000);
+        updateSessionTimerDisplay();
+      }
     });
   </script>
 </body>
