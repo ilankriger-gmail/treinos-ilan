@@ -747,7 +747,7 @@
     .set-weight, .set-reps { width: 56px; padding: 6px 4px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 13px; text-align: center; font-family: 'Inter', sans-serif; }
     .set-weight:focus, .set-reps:focus { outline: none; border-color: var(--text-muted); }
     .set-x { color: var(--text-muted); font-size: 12px; }
-    .set-check { width: 28px; height: 28px; border-radius: 6px; border: 2px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+    .set-check { width: 28px; height: 28px; border-radius: 4px; border: 2px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
     .set-row.done .set-check { background: var(--success); border-color: var(--success); }
     .set-row.done .set-check::after { content: '✓'; color: white; font-size: 14px; }
     .set-row.done { opacity: 0.6; }
@@ -1037,7 +1037,7 @@
       padding: 12px;
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 4px;
       color: var(--text-primary);
       font-family: 'Inter', sans-serif;
       font-size: 14px;
@@ -1050,21 +1050,21 @@
     
     .coach-textarea:focus {
       outline: none;
-      border-color: var(--accent);
+      border-color: var(--text-muted);
     }
     
     .dropzone {
       border: 2px dashed var(--border);
-      border-radius: 12px;
+      border-radius: 6px;
       padding: 30px 20px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: background 0.2s;
     }
-    
+
     .dropzone:hover, .dropzone.dragover {
-      border-color: var(--accent);
-      background: var(--accent-dim);
+      border-color: var(--text-muted);
+      background: var(--bg-tertiary);
     }
     
     .dropzone-icon {
@@ -1093,7 +1093,7 @@
       gap: 10px;
       padding: 10px 12px;
       background: var(--bg-tertiary);
-      border-radius: 8px;
+      border-radius: 4px;
       margin-bottom: 8px;
     }
 
@@ -1144,16 +1144,15 @@
     .image-overlay img {
       max-width: 90vw;
       max-height: 90vh;
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      border-radius: 8px;
     }
     
     .analyze-btn {
       width: 100%;
       padding: 16px;
-      background: linear-gradient(135deg, var(--accent), #6025d1);
+      background: var(--accent);
       border: none;
-      border-radius: 12px;
+      border-radius: 4px;
       color: white;
       font-size: 16px;
       font-weight: 600;
@@ -1163,7 +1162,7 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      transition: all 0.3s ease;
+      transition: background 0.2s;
     }
     
     .analyze-btn:hover {
@@ -1178,16 +1177,16 @@
     
     .analysis-result {
       background: var(--bg-secondary);
-      border-radius: 12px;
+      border-radius: 6px;
       padding: 20px;
       margin-top: 16px;
-      border: 1px solid var(--accent);
+      border: 1px solid var(--border);
     }
-    
+
     .analysis-result h3 {
       font-size: 16px;
       margin-bottom: 16px;
-      color: var(--accent);
+      color: var(--text-primary);
     }
     
     .analysis-content {
@@ -1244,7 +1243,7 @@
     }
 
     .chat-profile-header:hover {
-      background: var(--bg-tertiary);
+      background: var(--bg-hover);
     }
 
     .chat-profile-summary {
@@ -1288,12 +1287,11 @@
     .chat-bubble {
       max-width: 85%;
       padding: 12px 16px;
-      border-radius: 18px;
+      border-radius: 8px;
       font-size: 14px;
       line-height: 1.6;
       word-wrap: break-word;
       overflow-wrap: break-word;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     }
 
     .chat-bubble.user {
@@ -1314,14 +1312,14 @@
     .coach-name {
       font-size: 11px;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--text-muted);
       margin-bottom: 6px;
       letter-spacing: 0.3px;
     }
 
     .chat-bubble.assistant p { margin-bottom: 8px; }
     .chat-bubble.assistant p:last-child { margin-bottom: 0; }
-    .chat-bubble.assistant strong { color: var(--accent); }
+    .chat-bubble.assistant strong { color: var(--text-primary); }
     .chat-bubble.assistant ul, .chat-bubble.assistant ol { margin: 8px 0; padding-left: 20px; }
     .chat-bubble.assistant li { margin-bottom: 4px; }
 
@@ -1330,7 +1328,7 @@
       padding: 12px 20px;
       background: var(--bg-secondary);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 8px;
       border-bottom-left-radius: 4px;
       display: flex;
       gap: 4px;
@@ -1366,7 +1364,7 @@
       padding: 12px 16px;
       background: var(--bg-secondary);
       border: 1px solid var(--border);
-      border-radius: 20px;
+      border-radius: 6px;
       color: var(--text-primary);
       font-family: 'Inter', sans-serif;
       font-size: 14px;
@@ -1376,13 +1374,13 @@
     }
 
     .chat-input::placeholder { color: var(--text-muted); }
-    .chat-input:focus { outline: none; border-color: var(--accent); }
+    .chat-input:focus { outline: none; border-color: var(--text-muted); }
 
     .chat-send-btn {
       width: 44px;
       height: 44px;
       border: none;
-      border-radius: 50%;
+      border-radius: 6px;
       background: var(--accent);
       color: white;
       font-size: 18px;
@@ -1390,18 +1388,18 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
+      transition: background 0.2s;
       flex-shrink: 0;
     }
 
-    .chat-send-btn:hover { background: #6025d1; }
+    .chat-send-btn:hover { background: var(--accent-dark); }
     .chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .chat-start-btn {
       padding: 20px;
-      background: linear-gradient(135deg, var(--accent), #6025d1);
+      background: var(--accent);
       border: none;
-      border-radius: 16px;
+      border-radius: 6px;
       color: white;
       font-size: 18px;
       font-weight: 700;
@@ -1412,20 +1410,19 @@
       justify-content: center;
       gap: 12px;
       margin: 20px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 24px var(--accent-glow);
+      transition: background 0.2s;
       letter-spacing: 0.3px;
     }
 
     .chat-start-btn:hover {
-      opacity: 0.95;
+      background: var(--accent-dark);
     }
 
     /* Suggestion Cards */
     .suggestion-card {
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 6px;
       padding: 14px;
       margin-top: 10px;
     }
@@ -1455,9 +1452,9 @@
     .suggestion-card-header .badge {
       font-size: 11px;
       padding: 2px 8px;
-      border-radius: 10px;
-      background: var(--accent-dim);
-      color: var(--accent);
+      border-radius: 4px;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
     }
 
     .suggestion-card-detail {
@@ -1475,7 +1472,7 @@
     .suggestion-card-actions button {
       flex: 1;
       padding: 8px;
-      border-radius: 8px;
+      border-radius: 4px;
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
@@ -1491,8 +1488,8 @@
 
     .suggestion-modify {
       background: transparent;
-      border: 1px solid var(--accent);
-      color: var(--accent);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
     }
 
     .suggestion-reject {
@@ -1502,13 +1499,13 @@
     }
 
     .suggestion-accept:hover { background: #16a34a; }
-    .suggestion-modify:hover { background: var(--accent-dim); }
+    .suggestion-modify:hover { background: var(--bg-hover); }
     .suggestion-reject:hover { background: rgba(239, 68, 68, 0.1); }
 
     .exercise-img {
       width: 48px;
       height: 48px;
-      border-radius: 8px;
+      border-radius: 4px;
       object-fit: cover;
       background: var(--bg-tertiary);
       flex-shrink: 0;
@@ -1527,7 +1524,7 @@
 
     .exercise-modal {
       background: var(--bg-secondary);
-      border-radius: 16px;
+      border-radius: 8px;
       max-width: 500px;
       width: 100%;
       max-height: 85vh;
@@ -1556,7 +1553,7 @@
     .exercise-modal-close {
       width: 32px;
       height: 32px;
-      border-radius: 8px;
+      border-radius: 4px;
       border: none;
       background: var(--bg-tertiary);
       color: var(--text-secondary);
@@ -1575,7 +1572,7 @@
     .exercise-modal-gif img {
       max-width: 400px;
       width: 100%;
-      border-radius: 12px;
+      border-radius: 6px;
       background: var(--bg-tertiary);
     }
 
@@ -1588,12 +1585,12 @@
 
     .exercise-modal-muscle-tag {
       padding: 3px 10px;
-      border-radius: 20px;
+      border-radius: 4px;
       font-size: 11px;
       font-weight: 500;
-      background: var(--accent-dim);
-      color: var(--accent);
-      border: 1px solid rgba(127, 90, 240, 0.2);
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
     }
 
     .exercise-modal-muscle-tag.secondary {
@@ -1627,9 +1624,9 @@
       width: 22px;
       height: 22px;
       min-width: 22px;
-      border-radius: 50%;
-      background: var(--accent-dim);
-      color: var(--accent);
+      border-radius: 4px;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
       font-size: 11px;
       font-weight: 600;
       display: flex;
@@ -1669,7 +1666,7 @@
 
     .stat-input:focus {
       outline: none;
-      border-color: var(--accent);
+      border-color: var(--text-muted);
     }
 
     .stat-input-wide {
@@ -1697,8 +1694,8 @@
     }
 
     .type-toggle button.active {
-      background: var(--accent);
-      color: white;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
     }
 
     /* Custom scrollbar */
@@ -1716,9 +1713,9 @@
       background: rgba(255,255,255,0.15);
     }
 
-    /* Chat area gradient background */
+    /* Chat area background */
     .chat-messages {
-      background: linear-gradient(180deg, rgba(26,26,46,0.5) 0%, rgba(22,33,62,0.3) 100%);
+      background: var(--bg-primary);
     }
 
     /* Dashboard summary cards */
@@ -1732,18 +1729,17 @@
     .dash-card {
       background: var(--bg-secondary);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 6px;
       padding: 14px 16px;
       display: flex;
       align-items: center;
       gap: 12px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      transition: background 0.2s;
     }
 
     .dash-card:hover {
-      opacity: 0.95;
+      background: var(--bg-hover);
     }
 
     .dash-card-icon {
@@ -1753,7 +1749,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 10px;
+      border-radius: 4px;
       background: var(--surface);
       flex-shrink: 0;
     }
@@ -1786,36 +1782,32 @@
       flex-shrink: 0;
     }
 
-    /* Activity item softer radius */
+    /* Activity item radius */
     .activity-item {
-      border-radius: 12px;
+      border-radius: 4px;
     }
 
-    /* Activity btn softer radius */
+    /* Activity btn radius */
     .activity-btn {
-      border-radius: 12px;
-      transition: all 0.3s ease;
+      border-radius: 4px;
+      transition: background 0.2s;
     }
 
-    /* Suggestion card softer */
+    /* Suggestion card */
     .suggestion-card {
-      border-radius: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      border-radius: 6px;
     }
 
     /* 6.1 Hover effects only on devices with hover */
     @media (hover: hover) {
       .analyze-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 20px var(--accent-glow);
+        background: var(--accent-dark);
       }
       .chat-start-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 32px rgba(127, 90, 240, 0.5);
+        background: var(--accent-dark);
       }
       .dash-card:hover {
-        border-color: var(--accent);
-        box-shadow: 0 2px 12px var(--accent-glow);
+        background: var(--bg-hover);
       }
     }
 
@@ -1835,8 +1827,8 @@
     }
 
     /* 6.4 Touch feedback on calendar */
-    .calendar-day:active { transform: scale(0.95); }
-    .activity-btn:active { transform: scale(0.96); }
+    .calendar-day:active { background: var(--bg-hover); }
+    .activity-btn:active { background: var(--bg-hover); }
 
     /* 6.5 Tabular nums for timer */
     .timer-display {
@@ -1872,9 +1864,9 @@
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
           <span style="font-size: 18px;">💭</span>
           <span style="font-size: 14px; font-weight: 600;">Como estou agora</span>
-          <button onclick="saveEstado()" style="margin-left: auto; padding: 6px 12px; background: var(--accent); border: none; border-radius: 6px; color: white; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif;">Salvar</button>
+          <button onclick="saveEstado()" style="margin-left: auto; padding: 6px 12px; background: var(--accent); border: none; border-radius: 4px; color: white; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif;">Salvar</button>
         </div>
-        <textarea id="estadoHojeMain" aria-label="Como estou agora" placeholder="Ex: Dormi bem, com energia, leve dor no ombro..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 14px; resize: none;"></textarea>
+        <textarea id="estadoHojeMain" aria-label="Como estou agora" placeholder="Ex: Dormi bem, com energia, leve dor no ombro..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 14px; resize: none;"></textarea>
         <div id="estadoEntries" style="margin-top: 10px;"></div>
       </div>
       
@@ -1884,7 +1876,7 @@
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
           <span class="calendar-month" id="calendarMonth">Fevereiro 2026</span>
-          <button onclick="goToToday()" style="padding: 4px 10px; background: var(--accent-dim); border: 1px solid var(--accent); border-radius: 6px; color: var(--accent); font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">Hoje</button>
+          <button onclick="goToToday()" style="padding: 4px 10px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-secondary); font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">Hoje</button>
         </div>
         <div class="calendar-nav">
           <button onclick="changeMonth(1)">→</button>
@@ -2645,21 +2637,21 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
             <div style="grid-column: span 2;">
               <label for="profileNome" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Nome</label>
-              <input type="text" id="profileNome" placeholder="Seu nome" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
+              <input type="text" id="profileNome" placeholder="Seu nome" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
             </div>
             <div>
               <label for="profileIdade" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Idade</label>
-              <input type="number" id="profileIdade" placeholder="Ex: 30" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
+              <input type="number" id="profileIdade" placeholder="Ex: 30" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
             </div>
             <div>
               <label for="profileAltura" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Altura (cm)</label>
-              <input type="number" id="profileAltura" placeholder="Ex: 175" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
+              <input type="number" id="profileAltura" placeholder="Ex: 175" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
             </div>
             <div style="grid-column: span 2;">
               <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Sexo</label>
               <div style="display: flex; gap: 8px;">
-                <button onclick="event.stopPropagation(); selectSexo('masculino')" class="sexo-btn" data-sexo="masculino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">M</button>
-                <button onclick="event.stopPropagation(); selectSexo('feminino')" class="sexo-btn" data-sexo="feminino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">F</button>
+                <button onclick="event.stopPropagation(); selectSexo('masculino')" class="sexo-btn" data-sexo="masculino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">M</button>
+                <button onclick="event.stopPropagation(); selectSexo('feminino')" class="sexo-btn" data-sexo="feminino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">F</button>
               </div>
             </div>
           </div>
@@ -2675,12 +2667,12 @@
             <label for="notaMedicaInput" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Notas Médicas</label>
             <div style="display: flex; gap: 8px;">
               <textarea class="coach-textarea" id="notaMedicaInput" onclick="event.stopPropagation()" placeholder="Adicionar nota médica..." style="min-height: 50px; flex: 1;"></textarea>
-              <button onclick="event.stopPropagation(); addMedicalNote()" style="padding: 8px 12px; background: var(--success); border: none; border-radius: 6px; color: white; font-size: 11px; cursor: pointer; align-self: flex-end;">+</button>
+              <button onclick="event.stopPropagation(); addMedicalNote()" style="padding: 8px 12px; background: var(--success); border: none; border-radius: 4px; color: white; font-size: 11px; cursor: pointer; align-self: flex-end;">+</button>
             </div>
             <div id="notasMedicasList" style="margin-top: 8px;"></div>
           </div>
           <div style="display: flex; gap: 8px;">
-            <button onclick="event.stopPropagation(); saveProfile(); saveField('objetivo'); saveField('dores')" style="flex: 1; padding: 10px; background: var(--accent); border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">Salvar Perfil</button>
+            <button onclick="event.stopPropagation(); saveProfile(); saveField('objetivo'); saveField('dores')" style="flex: 1; padding: 10px; background: var(--accent); border: none; border-radius: 4px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">Salvar Perfil</button>
           </div>
         </div>
       </div>
@@ -2688,7 +2680,7 @@
       <!-- Chat area (hidden until started) -->
       <div id="chatArea" style="display: none;" class="chat-container">
         <div style="padding: 8px 20px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); display: flex; align-items: center; gap: 10px;">
-          <button onclick="exitChat()" aria-label="Voltar ao dashboard" style="padding: 8px 14px; background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px;">← Voltar</button>
+          <button onclick="exitChat()" aria-label="Voltar ao dashboard" style="padding: 8px 14px; background: transparent; border: 1px solid var(--border); border-radius: 4px; color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px;">← Voltar</button>
           <span style="font-size: 13px; color: var(--text-muted);">Coach AI</span>
         </div>
         <div class="chat-messages" id="chatMessages"></div>
@@ -2739,7 +2731,7 @@
       <div class="progress-track">
         <div class="progress-fill" id="progressFill" style="width: 0%"></div>
       </div>
-      <button id="finishBtn" onclick="finishWorkout()" style="display: none; margin-top: 12px; width: 100%; padding: 14px; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; border-radius: 8px; color: white; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">
+      <button id="finishBtn" onclick="finishWorkout()" style="display: none; margin-top: 12px; width: 100%; padding: 14px; background: var(--success); border: none; border-radius: 4px; color: white; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">
         🏆 Finalizar Treino
       </button>
     </div>
@@ -2755,7 +2747,7 @@
   
   <!-- Activity Modal -->
   <div class="timer-modal" id="activityModal" onclick="if(event.target.id==='activityModal')closeActivityModal()">
-    <div style="background: var(--bg-secondary); border-radius: 16px; width: 90%; max-width: 400px; padding: 20px; border: 1px solid var(--border);">
+    <div style="background: var(--bg-secondary); border-radius: 8px; width: 90%; max-width: 400px; padding: 20px; border: 1px solid var(--border);">
       <h3 style="font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
         <span id="activityModalEmoji">🏃</span>
         <span id="activityModalTitle">Corrida</span>
@@ -2765,12 +2757,12 @@
       
       <div style="margin-bottom: 16px;">
         <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">⏱️ Duração (minutos)</label>
-        <input type="number" id="activityDuration" value="60" placeholder="60" style="width: 100%; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 16px; font-family: 'Inter', sans-serif;">
+        <input type="number" id="activityDuration" value="60" placeholder="60" style="width: 100%; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-size: 16px; font-family: 'Inter', sans-serif;">
       </div>
       
       <div style="margin-bottom: 16px;">
-        <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">⚡ Esforço: <span id="effortValue" style="color: var(--accent); font-weight: 600;">5</span>/10</label>
-        <input type="range" id="activityEffort" min="0" max="10" value="5" oninput="document.getElementById('effortValue').textContent=this.value" style="width: 100%; accent-color: var(--accent);">
+        <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">⚡ Esforço: <span id="effortValue" style="color: var(--text-primary); font-weight: 600;">5</span>/10</label>
+        <input type="range" id="activityEffort" min="0" max="10" value="5" oninput="document.getElementById('effortValue').textContent=this.value" style="width: 100%; accent-color: var(--text-muted);">
         <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 4px;">
           <span>0 - Nada</span>
           <span>5 - Moderado</span>
@@ -2780,17 +2772,17 @@
       
       <div id="fisioTreinoContainer" style="margin-bottom: 16px; display: none;">
         <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">📋 Treino de Fisioterapia</label>
-        <textarea id="fisioTreino" placeholder="Descreva os exercícios da fisio..." style="width: 100%; min-height: 80px; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
+        <textarea id="fisioTreino" placeholder="Descreva os exercícios da fisio..." style="width: 100%; min-height: 80px; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
       </div>
       
       <div style="margin-bottom: 20px;">
         <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">💬 Como saí (opcional)</label>
-        <textarea id="activityNotes" placeholder="Ex: Me senti bem, dor no joelho no final..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
+        <textarea id="activityNotes" placeholder="Ex: Me senti bem, dor no joelho no final..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
       </div>
       
       <div style="display: flex; gap: 10px;">
-        <button onclick="closeActivityModal()" style="flex: 1; padding: 14px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">Cancelar</button>
-        <button id="saveActivityBtn" onclick="saveActivity()" style="flex: 2; padding: 14px; border: none; border-radius: 8px; background: var(--success); color: white; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">Salvar Atividade</button>
+        <button onclick="closeActivityModal()" style="flex: 1; padding: 14px; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">Cancelar</button>
+        <button id="saveActivityBtn" onclick="saveActivity()" style="flex: 2; padding: 14px; border: none; border-radius: 4px; background: var(--success); color: white; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">Salvar Atividade</button>
       </div>
     </div>
   </div>
@@ -3085,10 +3077,10 @@
               ${a.effort != null ? ' • esforço ' + a.effort + '/10' : (a.intensity ? ' • ' + a.intensity : '')}
             </div>
           </div>
-          <button onclick="editActivity('${dateStr}', ${i})" style="width: 28px; height: 28px; border: none; border-radius: 6px; background: var(--accent-dim); color: var(--accent); cursor: pointer; font-size: 14px;">✎</button>
+          <button onclick="editActivity('${dateStr}', ${i})" style="width: 28px; height: 28px; border: none; border-radius: 4px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-size: 14px;">✎</button>
           <button class="activity-delete" onclick="deleteActivity('${dateStr}', ${i})">✕</button>
-          ${a.notes ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: var(--bg-tertiary); border-radius: 6px; font-size: 12px; color: var(--text-secondary); margin-left: 36px;">💬 ' + escapeHtml(a.notes) + '</div>' : ''}
-          ${a.fisioTreino ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: rgba(139, 92, 246, 0.1); border-radius: 6px; font-size: 12px; color: var(--accent); margin-left: 36px; border-left: 2px solid var(--accent);">📋 ' + escapeHtml(a.fisioTreino) + '</div>' : ''}
+          ${a.notes ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: var(--bg-tertiary); border-radius: 4px; font-size: 12px; color: var(--text-secondary); margin-left: 36px;">💬 ' + escapeHtml(a.notes) + '</div>' : ''}
+          ${a.fisioTreino ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: var(--bg-tertiary); border-radius: 4px; font-size: 12px; color: var(--text-secondary); margin-left: 36px; border-left: 2px solid var(--text-muted);">📋 ' + escapeHtml(a.fisioTreino) + '</div>' : ''}
         </div>
       `).join('');
     }
@@ -3590,17 +3582,40 @@
       });
       localStorage.setItem('workout-progress-v6', JSON.stringify(progress));
       localStorage.setItem('workout-date', new Date().toDateString());
+      // Sync to Supabase (fire-and-forget)
+      try {
+        fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
+          method: 'PATCH',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ workout_progress: { progress: progress, date: new Date().toDateString() } })
+        }).catch(function(e) { console.error('sync progress:', e); });
+      } catch(e) {}
     }
     
-    function loadProgress() {
-      const savedDate = localStorage.getItem('workout-date');
-      if (savedDate !== new Date().toDateString()) {
-        localStorage.removeItem('workout-progress-v6');
-        localStorage.removeItem('workout-progress-v5');
-        return;
+    async function loadProgress() {
+      var progress = null;
+      // Try Supabase first
+      try {
+        var res = await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1&select=workout_progress`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        var data = await res.json();
+        if (data[0]?.workout_progress?.progress && data[0].workout_progress.date === new Date().toDateString()) {
+          progress = data[0].workout_progress.progress;
+          localStorage.setItem('workout-progress-v6', JSON.stringify(progress));
+          localStorage.setItem('workout-date', data[0].workout_progress.date);
+        }
+      } catch(e) { console.error('load progress from cloud:', e); }
+      // Fallback localStorage
+      if (!progress) {
+        var savedDate = localStorage.getItem('workout-date');
+        if (savedDate !== new Date().toDateString()) {
+          localStorage.removeItem('workout-progress-v6');
+          localStorage.removeItem('workout-progress-v5');
+          return;
+        }
+        progress = JSON.parse(localStorage.getItem('workout-progress-v6') || '{}');
       }
-
-      const progress = JSON.parse(localStorage.getItem('workout-progress-v6') || '{}');
       Object.keys(progress).forEach(id => {
         const ex = document.querySelector(`[data-id="${id}"]`);
         if (!ex || !progress[id].sets) return;
@@ -3776,7 +3791,20 @@
 
     let exerciseConfigs = {};
 
-    function loadExerciseConfigs() {
+    async function loadExerciseConfigs() {
+      // Try Supabase first
+      try {
+        var res = await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1&select=exercise_configs`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        var data = await res.json();
+        if (data[0]?.exercise_configs && Object.keys(data[0].exercise_configs).length > 0) {
+          exerciseConfigs = data[0].exercise_configs;
+          localStorage.setItem('exercise-configs', JSON.stringify(exerciseConfigs));
+          return;
+        }
+      } catch(e) { console.error('load configs from cloud:', e); }
+      // Fallback localStorage
       try {
         exerciseConfigs = JSON.parse(localStorage.getItem('exercise-configs') || '{}');
       } catch(e) { exerciseConfigs = {}; }
@@ -3784,10 +3812,18 @@
 
     function saveExerciseConfigs() {
       localStorage.setItem('exercise-configs', JSON.stringify(exerciseConfigs));
+      // Sync to Supabase (fire-and-forget)
+      try {
+        fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
+          method: 'PATCH',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ exercise_configs: exerciseConfigs })
+        }).catch(function(e) { console.error('sync configs:', e); });
+      } catch(e) {}
     }
 
-    function initExerciseControls() {
-      loadExerciseConfigs();
+    async function initExerciseControls() {
+      await loadExerciseConfigs();
 
       document.querySelectorAll('.exercise[data-id]').forEach(ex => {
         const id = ex.dataset.id;
@@ -4339,7 +4375,7 @@
 
     async function startCoachChat() {
       // Check for saved conversation first
-      if (loadChatFromStorage() && chatMessages.length > 1) {
+      if ((await loadChatFromStorage()) && chatMessages.length > 1) {
         chatActive = true;
         document.getElementById('chatStartArea').style.display = 'none';
         document.getElementById('chatArea').style.display = 'flex';
@@ -5038,7 +5074,7 @@
         try {
           var custom = JSON.parse(localStorage.getItem('custom-exercises') || '[]');
           custom = custom.filter(function(c) { return c.id !== id; });
-          localStorage.setItem('custom-exercises', JSON.stringify(custom));
+          saveCustomExercises(custom);
         } catch(e) {}
       }
 
@@ -5114,7 +5150,7 @@
             custom.forEach(function(c) {
               if (c.id === id) c.group = targetGroup;
             });
-            localStorage.setItem('custom-exercises', JSON.stringify(custom));
+            saveCustomExercises(custom);
           } catch(e) {}
         }
       }
@@ -5197,7 +5233,7 @@
 
       // Save to custom exercises list for persistence
       customExercises.push({ id: id, name: name, group: group, note: note, sets: numSets, reps: reps });
-      localStorage.setItem('custom-exercises', JSON.stringify(customExercises));
+      saveCustomExercises(customExercises);
 
       // Load image for the new exercise
       loadSingleExerciseImage(exDiv);
@@ -5215,9 +5251,37 @@
       showToast('Exercício ' + name + ' adicionado!');
     }
 
-    function loadCustomExercises() {
+    function saveCustomExercises(customArr) {
+      localStorage.setItem('custom-exercises', JSON.stringify(customArr));
+      // Sync to Supabase (fire-and-forget)
       try {
-        var custom = JSON.parse(localStorage.getItem('custom-exercises') || '[]');
+        fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
+          method: 'PATCH',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ custom_exercises: customArr })
+        }).catch(function(e) { console.error('sync custom exercises:', e); });
+      } catch(e) {}
+    }
+
+    async function loadCustomExercises() {
+      var custom = [];
+      // Try Supabase first
+      try {
+        var res = await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1&select=custom_exercises`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        var data = await res.json();
+        if (data[0]?.custom_exercises?.length > 0) {
+          custom = data[0].custom_exercises;
+          localStorage.setItem('custom-exercises', JSON.stringify(custom));
+        }
+      } catch(e) { console.error('load custom exercises from cloud:', e); }
+      // Fallback localStorage
+      if (!custom.length) {
+        try { custom = JSON.parse(localStorage.getItem('custom-exercises') || '[]'); } catch(e) {}
+      }
+      try {
+        // var custom already loaded above
         custom.forEach(function(c) {
           // Check if already exists in DOM
           if (document.querySelector('[data-id="' + c.id + '"]')) return;
@@ -5335,7 +5399,7 @@
       var bubble = document.createElement('div');
       bubble.className = 'chat-bubble assistant';
       bubble.innerHTML = '<span style="color: var(--error);">Erro na resposta.</span><br>' +
-        '<button onclick="retryChatMessage(this)" data-text="' + escapeHtml(lastUserText) + '" style="margin-top: 8px; padding: 8px 16px; background: var(--accent); border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: \'Inter\', sans-serif;">Tentar novamente</button>';
+        '<button onclick="retryChatMessage(this)" data-text="' + escapeHtml(lastUserText) + '" style="margin-top: 8px; padding: 8px 16px; background: var(--accent); border: none; border-radius: 4px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: \'Inter\', sans-serif;">Tentar novamente</button>';
       container.appendChild(bubble);
       scrollChatToBottom();
     }
@@ -5394,9 +5458,33 @@
         localStorage.setItem('chat-messages', JSON.stringify(chatMessages));
         localStorage.setItem('chat-date', new Date().toDateString());
       } catch (e) { console.error(e); }
+      // Sync to Supabase (fire-and-forget)
+      try {
+        fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
+          method: 'PATCH',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_history: { messages: chatMessages, date: new Date().toDateString() } })
+        }).catch(function(e) { console.error('sync chat:', e); });
+      } catch(e) {}
     }
 
-    function loadChatFromStorage() {
+    async function loadChatFromStorage() {
+      // Try Supabase first
+      try {
+        var res = await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1&select=chat_history`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        var data = await res.json();
+        if (data[0]?.chat_history?.messages?.length > 0) {
+          if (data[0].chat_history.date === new Date().toDateString()) {
+            chatMessages = data[0].chat_history.messages;
+            localStorage.setItem('chat-messages', JSON.stringify(chatMessages));
+            localStorage.setItem('chat-date', data[0].chat_history.date);
+            return true;
+          }
+        }
+      } catch(e) { console.error('load chat from cloud:', e); }
+      // Fallback localStorage
       try {
         var savedDate = localStorage.getItem('chat-date');
         if (savedDate !== new Date().toDateString()) {
@@ -5796,9 +5884,9 @@
       return text
         .replace(/\n{3,}/g, '\n\n')
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        .replace(/^### (.+)$/gm, '<h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--accent);">$1</h4>')
-        .replace(/^## (.+)$/gm, '<h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--accent);">$1</h4>')
-        .replace(/^# (.+)$/gm, '<h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--accent);">$1</h4>')
+        .replace(/^### (.+)$/gm, '<h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--text-primary);">$1</h4>')
+        .replace(/^## (.+)$/gm, '<h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--text-primary);">$1</h4>')
+        .replace(/^# (.+)$/gm, '<h4 style="margin-top: 20px; margin-bottom: 8px; color: var(--text-primary);">$1</h4>')
         .replace(/^\d+\. (.+)$/gm, '<p style="margin-left: 16px; margin-bottom: 6px;">• $1</p>')
         .replace(/^- (.+)$/gm, '<p style="margin-left: 16px; margin-bottom: 6px;">• $1</p>')
         .replace(/\n\n/g, '<div style="margin-bottom: 8px;"></div>')
@@ -5887,7 +5975,7 @@
       }
       
       container.innerHTML = notasMedicas.map((n, i) => `
-        <div style="padding: 10px 12px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 8px; border-left: 3px solid var(--success);">
+        <div style="padding: 10px 12px; background: var(--bg-tertiary); border-radius: 4px; margin-bottom: 8px; border-left: 3px solid var(--success);">
           <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">${new Date(n.data).toLocaleDateString('pt-BR')}</div>
           <div style="font-size: 13px; color: var(--text-primary);">${escapeHtml(n.texto)}</div>
         </div>
@@ -5906,7 +5994,7 @@
       }
       
       container.innerHTML = historicoAnalises.slice(0, 5).map((a, i) => `
-        <div style="padding: 12px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 8px; cursor: pointer;" onclick="showAnalysis(${i})">
+        <div style="padding: 12px; background: var(--bg-tertiary); border-radius: 4px; margin-bottom: 8px; cursor: pointer;" onclick="showAnalysis(${i})">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span style="font-size: 13px; font-weight: 500;">Análise ${historicoAnalises.length - i}</span>
             <span style="font-size: 11px; color: var(--text-muted);">${new Date(a.data).toLocaleDateString('pt-BR')}</span>
@@ -5981,7 +6069,7 @@
         return;
       }
       container.innerHTML = estadoEntries.map(function(e, i) {
-        return '<div style="padding: 10px 12px; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 6px; border-left: 3px solid var(--accent); display: flex; align-items: flex-start; gap: 8px;">' +
+        return '<div style="padding: 10px 12px; background: var(--bg-secondary); border-radius: 4px; margin-bottom: 6px; border-left: 3px solid var(--text-muted); display: flex; align-items: flex-start; gap: 8px;">' +
           '<div style="flex: 1;">' +
             '<div style="font-size: 12px; color: var(--text-muted); margin-bottom: 2px;">' + escapeHtml(e.hora) + '</div>' +
             '<div style="font-size: 13px; color: var(--text-primary);">' + escapeHtml(e.texto) + '</div>' +
@@ -6194,12 +6282,64 @@
       }
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-      loadCustomExercises();
-      initExerciseControls();
+    // Migrate localStorage data to Supabase (one-time, on first cloud-enabled load)
+    async function migrateLocalDataToCloud() {
+      try {
+        var res = await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1&select=chat_history,workout_progress,exercise_configs,custom_exercises`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        var data = await res.json();
+        var profile = data[0] || {};
+        var updates = {};
+        // Migrate chat if cloud is empty but local has data
+        if ((!profile.chat_history || !profile.chat_history.messages?.length) && localStorage.getItem('chat-messages')) {
+          try {
+            var msgs = JSON.parse(localStorage.getItem('chat-messages'));
+            var date = localStorage.getItem('chat-date') || new Date().toDateString();
+            if (msgs?.length > 0) updates.chat_history = { messages: msgs, date: date };
+          } catch(e) {}
+        }
+        // Migrate workout progress
+        if ((!profile.workout_progress || !profile.workout_progress.progress) && localStorage.getItem('workout-progress-v6')) {
+          try {
+            var prog = JSON.parse(localStorage.getItem('workout-progress-v6'));
+            var date = localStorage.getItem('workout-date') || new Date().toDateString();
+            if (prog && Object.keys(prog).length > 0) updates.workout_progress = { progress: prog, date: date };
+          } catch(e) {}
+        }
+        // Migrate exercise configs
+        if ((!profile.exercise_configs || Object.keys(profile.exercise_configs).length === 0) && localStorage.getItem('exercise-configs')) {
+          try {
+            var configs = JSON.parse(localStorage.getItem('exercise-configs'));
+            if (configs && Object.keys(configs).length > 0) updates.exercise_configs = configs;
+          } catch(e) {}
+        }
+        // Migrate custom exercises
+        if ((!profile.custom_exercises || profile.custom_exercises.length === 0) && localStorage.getItem('custom-exercises')) {
+          try {
+            var custom = JSON.parse(localStorage.getItem('custom-exercises'));
+            if (custom?.length > 0) updates.custom_exercises = custom;
+          } catch(e) {}
+        }
+        if (Object.keys(updates).length > 0) {
+          await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify(updates)
+          });
+          console.log('Migrated local data to cloud:', Object.keys(updates));
+        }
+      } catch(e) { console.error('migration error:', e); }
+    }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      await loadCustomExercises();
+      await initExerciseControls();
       loadUploadedFiles();
-      loadProgress();
+      await loadProgress();
       loadLastWeights();
+      // Migrate localStorage data to Supabase if needed
+      migrateLocalDataToCloud();
       selectDate(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
       // Load data then render dashboard
       Promise.all([loadActivities(), loadProfile()]).then(function() {
