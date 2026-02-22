@@ -2837,12 +2837,16 @@
         '3. Use blocos <' + sg + '> para sugestoes acionaveis que o aluno pode aceitar e adicionar ao calendario.\n' +
         '4. Seja breve nas respostas (maximo 3-4 paragrafos).\n' +
         '5. Nao repita informacoes que ja foram dadas no contexto.\n\n' +
+        'DATA DE HOJE: ' + formatDate(new Date()) + ' (' + ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][new Date().getDay()] + ')\n\n' +
         'FORMATO DE SUGESTAO (quando aplicavel):\n' +
         '<' + sg + '>\n' +
         'type: atividade\naction: add\nlabel: Nome da atividade sugerida\n' +
         'activity_type: corrida|surf|tenis|bike|fisio|upper|lower\n' +
+        'date: YYYY-MM-DD (data especifica para a atividade, ex: ' + formatDate(new Date()) + ' para hoje)\n' +
         'duration: 30\ndetail: Descricao breve da sugestao\n' +
         '</' + sg + '>\n\n' +
+        'IMPORTANTE: Sempre inclua o campo "date" com a data EXATA (YYYY-MM-DD) para cada atividade sugerida.\n' +
+        'Se sugerir uma rotina semanal, crie uma sugestao separada para CADA dia com a data correta da proxima ocorrencia.\n\n' +
         '<' + sg + '>\n' +
         'type: exercicio\naction: modify\nlabel: Nome do exercicio\n' +
         'exercise_name: Nome EXATO do exercicio (da lista abaixo)\ndetail: O que mudar no exercicio\n' +
@@ -3227,6 +3231,13 @@
       const badge = s.type === 'atividade' ? 'Atividade' : (s.type === 'exercicio' ? 'Exercício' : 'Sugestão');
 
       let detailHtml = s.detail || '';
+      if (s.date) {
+        var dayNames = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+        var dateParts = s.date.split('-');
+        var dateObj = new Date(parseInt(dateParts[0]), parseInt(dateParts[1]) - 1, parseInt(dateParts[2]));
+        var dayName = dayNames[dateObj.getDay()];
+        detailHtml = '📅 ' + dayName + ' ' + dateParts[2] + '/' + dateParts[1] + (detailHtml ? ' — ' + detailHtml : '');
+      }
       if (s.sets) detailHtml += ' | ' + s.sets + ' series';
       if (s.reps) detailHtml += ' x ' + s.reps + ' reps';
       if (s.weight) detailHtml += ' | ' + s.weight + 'kg';
@@ -3420,15 +3431,14 @@
         return;
       }
 
-      card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Adicionado ao calendario</span>';
-
       const validTypes = ['corrida', 'surf', 'tenis', 'bike', 'fisio', 'upper', 'lower'];
       const type = s.activity_type && validTypes.includes(s.activity_type) ? s.activity_type : null;
 
       if (type) {
-        const today = formatDate(new Date());
-        if (!activities[today]) activities[today] = [];
-        activities[today].push({
+        // Use date from suggestion, fallback to today
+        var targetDate = s.date && /^\d{4}-\d{2}-\d{2}$/.test(s.date) ? s.date : formatDate(new Date());
+        if (!activities[targetDate]) activities[targetDate] = [];
+        activities[targetDate].push({
           type: type,
           time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
           duration: s.duration ? parseInt(s.duration) : null,
@@ -3436,16 +3446,21 @@
           effort: null
         });
 
-        // Ensure selectedDate is today for saving
+        // Save to the correct date
         const prevSelected = selectedDate;
-        selectedDate = new Date();
+        var parts = targetDate.split('-');
+        selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
         await saveActivities();
         selectedDate = prevSelected;
 
         renderCalendar();
         renderDayActivities();
-        showToast('Sugestão adicionada ao calendário!');
+
+        var dateLabel = targetDate === formatDate(new Date()) ? 'hoje' : targetDate;
+        card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Adicionado em ' + dateLabel + '</span>';
+        showToast('Adicionado ao calendário (' + dateLabel + ')!');
       } else {
+        card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Aceito</span>';
         showToast('Sugestão aceita!');
       }
     }
