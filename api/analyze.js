@@ -19,6 +19,8 @@ export default async function handler(req) {
     return new Response('Method not allowed', { status: 405 });
   }
 
+  const isStream = new URL(req.url).searchParams.get('stream') === '1';
+
   try {
     const body = await req.json();
 
@@ -48,6 +50,10 @@ export default async function handler(req) {
       requestBody.system = system;
     }
 
+    if (isStream) {
+      requestBody.stream = true;
+    }
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -66,6 +72,19 @@ export default async function handler(req) {
       });
     }
 
+    // Streaming: pipe Anthropic SSE stream directly to client
+    if (isStream) {
+      return new Response(response.body, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
+    // Non-streaming: parse JSON and return content
     const data = await response.json();
     const content = data.content?.[0]?.text || 'Sem resposta';
 
