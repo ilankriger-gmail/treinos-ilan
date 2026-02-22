@@ -28,7 +28,7 @@
       --text-primary: #dcddde;
       --text-secondary: #a7a9ab;
       --text-muted: #6b6e73;
-      --border: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.08);
       --success: #59a869;
       --warning: #e0a256;
       --error: #d95555;
@@ -86,63 +86,67 @@
     /* Reusable Button System */
     .btn {
       padding: 10px 16px;
-      border-radius: 4px;
+      border-radius: 8px;
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
       border: 1px solid var(--border);
-      background: transparent;
+      background: var(--bg-secondary);
       color: var(--text-secondary);
     }
+    .btn:hover { background: var(--bg-hover); color: var(--text-primary); transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
     .btn-primary {
       background: var(--accent);
-      border-color: var(--accent);
+      border-color: transparent;
       color: white;
     }
-    .btn-primary:hover { background: var(--accent-dark); }
+    .btn-primary:hover { background: var(--accent-dark); border-color: transparent; }
     .btn-success {
       background: var(--success);
-      border-color: var(--success);
+      border-color: transparent;
       color: white;
     }
-    .btn-success:hover { background: #16a34a; }
+    .btn-success:hover { background: #16a34a; border-color: transparent; }
     .btn-ghost {
       background: transparent;
       border-color: var(--border);
       color: var(--text-secondary);
     }
     .btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); }
-    .btn-sm { padding: 6px 12px; font-size: 12px; }
-    .btn-lg { padding: 14px 20px; font-size: 15px; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+    .btn-lg { padding: 14px 20px; font-size: 15px; border-radius: 10px; }
 
     /* Reusable Form Inputs */
     .form-input {
       width: 100%;
-      padding: 10px 12px;
+      padding: 10px 14px;
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 8px;
       color: var(--text-primary);
       font-size: 14px;
       font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s;
     }
-    .form-input:focus { outline: none; border-color: var(--text-muted); }
+    .form-input:focus { outline: none; border-color: var(--accent); }
     .form-input::placeholder { color: var(--text-muted); }
     .form-textarea {
       width: 100%;
       min-height: 80px;
-      padding: 12px;
+      padding: 12px 14px;
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 8px;
       color: var(--text-primary);
       font-family: 'Inter', sans-serif;
       font-size: 14px;
       resize: vertical;
+      transition: border-color 0.2s;
     }
-    .form-textarea:focus { outline: none; border-color: var(--text-muted); }
+    .form-textarea:focus { outline: none; border-color: var(--accent); }
     .form-textarea::placeholder { color: var(--text-muted); }
     .form-label {
       font-size: 12px;
@@ -171,11 +175,11 @@
       flex: 1;
       padding: 8px;
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 10px;
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.2s ease;
       background: transparent;
       color: var(--text-secondary);
       font-family: 'Inter', sans-serif;
@@ -212,7 +216,7 @@
       width: 36px;
       height: 36px;
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 8px;
       background: var(--bg-secondary);
       color: var(--text-primary);
       cursor: pointer;
@@ -252,7 +256,7 @@
     .calendar-day {
       aspect-ratio: 1;
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 6px;
       background: var(--bg-secondary);
       display: flex;
       flex-direction: column;
@@ -309,11 +313,11 @@
     .activity-btn {
       padding: 12px 8px;
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 10px;
       background: var(--bg-secondary);
       color: var(--text-primary);
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.2s ease;
       font-family: 'Inter', sans-serif;
       font-size: 12px;
       display: flex;
@@ -351,7 +355,7 @@
       gap: 12px;
       padding: 12px;
       background: var(--bg-secondary);
-      border-radius: 4px;
+      border-radius: 8px;
       margin-bottom: 8px;
       border: 1px solid var(--border);
     }
@@ -378,7 +382,7 @@
       width: 28px;
       height: 28px;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       background: var(--error-dim);
       color: var(--error);
       cursor: pointer;
@@ -409,7 +413,7 @@
       white-space: nowrap;
       padding: 10px 12px;
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 8px;
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
@@ -452,7 +456,7 @@
       flex: 1;
       text-align: center;
       padding: 6px 2px;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 11px;
       font-weight: 500;
       color: var(--text-muted);
@@ -486,7 +490,7 @@
     }
     .session-timer-bar button {
       padding: 6px 14px;
-      border-radius: 4px;
+      border-radius: 8px;
       border: 1px solid var(--border);
       background: var(--bg-tertiary);
       color: var(--text-secondary);
@@ -494,6 +498,7 @@
       font-weight: 600;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
+      transition: all 0.2s ease;
     }
     .session-timer-bar button.running {
       background: var(--accent);
@@ -510,7 +515,7 @@
     .cardio-type-btn {
       flex: 1;
       padding: 12px;
-      border-radius: 4px;
+      border-radius: 8px;
       border: 1px solid var(--border);
       background: var(--surface);
       color: var(--text-secondary);
@@ -540,7 +545,7 @@
     .cardio-field input, .cardio-field textarea {
       width: 100%;
       padding: 10px;
-      border-radius: 4px;
+      border-radius: 8px;
       border: 1px solid var(--border);
       background: var(--bg-secondary);
       color: var(--text-primary);
@@ -552,7 +557,7 @@
       text-align: center;
       padding: 16px;
       background: var(--bg-tertiary);
-      border-radius: 6px;
+      border-radius: 12px;
       margin-bottom: 16px;
     }
     .pace-display .pace-value {
@@ -582,7 +587,7 @@
     .simple-activity-form textarea {
       width: 100%;
       padding: 10px;
-      border-radius: 4px;
+      border-radius: 8px;
       border: 1px solid var(--border);
       background: var(--bg-secondary);
       color: var(--text-primary);
@@ -611,7 +616,7 @@
       padding: 14px;
       background: var(--success);
       border: none;
-      border-radius: 4px;
+      border-radius: 10px;
       color: white;
       font-size: 14px;
       font-weight: 600;
@@ -640,11 +645,11 @@
     
     .exercise {
       background: var(--bg-secondary);
-      border-radius: 6px;
+      border-radius: 10px;
       padding: 12px;
       margin-bottom: 6px;
       border: 1px solid var(--border);
-      transition: background 0.2s;
+      transition: all 0.2s ease;
     }
     
     .exercise.done {
@@ -700,7 +705,7 @@
       margin-top: 12px;
       padding: 10px 12px;
       background: var(--bg-tertiary);
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 12px;
       color: var(--text-secondary);
       border-left: 2px solid var(--text-muted);
@@ -737,10 +742,10 @@
     .set-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); }
     .set-row:last-child { border-bottom: none; }
     .set-label { width: 20px; font-size: 12px; color: var(--text-muted); text-align: center; flex-shrink: 0; }
-    .set-weight, .set-reps { width: 56px; padding: 6px 4px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 13px; text-align: center; font-family: 'Inter', sans-serif; }
-    .set-weight:focus, .set-reps:focus { outline: none; border-color: var(--text-muted); }
+    .set-weight, .set-reps { width: 56px; padding: 6px 4px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 13px; text-align: center; font-family: 'Inter', sans-serif; transition: border-color 0.2s; }
+    .set-weight:focus, .set-reps:focus { outline: none; border-color: var(--accent); }
     .set-x { color: var(--text-muted); font-size: 12px; }
-    .set-check { width: 28px; height: 28px; border-radius: 4px; border: 2px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+    .set-check { width: 28px; height: 28px; border-radius: 6px; border: 2px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s ease; }
     .set-row.done .set-check { background: var(--success); border-color: var(--success); }
     .set-row.done .set-check::after { content: '✓'; color: white; font-size: 14px; }
     .set-row.done { opacity: 0.6; }
@@ -752,7 +757,7 @@
       padding: 6px 12px;
       background: transparent;
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 6px;
       color: var(--text-secondary);
       font-size: 11px;
       font-family: 'Inter', sans-serif;
@@ -837,7 +842,7 @@
       padding: 10px 24px;
       background: transparent;
       border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 4px;
+      border-radius: 8px;
       color: white;
       font-size: 14px;
       font-family: 'Inter', sans-serif;
@@ -849,7 +854,7 @@
       height: 36px;
       min-width: 36px;
       border: 2px solid var(--text-muted);
-      border-radius: 4px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -965,7 +970,7 @@
       padding: 12px 32px;
       background: transparent;
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 8px;
       color: var(--text-secondary);
       font-size: 13px;
       font-family: 'Inter', sans-serif;
@@ -980,7 +985,7 @@
       background: var(--success);
       color: white;
       padding: 12px 24px;
-      border-radius: 4px;
+      border-radius: 10px;
       font-size: 14px;
       font-weight: 600;
       transition: transform 0.3s;
@@ -1030,13 +1035,13 @@
       padding: 12px;
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 8px;
       color: var(--text-primary);
       font-family: 'Inter', sans-serif;
       font-size: 14px;
       resize: vertical;
     }
-    
+
     .coach-textarea::placeholder {
       color: var(--text-muted);
     }
@@ -1086,7 +1091,7 @@
       gap: 10px;
       padding: 10px 12px;
       background: var(--bg-tertiary);
-      border-radius: 4px;
+      border-radius: 8px;
       margin-bottom: 8px;
     }
 
@@ -1116,7 +1121,7 @@
       width: 24px;
       height: 24px;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       background: rgba(239, 68, 68, 0.1);
       color: #ef4444;
       cursor: pointer;
@@ -1145,7 +1150,7 @@
       padding: 16px;
       background: var(--accent);
       border: none;
-      border-radius: 4px;
+      border-radius: 10px;
       color: white;
       font-size: 16px;
       font-weight: 600;
@@ -1280,7 +1285,7 @@
     .chat-bubble {
       max-width: 85%;
       padding: 12px 16px;
-      border-radius: 8px;
+      border-radius: 14px;
       font-size: 14px;
       line-height: 1.6;
       word-wrap: break-word;
@@ -1357,7 +1362,7 @@
       padding: 12px 16px;
       background: var(--bg-secondary);
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 12px;
       color: var(--text-primary);
       font-family: 'Inter', sans-serif;
       font-size: 14px;
@@ -1367,13 +1372,13 @@
     }
 
     .chat-input::placeholder { color: var(--text-muted); }
-    .chat-input:focus { outline: none; border-color: var(--text-muted); }
+    .chat-input:focus { outline: none; border-color: var(--accent); }
 
     .chat-send-btn {
       width: 44px;
       height: 44px;
       border: none;
-      border-radius: 6px;
+      border-radius: 12px;
       background: var(--accent);
       color: white;
       font-size: 18px;
@@ -1392,7 +1397,7 @@
       padding: 20px;
       background: var(--accent);
       border: none;
-      border-radius: 6px;
+      border-radius: 12px;
       color: white;
       font-size: 18px;
       font-weight: 700;
@@ -1415,7 +1420,7 @@
     .suggestion-card {
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 10px;
       padding: 14px;
       margin-top: 10px;
     }
@@ -1445,7 +1450,7 @@
     .suggestion-card-header .badge {
       font-size: 11px;
       padding: 2px 8px;
-      border-radius: 4px;
+      border-radius: 6px;
       background: var(--bg-tertiary);
       color: var(--text-secondary);
     }
@@ -1465,7 +1470,7 @@
     .suggestion-card-actions button {
       flex: 1;
       padding: 8px;
-      border-radius: 4px;
+      border-radius: 8px;
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
@@ -1498,7 +1503,7 @@
     .exercise-img {
       width: 48px;
       height: 48px;
-      border-radius: 4px;
+      border-radius: 6px;
       object-fit: cover;
       background: var(--bg-tertiary);
       flex-shrink: 0;
@@ -1546,7 +1551,7 @@
     .exercise-modal-close {
       width: 32px;
       height: 32px;
-      border-radius: 4px;
+      border-radius: 6px;
       border: none;
       background: var(--bg-tertiary);
       color: var(--text-secondary);
@@ -1578,7 +1583,7 @@
 
     .exercise-modal-muscle-tag {
       padding: 3px 10px;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 11px;
       font-weight: 500;
       background: var(--bg-tertiary);
@@ -1617,7 +1622,7 @@
       width: 22px;
       height: 22px;
       min-width: 22px;
-      border-radius: 4px;
+      border-radius: 6px;
       background: var(--bg-tertiary);
       color: var(--text-secondary);
       font-size: 11px;
@@ -1642,7 +1647,7 @@
       padding: 4px 2px;
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 6px;
       color: var(--text-primary);
       font-size: 12px;
       font-family: 'Inter', sans-serif;
@@ -1722,17 +1727,19 @@
     .dash-card {
       background: var(--bg-secondary);
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 10px;
       padding: 14px 16px;
       display: flex;
       align-items: center;
       gap: 12px;
       cursor: pointer;
+      transition: all 0.2s ease;
       transition: background 0.2s;
     }
 
     .dash-card:hover {
       background: var(--bg-hover);
+      transform: translateY(-1px);
     }
 
     .dash-card-icon {
@@ -1742,7 +1749,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 4px;
+      border-radius: 8px;
       background: var(--surface);
       flex-shrink: 0;
     }
@@ -1777,18 +1784,25 @@
 
     /* Activity item radius */
     .activity-item {
-      border-radius: 4px;
+      border-radius: 8px;
     }
 
     /* Activity btn radius */
     .activity-btn {
-      border-radius: 4px;
-      transition: background 0.2s;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+    .activity-btn:hover {
+      transform: translateY(-1px);
+      background: var(--bg-hover);
+    }
+    .activity-btn:active {
+      transform: translateY(0);
     }
 
     /* Suggestion card */
     .suggestion-card {
-      border-radius: 6px;
+      border-radius: 10px;
     }
 
     /* 6.1 Hover effects only on devices with hover */
@@ -1922,7 +1936,7 @@
     .md-codeblock {
       background: #1a1a1a;
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 8px;
       padding: 12px;
       overflow-x: auto;
       margin: 8px 0;
@@ -1978,7 +1992,7 @@
     .sparkline-container {
       display: inline-block;
       background: var(--bg-tertiary);
-      border-radius: 4px;
+      border-radius: 6px;
       padding: 4px 8px;
       cursor: pointer;
       margin-top: 4px;
@@ -1999,7 +2013,7 @@
     .chart-modal.active { display: flex; animation: modalFadeIn 0.2s ease-out; }
     .chart-modal-content {
       background: var(--bg-secondary);
-      border-radius: 6px;
+      border-radius: 12px;
       padding: 20px;
       width: 95%;
       max-width: 440px;
@@ -2024,7 +2038,7 @@
     .chart-stat {
       flex: 1;
       background: var(--bg-tertiary);
-      border-radius: 4px;
+      border-radius: 8px;
       padding: 10px;
       text-align: center;
     }
@@ -2048,7 +2062,7 @@
     }
     .chart-svg-wrap {
       background: var(--bg-tertiary);
-      border-radius: 4px;
+      border-radius: 8px;
       padding: 12px;
     }
 
@@ -2158,9 +2172,9 @@
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
           <span style="font-size: 18px;">💭</span>
           <span style="font-size: 14px; font-weight: 600;">Como estou agora</span>
-          <button onclick="saveEstado()" style="margin-left: auto; padding: 6px 12px; background: var(--accent); border: none; border-radius: 4px; color: white; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif;">Salvar</button>
+          <button onclick="saveEstado()" style="margin-left: auto; padding: 6px 12px; background: var(--accent); border: none; border-radius: 8px; color: white; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif;">Salvar</button>
         </div>
-        <textarea id="estadoHojeMain" aria-label="Como estou agora" placeholder="Ex: Dormi bem, com energia, leve dor no ombro..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 14px; resize: none;"></textarea>
+        <textarea id="estadoHojeMain" aria-label="Como estou agora" placeholder="Ex: Dormi bem, com energia, leve dor no ombro..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 14px; resize: none;"></textarea>
         <div id="estadoEntries" style="margin-top: 10px;"></div>
       </div>
       
@@ -2170,7 +2184,7 @@
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
           <span class="calendar-month" id="calendarMonth">Fevereiro 2026</span>
-          <button onclick="goToToday()" style="padding: 4px 10px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-secondary); font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">Hoje</button>
+          <button onclick="goToToday()" style="padding: 4px 10px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">Hoje</button>
         </div>
         <div class="calendar-nav">
           <button onclick="changeMonth(1)">→</button>
@@ -2932,21 +2946,21 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
             <div style="grid-column: span 2;">
               <label for="profileNome" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Nome</label>
-              <input type="text" id="profileNome" placeholder="Seu nome" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
+              <input type="text" id="profileNome" placeholder="Seu nome" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
             </div>
             <div>
               <label for="profileIdade" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Idade</label>
-              <input type="number" id="profileIdade" placeholder="Ex: 30" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
+              <input type="number" id="profileIdade" placeholder="Ex: 30" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
             </div>
             <div>
               <label for="profileAltura" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Altura (cm)</label>
-              <input type="number" id="profileAltura" placeholder="Ex: 175" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
+              <input type="number" id="profileAltura" placeholder="Ex: 175" onclick="event.stopPropagation()" style="width: 100%; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif;">
             </div>
             <div style="grid-column: span 2;">
               <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Sexo</label>
               <div style="display: flex; gap: 8px;">
-                <button onclick="event.stopPropagation(); selectSexo('masculino')" class="sexo-btn" data-sexo="masculino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">M</button>
-                <button onclick="event.stopPropagation(); selectSexo('feminino')" class="sexo-btn" data-sexo="feminino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">F</button>
+                <button onclick="event.stopPropagation(); selectSexo('masculino')" class="sexo-btn" data-sexo="masculino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">M</button>
+                <button onclick="event.stopPropagation(); selectSexo('feminino')" class="sexo-btn" data-sexo="feminino" style="flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">F</button>
               </div>
             </div>
           </div>
@@ -2962,12 +2976,12 @@
             <label for="notaMedicaInput" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px;">Notas Médicas</label>
             <div style="display: flex; gap: 8px;">
               <textarea class="coach-textarea" id="notaMedicaInput" onclick="event.stopPropagation()" placeholder="Adicionar nota médica..." style="min-height: 50px; flex: 1;"></textarea>
-              <button onclick="event.stopPropagation(); addMedicalNote()" style="padding: 8px 12px; background: var(--success); border: none; border-radius: 4px; color: white; font-size: 11px; cursor: pointer; align-self: flex-end;">+</button>
+              <button onclick="event.stopPropagation(); addMedicalNote()" style="padding: 8px 12px; background: var(--success); border: none; border-radius: 8px; color: white; font-size: 11px; cursor: pointer; align-self: flex-end;">+</button>
             </div>
             <div id="notasMedicasList" style="margin-top: 8px;"></div>
           </div>
           <div style="display: flex; gap: 8px;">
-            <button onclick="event.stopPropagation(); saveProfile(); saveField('objetivo'); saveField('dores')" style="flex: 1; padding: 10px; background: var(--accent); border: none; border-radius: 4px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">Salvar Perfil</button>
+            <button onclick="event.stopPropagation(); saveProfile(); saveField('objetivo'); saveField('dores')" style="flex: 1; padding: 10px; background: var(--accent); border: none; border-radius: 10px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">Salvar Perfil</button>
           </div>
         </div>
       </div>
@@ -2975,7 +2989,7 @@
       <!-- Chat area (hidden until started) -->
       <div id="chatArea" style="display: none;" class="chat-container">
         <div style="padding: 8px 20px; border-bottom: 1px solid var(--border); background: var(--bg-secondary); display: flex; align-items: center; gap: 10px;">
-          <button onclick="exitChat()" aria-label="Voltar ao dashboard" style="padding: 8px 14px; background: transparent; border: 1px solid var(--border); border-radius: 4px; color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px;">← Voltar</button>
+          <button onclick="exitChat()" aria-label="Voltar ao dashboard" style="padding: 8px 14px; background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 13px;">← Voltar</button>
           <span style="font-size: 13px; color: var(--text-muted);">Coach AI</span>
         </div>
         <div class="chat-messages" id="chatMessages"></div>
@@ -3026,7 +3040,7 @@
       <div class="progress-track">
         <div class="progress-fill" id="progressFill" style="width: 0%"></div>
       </div>
-      <button id="finishBtn" onclick="finishWorkout()" style="display: none; margin-top: 12px; width: 100%; padding: 14px; background: var(--success); border: none; border-radius: 4px; color: white; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">
+      <button id="finishBtn" onclick="finishWorkout()" style="display: none; margin-top: 12px; width: 100%; padding: 14px; background: var(--success); border: none; border-radius: 10px; color: white; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">
         🏆 Finalizar Treino
       </button>
     </div>
@@ -3052,7 +3066,7 @@
       
       <div style="margin-bottom: 16px;">
         <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">⏱️ Duração (minutos)</label>
-        <input type="number" id="activityDuration" value="60" placeholder="60" style="width: 100%; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-size: 16px; font-family: 'Inter', sans-serif;">
+        <input type="number" id="activityDuration" value="60" placeholder="60" style="width: 100%; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 16px; font-family: 'Inter', sans-serif;">
       </div>
       
       <div style="margin-bottom: 16px;">
@@ -3067,17 +3081,17 @@
       
       <div id="fisioTreinoContainer" style="margin-bottom: 16px; display: none;">
         <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">📋 Treino de Fisioterapia</label>
-        <textarea id="fisioTreino" placeholder="Descreva os exercícios da fisio..." style="width: 100%; min-height: 80px; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
+        <textarea id="fisioTreino" placeholder="Descreva os exercícios da fisio..." style="width: 100%; min-height: 80px; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
       </div>
       
       <div style="margin-bottom: 20px;">
         <label style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">💬 Como saí (opcional)</label>
-        <textarea id="activityNotes" placeholder="Ex: Me senti bem, dor no joelho no final..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 4px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
+        <textarea id="activityNotes" placeholder="Ex: Me senti bem, dor no joelho no final..." style="width: 100%; min-height: 60px; padding: 12px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical;"></textarea>
       </div>
       
       <div style="display: flex; gap: 10px;">
-        <button onclick="closeActivityModal()" style="flex: 1; padding: 14px; border: 1px solid var(--border); border-radius: 4px; background: transparent; color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">Cancelar</button>
-        <button id="saveActivityBtn" onclick="saveActivity()" style="flex: 2; padding: 14px; border: none; border-radius: 4px; background: var(--success); color: white; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">Salvar Atividade</button>
+        <button onclick="closeActivityModal()" style="flex: 1; padding: 14px; border: 1px solid var(--border); border-radius: 10px; background: transparent; color: var(--text-secondary); cursor: pointer; font-family: 'Inter', sans-serif;">Cancelar</button>
+        <button id="saveActivityBtn" onclick="saveActivity()" style="flex: 2; padding: 14px; border: none; border-radius: 10px; background: var(--success); color: white; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600;">Salvar Atividade</button>
       </div>
     </div>
   </div>
@@ -3413,10 +3427,10 @@
               ${a.effort != null ? ' • esforço ' + a.effort + '/10' : (a.intensity ? ' • ' + a.intensity : '')}
             </div>
           </div>
-          <button onclick="editActivity('${dateStr}', ${i})" style="width: 28px; height: 28px; border: none; border-radius: 4px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-size: 14px;">✎</button>
+          <button onclick="editActivity('${dateStr}', ${i})" style="width: 28px; height: 28px; border: none; border-radius: 6px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-size: 14px;">✎</button>
           <button class="activity-delete" onclick="deleteActivity('${dateStr}', ${i})">✕</button>
-          ${a.notes ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: var(--bg-tertiary); border-radius: 4px; font-size: 12px; color: var(--text-secondary); margin-left: 36px;">💬 ' + escapeHtml(a.notes) + '</div>' : ''}
-          ${a.fisioTreino ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: var(--bg-tertiary); border-radius: 4px; font-size: 12px; color: var(--text-secondary); margin-left: 36px; border-left: 2px solid var(--text-muted);">📋 ' + escapeHtml(a.fisioTreino) + '</div>' : ''}
+          ${a.notes ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: var(--bg-tertiary); border-radius: 6px; font-size: 12px; color: var(--text-secondary); margin-left: 36px;">💬 ' + escapeHtml(a.notes) + '</div>' : ''}
+          ${a.fisioTreino ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: var(--bg-tertiary); border-radius: 6px; font-size: 12px; color: var(--text-secondary); margin-left: 36px; border-left: 2px solid var(--text-muted);">📋 ' + escapeHtml(a.fisioTreino) + '</div>' : ''}
         </div>
       `).join('');
     }
@@ -3433,7 +3447,7 @@
       // Show undo toast
       if (undoDeleteTimer) clearTimeout(undoDeleteTimer);
       var toast = document.getElementById('toast');
-      toast.innerHTML = 'Atividade removida <button onclick="undoDeleteActivity(\'' + dateStr + '\',' + index + ')" style="margin-left: 10px; padding: 4px 12px; background: white; color: var(--success); border: none; border-radius: 4px; font-weight: 600; cursor: pointer; font-family: \'Inter\', sans-serif; font-size: 12px;">Desfazer</button>';
+      toast.innerHTML = 'Atividade removida <button onclick="undoDeleteActivity(\'' + dateStr + '\',' + index + ')" style="margin-left: 10px; padding: 4px 12px; background: white; color: var(--success); border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-family: \'Inter\', sans-serif; font-size: 12px;">Desfazer</button>';
       toast.classList.add('show');
       // Store for undo
       toast.dataset.undoActivity = JSON.stringify({ dateStr: dateStr, index: index, activity: removed });
@@ -5994,7 +6008,7 @@
       var bubble = document.createElement('div');
       bubble.className = 'chat-bubble assistant';
       bubble.innerHTML = '<span style="color: var(--error);">Erro na resposta.</span><br>' +
-        '<button onclick="retryChatMessage(this)" data-text="' + escapeHtml(lastUserText) + '" style="margin-top: 8px; padding: 8px 16px; background: var(--accent); border: none; border-radius: 4px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: \'Inter\', sans-serif;">Tentar novamente</button>';
+        '<button onclick="retryChatMessage(this)" data-text="' + escapeHtml(lastUserText) + '" style="margin-top: 8px; padding: 8px 16px; background: var(--accent); border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: \'Inter\', sans-serif;">Tentar novamente</button>';
       container.appendChild(bubble);
       scrollChatToBottom();
     }
@@ -6668,7 +6682,7 @@
       }
       
       container.innerHTML = notasMedicas.map((n, i) => `
-        <div style="padding: 10px 12px; background: var(--bg-tertiary); border-radius: 4px; margin-bottom: 8px; border-left: 3px solid var(--success);">
+        <div style="padding: 10px 12px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 8px; border-left: 3px solid var(--success);">
           <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">${new Date(n.data).toLocaleDateString('pt-BR')}</div>
           <div style="font-size: 13px; color: var(--text-primary);">${escapeHtml(n.texto)}</div>
         </div>
@@ -6687,7 +6701,7 @@
       }
       
       container.innerHTML = historicoAnalises.slice(0, 5).map((a, i) => `
-        <div style="padding: 12px; background: var(--bg-tertiary); border-radius: 4px; margin-bottom: 8px; cursor: pointer;" onclick="showAnalysis(${i})">
+        <div style="padding: 12px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 8px; cursor: pointer;" onclick="showAnalysis(${i})">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span style="font-size: 13px; font-weight: 500;">Análise ${historicoAnalises.length - i}</span>
             <span style="font-size: 11px; color: var(--text-muted);">${new Date(a.data).toLocaleDateString('pt-BR')}</span>
@@ -6762,7 +6776,7 @@
         return;
       }
       container.innerHTML = estadoEntries.map(function(e, i) {
-        return '<div style="padding: 10px 12px; background: var(--bg-secondary); border-radius: 4px; margin-bottom: 6px; border-left: 3px solid var(--text-muted); display: flex; align-items: flex-start; gap: 8px;">' +
+        return '<div style="padding: 10px 12px; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 6px; border-left: 3px solid var(--text-muted); display: flex; align-items: flex-start; gap: 8px;">' +
           '<div style="flex: 1;">' +
             '<div style="font-size: 12px; color: var(--text-muted); margin-bottom: 2px;">' + escapeHtml(e.hora) + '</div>' +
             '<div style="font-size: 13px; color: var(--text-primary);">' + escapeHtml(e.texto) + '</div>' +
