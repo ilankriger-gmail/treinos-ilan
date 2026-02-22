@@ -1976,9 +1976,12 @@
       'bike': 'Bike',
       'fisio': 'Fisioterapia',
       'upper': 'Treino Upper',
-      'lower': 'Treino Lower'
+      'lower': 'Treino Lower',
+      'caminhada': 'Caminhada',
+      'descanso': 'Descanso',
+      'mobilidade': 'Mobilidade'
     };
-    
+
     const activityEmojis = {
       'corrida': '🏃',
       'surf': '🏄',
@@ -1986,7 +1989,10 @@
       'bike': '🚴',
       'fisio': '🏥',
       'upper': '💪',
-      'lower': '🦵'
+      'lower': '🦵',
+      'caminhada': '🚶',
+      'descanso': '😴',
+      'mobilidade': '🧘'
     };
     
     let selectedIntensity = null;
@@ -2714,6 +2720,17 @@
 
     // ========== DYNAMIC WORKOUT DATA ==========
 
+    function getNext7Days() {
+      var dayNames = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+      var days = [];
+      for (var i = 0; i < 7; i++) {
+        var d = new Date();
+        d.setDate(d.getDate() + i);
+        days.push(dayNames[d.getDay()] + ' ' + formatDate(d));
+      }
+      return days.join(', ');
+    }
+
     function buildDynamicWorkoutText() {
       var upper = [];
       var lower = [];
@@ -2837,16 +2854,20 @@
         '3. Use blocos <' + sg + '> para sugestoes acionaveis que o aluno pode aceitar e adicionar ao calendario.\n' +
         '4. Seja breve nas respostas (maximo 3-4 paragrafos).\n' +
         '5. Nao repita informacoes que ja foram dadas no contexto.\n\n' +
-        'DATA DE HOJE: ' + formatDate(new Date()) + ' (' + ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][new Date().getDay()] + ')\n\n' +
+        'DATA DE HOJE: ' + formatDate(new Date()) + ' (' + ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][new Date().getDay()] + ')\n' +
+        'PROXIMOS 7 DIAS: ' + getNext7Days() + '\n\n' +
         'FORMATO DE SUGESTAO (quando aplicavel):\n' +
         '<' + sg + '>\n' +
         'type: atividade\naction: add\nlabel: Nome da atividade sugerida\n' +
         'activity_type: corrida|surf|tenis|bike|fisio|upper|lower\n' +
-        'date: YYYY-MM-DD (data especifica para a atividade, ex: ' + formatDate(new Date()) + ' para hoje)\n' +
+        'date: YYYY-MM-DD\n' +
         'duration: 30\ndetail: Descricao breve da sugestao\n' +
         '</' + sg + '>\n\n' +
-        'IMPORTANTE: Sempre inclua o campo "date" com a data EXATA (YYYY-MM-DD) para cada atividade sugerida.\n' +
-        'Se sugerir uma rotina semanal, crie uma sugestao separada para CADA dia com a data correta da proxima ocorrencia.\n\n' +
+        'REGRA OBRIGATORIA PARA ROTINAS SEMANAIS:\n' +
+        'Quando sugerir uma rotina semanal ou plano de varios dias, voce DEVE criar um bloco <' + sg + '> SEPARADO para CADA atividade de CADA dia.\n' +
+        'Cada bloco DEVE ter o campo "date" com a data exata no formato YYYY-MM-DD (use as datas dos proximos 7 dias acima).\n' +
+        'Se um dia tem 2 atividades (ex: tenis + upper), crie 2 blocos separados com a mesma data.\n' +
+        'NUNCA sugira rotina apenas como texto - SEMPRE use blocos <' + sg + '> para que o aluno possa aceitar e adicionar ao calendario.\n\n' +
         '<' + sg + '>\n' +
         'type: exercicio\naction: modify\nlabel: Nome do exercicio\n' +
         'exercise_name: Nome EXATO do exercicio (da lista abaixo)\ndetail: O que mudar no exercicio\n' +
@@ -2858,7 +2879,7 @@
         'exercise_name: Nome do exercicio\ndetail: Instrucoes de execucao\n' +
         'sets: 3\nreps: 12\nweight: 0\nworkout_group: upper|lower\n' +
         '</' + sg + '>\n\n' +
-        'Tipos validos de activity_type: corrida, surf, tenis, bike, fisio, upper, lower\n' +
+        'Tipos validos de activity_type: corrida, surf, tenis, bike, fisio, upper, lower, caminhada, descanso, mobilidade\n' +
         'Use <' + sg + '> APENAS quando tiver sugestoes concretas e acionaveis. Nao use em perguntas iniciais.\n\n' +
         'EXERCICIOS ATUAIS DO ALUNO (use estes nomes exatos para exercise_name):\n' +
         buildExerciseNameList().join(', ');
@@ -3431,7 +3452,7 @@
         return;
       }
 
-      const validTypes = ['corrida', 'surf', 'tenis', 'bike', 'fisio', 'upper', 'lower'];
+      const validTypes = ['corrida', 'surf', 'tenis', 'bike', 'fisio', 'upper', 'lower', 'caminhada', 'descanso', 'mobilidade'];
       const type = s.activity_type && validTypes.includes(s.activity_type) ? s.activity_type : null;
 
       if (type) {
