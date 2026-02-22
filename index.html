@@ -406,11 +406,13 @@
       padding: 12px 20px;
       gap: 8px;
       border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
     }
-    
+
     .workout-tab {
-      flex: 1;
-      padding: 10px;
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 10px 8px;
       border: 1px solid var(--border);
       border-radius: 8px;
       font-size: 13px;
@@ -1644,6 +1646,9 @@
       <div class="workout-tabs">
         <button class="workout-tab active" onclick="showWorkout('braco', this)">💪 Upper Body</button>
         <button class="workout-tab" onclick="showWorkout('perna', this)">🦵 Lower Body</button>
+        <button class="workout-tab" onclick="showWorkout('mob1', this)">🧘 Mob 1</button>
+        <button class="workout-tab" onclick="showWorkout('mob2', this)">🧘 Mob 2</button>
+        <button class="workout-tab" onclick="showWorkout('mob3', this)">🧘 Mob 3</button>
       </div>
       
       <!-- Upper Body -->
@@ -1960,6 +1965,240 @@
             <span class="weight-unit">kg</span>
           </div>
           <div class="weight-last" id="last-p7"></div>
+        </div>
+      </div>
+
+      <!-- Mobilidade 1 -->
+      <div id="mob1" class="workout">
+        <div class="exercise" data-id="m1-1" data-name="Cat-Cow">
+          <div class="exercise-header">
+            <div class="exercise-number">1</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Cat-Cow</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> series</span>
+                <span><strong>10</strong> reps</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Alterne entre flexao e extensao da coluna</div>
+        </div>
+
+        <div class="exercise" data-id="m1-2" data-name="World's Greatest Stretch">
+          <div class="exercise-header">
+            <div class="exercise-number">2</div>
+            <div class="exercise-info">
+              <div class="exercise-name">World's Greatest Stretch</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> series</span>
+                <span><strong>5</strong> reps/lado</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Afundo + rotacao toracica + extensao de braco</div>
+        </div>
+
+        <div class="exercise" data-id="m1-3" data-name="90/90 Hip Switch">
+          <div class="exercise-header">
+            <div class="exercise-number">3</div>
+            <div class="exercise-info">
+              <div class="exercise-name">90/90 Hip Switch</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> series</span>
+                <span><strong>8</strong> reps/lado</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Rotacao interna e externa do quadril controlada</div>
+        </div>
+
+        <div class="exercise" data-id="m1-4" data-name="Toracica em Quadrupedia">
+          <div class="exercise-header">
+            <div class="exercise-number">4</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Toracica em Quadrupedia</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> series</span>
+                <span><strong>8</strong> reps/lado</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Mao na nuca, abre e fecha rotando o tronco</div>
+        </div>
+
+        <div class="exercise" data-id="m1-5" data-name="Bretzel Stretch">
+          <div class="exercise-header">
+            <div class="exercise-number">5</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Bretzel Stretch</div>
+              <div class="exercise-stats">
+                <span><strong>2</strong> series</span>
+                <span><strong>30s</strong> hold/lado</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Deitado de lado, abre peito e quadril simultaneamente</div>
+        </div>
+      </div>
+
+      <!-- Mobilidade 2 -->
+      <div id="mob2" class="workout">
+        <div class="exercise" data-id="m2-1" data-name="Shoulder CARs">
+          <div class="exercise-header">
+            <div class="exercise-number">1</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Shoulder CARs</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> series</span>
+                <span><strong>5</strong> reps/lado</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Rotacao controlada e lenta do ombro (amplitude maxima)</div>
+        </div>
+
+        <div class="exercise" data-id="m2-2" data-name="Hip CARs">
+          <div class="exercise-header">
+            <div class="exercise-number">2</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Hip CARs</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> series</span>
+                <span><strong>5</strong> reps/lado</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Rotacao controlada do quadril em pe, amplitude maxima</div>
+        </div>
+
+        <div class="exercise" data-id="m2-3" data-name="Scorpion Stretch">
+          <div class="exercise-header">
+            <div class="exercise-number">3</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Scorpion Stretch</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> series</span>
+                <span><strong>8</strong> reps/lado</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">De brucos, leva o pe pro lado oposto rotando o tronco</div>
+        </div>
+
+        <div class="exercise" data-id="m2-4" data-name="Deep Squat Hold">
+          <div class="exercise-header">
+            <div class="exercise-number">4</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Deep Squat Hold</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> series</span>
+                <span><strong>30s</strong> hold</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Agachamento profundo, cotovelos empurrando joelhos</div>
+        </div>
+
+        <div class="exercise" data-id="m2-5" data-name="Pigeon Stretch">
+          <div class="exercise-header">
+            <div class="exercise-number">5</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Pigeon Stretch</div>
+              <div class="exercise-stats">
+                <span><strong>2</strong> series</span>
+                <span><strong>45s</strong> hold/lado</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Pombo: abre o quadril e alonga gluteo profundo</div>
+        </div>
+      </div>
+
+      <!-- Mobilidade 3 -->
+      <div id="mob3" class="workout">
+        <div class="exercise" data-id="m3-1" data-name="Inchworm">
+          <div class="exercise-header">
+            <div class="exercise-number">1</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Inchworm</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> series</span>
+                <span><strong>6</strong> reps</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Caminha com as maos ate prancha, volta aos pes</div>
+        </div>
+
+        <div class="exercise" data-id="m3-2" data-name="Spiderman com Rotacao">
+          <div class="exercise-header">
+            <div class="exercise-number">2</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Spiderman com Rotacao</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> series</span>
+                <span><strong>6</strong> reps/lado</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Afundo do homem-aranha + abre o braco pro teto</div>
+        </div>
+
+        <div class="exercise" data-id="m3-3" data-name="Cossack Squat">
+          <div class="exercise-header">
+            <div class="exercise-number">3</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Cossack Squat</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> series</span>
+                <span><strong>8</strong> reps/lado</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Agachamento lateral alternando, perna estendida fica reta</div>
+        </div>
+
+        <div class="exercise" data-id="m3-4" data-name="Wall Slides">
+          <div class="exercise-header">
+            <div class="exercise-number">4</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Wall Slides</div>
+              <div class="exercise-stats">
+                <span><strong>3</strong> series</span>
+                <span><strong>10</strong> reps</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Costas na parede, desliza bracos pra cima mantendo contato</div>
+        </div>
+
+        <div class="exercise" data-id="m3-5" data-name="Child's Pose com Rotacao">
+          <div class="exercise-header">
+            <div class="exercise-number">5</div>
+            <div class="exercise-info">
+              <div class="exercise-name">Child's Pose com Rotacao</div>
+              <div class="exercise-stats">
+                <span><strong>2</strong> series</span>
+                <span><strong>30s</strong> hold/lado</span>
+              </div>
+            </div>
+            <div class="checkbox" onclick="toggleExercise(this)"></div>
+          </div>
+          <div class="exercise-note">Posicao de crianca com braco passando por baixo do tronco</div>
         </div>
       </div>
     </div>
@@ -2549,7 +2788,8 @@
       
       try {
         const today = new Date().toISOString().split('T')[0];
-        const workoutType = currentWorkout === 'braco' ? 'upper' : 'lower';
+        const workoutTypeMap = { braco: 'upper', perna: 'lower', mob1: 'mobilidade', mob2: 'mobilidade', mob3: 'mobilidade' };
+        const workoutType = workoutTypeMap[currentWorkout] || 'upper';
         
         const response = await fetch(`${SUPABASE_URL}/rest/v1/workout_sessions`, {
           method: 'POST',
@@ -2706,6 +2946,21 @@
       'p5': { sets: 3, reps: '12-15', rest: 60, type: 'kg' },
       'p6': { sets: 3, reps: '15-20', rest: 60, type: 'kg' },
       'p7': { sets: 3, reps: '15-20', rest: 60, type: 'kg' },
+      'm1-1': { sets: 3, reps: '10', rest: 0, type: 'reps' },
+      'm1-2': { sets: 3, reps: '5', rest: 0, type: 'reps' },
+      'm1-3': { sets: 3, reps: '8', rest: 0, type: 'reps' },
+      'm1-4': { sets: 3, reps: '8', rest: 0, type: 'reps' },
+      'm1-5': { sets: 2, reps: '30', rest: 0, type: 'tempo' },
+      'm2-1': { sets: 3, reps: '5', rest: 0, type: 'reps' },
+      'm2-2': { sets: 3, reps: '5', rest: 0, type: 'reps' },
+      'm2-3': { sets: 3, reps: '8', rest: 0, type: 'reps' },
+      'm2-4': { sets: 3, reps: '30', rest: 0, type: 'tempo' },
+      'm2-5': { sets: 2, reps: '45', rest: 0, type: 'tempo' },
+      'm3-1': { sets: 3, reps: '6', rest: 0, type: 'reps' },
+      'm3-2': { sets: 3, reps: '6', rest: 0, type: 'reps' },
+      'm3-3': { sets: 3, reps: '8', rest: 0, type: 'reps' },
+      'm3-4': { sets: 3, reps: '10', rest: 0, type: 'reps' },
+      'm3-5': { sets: 2, reps: '30', rest: 0, type: 'tempo' },
     };
 
     let exerciseConfigs = {};
@@ -2922,15 +3177,46 @@
         var unit = cfg.type === 'tempo' ? 's' : 'reps';
         lower.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : ''));
       });
+      var mob1 = [], mob2 = [], mob3 = [];
+      document.querySelectorAll('#mob1 .exercise[data-id]').forEach(function(ex) {
+        var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
+        var id = ex.dataset.id;
+        var cfg = exerciseConfigs[id] || {};
+        var sets = cfg.sets || 3;
+        var reps = cfg.reps || '10';
+        var unit = cfg.type === 'tempo' ? 's' : 'reps';
+        mob1.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : ''));
+      });
+      document.querySelectorAll('#mob2 .exercise[data-id]').forEach(function(ex) {
+        var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
+        var id = ex.dataset.id;
+        var cfg = exerciseConfigs[id] || {};
+        var sets = cfg.sets || 3;
+        var reps = cfg.reps || '10';
+        var unit = cfg.type === 'tempo' ? 's' : 'reps';
+        mob2.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : ''));
+      });
+      document.querySelectorAll('#mob3 .exercise[data-id]').forEach(function(ex) {
+        var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
+        var id = ex.dataset.id;
+        var cfg = exerciseConfigs[id] || {};
+        var sets = cfg.sets || 3;
+        var reps = cfg.reps || '10';
+        var unit = cfg.type === 'tempo' ? 's' : 'reps';
+        mob3.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : ''));
+      });
       return 'Upper: ' + (upper.join(', ') || 'Nenhum') + '\n' +
-             'Lower: ' + (lower.join(', ') || 'Nenhum');
+             'Lower: ' + (lower.join(', ') || 'Nenhum') + '\n' +
+             'Mobilidade 1: ' + (mob1.join(', ') || 'Nenhum') + '\n' +
+             'Mobilidade 2: ' + (mob2.join(', ') || 'Nenhum') + '\n' +
+             'Mobilidade 3: ' + (mob3.join(', ') || 'Nenhum');
     }
 
     function buildExerciseNameList() {
       var names = [];
       document.querySelectorAll('.exercise[data-id]').forEach(function(ex) {
         var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
-        var group = ex.closest('#braco') ? 'upper' : 'lower';
+        var group = ex.closest('#braco') ? 'upper' : (ex.closest('#perna') ? 'lower' : (ex.closest('#mob1') ? 'mob1' : (ex.closest('#mob2') ? 'mob2' : (ex.closest('#mob3') ? 'mob3' : 'other'))));
         if (name) names.push(name + ' (' + group + ')');
       });
       // Include custom exercises
@@ -3128,13 +3414,13 @@
         '<' + sg + '>\n' +
         'type: exercicio\naction: modify\nlabel: Nome do exercicio\n' +
         'exercise_name: Nome EXATO do exercicio (da lista abaixo)\ndetail: O que mudar no exercicio\n' +
-        'sets: 3\nreps: 12\nweight: 20\nworkout_group: upper|lower\n' +
+        'sets: 3\nreps: 12\nweight: 20\nworkout_group: upper|lower|mob1|mob2|mob3\n' +
         '</' + sg + '>\n\n' +
         'Para adicionar exercicio NOVO:\n' +
         '<' + sg + '>\n' +
         'type: exercicio\naction: add\nlabel: Nome do exercicio novo\n' +
         'exercise_name: Nome do exercicio\ndetail: Instrucoes de execucao\n' +
-        'sets: 3\nreps: 12\nweight: 0\nworkout_group: upper|lower\n' +
+        'sets: 3\nreps: 12\nweight: 0\nworkout_group: upper|lower|mob1|mob2|mob3\n' +
         '</' + sg + '>\n\n' +
         'Para REMOVER exercicio existente:\n' +
         '<' + sg + '>\n' +
@@ -3146,13 +3432,13 @@
         'type: exercicio\naction: replace\nlabel: Nome do exercicio novo\n' +
         'exercise_name: Nome EXATO do exercicio que sera substituido (da lista abaixo)\n' +
         'detail: Instrucoes do exercicio substituto\n' +
-        'sets: 3\nreps: 12\nweight: 0\nworkout_group: upper|lower\n' +
+        'sets: 3\nreps: 12\nweight: 0\nworkout_group: upper|lower|mob1|mob2|mob3\n' +
         '</' + sg + '>\n\n' +
-        'Para REORDENAR exercicio (mudar posicao ou mover entre secoes upper/lower):\n' +
+        'Para REORDENAR exercicio (mudar posicao ou mover entre secoes upper/lower/mob1/mob2/mob3):\n' +
         '<' + sg + '>\n' +
         'type: exercicio\naction: reorder\nlabel: Nome do exercicio\n' +
         'exercise_name: Nome EXATO do exercicio (da lista abaixo)\nposition: 1\n' +
-        'workout_group: upper|lower (opcional, inclua para mover entre secoes)\n' +
+        'workout_group: upper|lower|mob1|mob2|mob3 (opcional, inclua para mover entre secoes)\n' +
         'detail: Motivo da mudanca de ordem\n' +
         '</' + sg + '>\n\n' +
         'Tipos validos de activity_type: corrida, surf, tenis, bike, fisio, upper, lower, caminhada, descanso, mobilidade\n' +
@@ -3163,7 +3449,7 @@
         'Seja proativo: se perceber que o treino pode melhorar com base no objetivo, dores ou historico do aluno, sugira mudancas.\n\n' +
         'PESOS: Quando sugerir exercicios, SEMPRE inclua o campo weight com um peso adequado baseado no historico de pesos do aluno. Se nao tem historico, sugira um peso inicial conservador. Se o aluno ja treina o exercicio, sugira progressao de carga quando apropriado.\n' +
         'ORDEM DOS EXERCICIOS: A ordem importa! Sugira reordenacao quando necessario seguindo principios de treino: compostos pesados primeiro (supino, remada, agachamento), depois isolados. Agrupe musculos antagonistas. Se perceber que a ordem nao esta otimizada, sugira mudancas com action: reorder.\n' +
-        'Voce tambem pode MOVER exercicios entre secoes (upper para lower ou vice-versa) usando action: reorder com workout_group. Para reorganizar o treino inteiro, crie um bloco reorder para CADA exercicio que precisa mudar de posicao.\n\n' +
+        'Voce tambem pode MOVER exercicios entre secoes (upper, lower, mob1, mob2, mob3) usando action: reorder com workout_group. Para reorganizar o treino inteiro, crie um bloco reorder para CADA exercicio que precisa mudar de posicao.\n\n' +
         'EXERCICIOS ATUAIS DO ALUNO (use estes nomes exatos para exercise_name):\n' +
         buildExerciseNameList().join(', ');
     }
@@ -3686,7 +3972,7 @@
       }
 
       // Renumber remaining exercises in the container
-      var containers = [document.getElementById('braco'), document.getElementById('perna')];
+      var containers = [document.getElementById('braco'), document.getElementById('perna'), document.getElementById('mob1'), document.getElementById('mob2'), document.getElementById('mob3')];
       containers.forEach(function(container) {
         if (!container) return;
         var exercises = container.querySelectorAll('.exercise');
@@ -3712,7 +3998,8 @@
 
       // Move between sections if targetGroup specified
       if (targetGroup) {
-        var newContainer = targetGroup === 'lower' ? document.getElementById('perna') : document.getElementById('braco');
+        var reorderContainerMap = { lower: 'perna', upper: 'braco', mob1: 'mob1', mob2: 'mob2', mob3: 'mob3' };
+        var newContainer = document.getElementById(reorderContainerMap[targetGroup] || 'braco');
         if (newContainer && newContainer !== oldContainer) {
           container = newContainer;
         }
@@ -3762,7 +4049,8 @@
       }
 
       var exName = exerciseEl.dataset.name || exerciseEl.querySelector('.exercise-name')?.textContent || name;
-      var sectionName = container.id === 'perna' ? 'Lower' : 'Upper';
+      var sectionNameMap = { perna: 'Lower', braco: 'Upper', mob1: 'Mob 1', mob2: 'Mob 2', mob3: 'Mob 3' };
+      var sectionName = sectionNameMap[container.id] || 'Upper';
       var msg = movingBetweenSections
         ? exName + ' movido para ' + sectionName + ' (posição ' + (targetIndex + 1) + ')!'
         : exName + ' movido para posição ' + (targetIndex + 1) + '!';
@@ -3772,7 +4060,8 @@
 
     function addNewExercise(s) {
       var group = (s.workout_group || 'upper').toLowerCase();
-      var container = group === 'lower' ? document.getElementById('perna') : document.getElementById('braco');
+      var containerMap = { lower: 'perna', upper: 'braco', mob1: 'mob1', mob2: 'mob2', mob3: 'mob3' };
+      var container = document.getElementById(containerMap[group] || 'braco');
       if (!container) return;
 
       // Generate unique id
