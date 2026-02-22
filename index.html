@@ -2939,6 +2939,8 @@
         'Voce tem controle total sobre os treinos de musculacao do aluno. Pode modificar sets/reps/peso, adicionar exercicios novos, remover exercicios desnecessarios, substituir exercicios e mudar a ordem dos exercicios.\n' +
         'Quando o aluno pedir mudancas no treino (ex: "muda meu treino", "troca exercicio tal", "tira esse exercicio", "muda a ordem"), use os blocos de sugestao com action: modify, add, remove, replace ou reorder.\n' +
         'Seja proativo: se perceber que o treino pode melhorar com base no objetivo, dores ou historico do aluno, sugira mudancas.\n\n' +
+        'PESOS: Quando sugerir exercicios, SEMPRE inclua o campo weight com um peso adequado baseado no historico de pesos do aluno. Se nao tem historico, sugira um peso inicial conservador. Se o aluno ja treina o exercicio, sugira progressao de carga quando apropriado.\n' +
+        'ORDEM DOS EXERCICIOS: A ordem importa! Sugira reordenacao quando necessario seguindo principios de treino: compostos pesados primeiro (supino, remada, agachamento), depois isolados. Agrupe musculos antagonistas. Se perceber que a ordem nao esta otimizada, sugira mudancas com action: reorder.\n\n' +
         'EXERCICIOS ATUAIS DO ALUNO (use estes nomes exatos para exercise_name):\n' +
         buildExerciseNameList().join(', ');
     }
@@ -3419,7 +3421,10 @@
         }
         if (s.weight) {
           var weightInput = exerciseEl.querySelector('.weight-input');
-          if (weightInput) weightInput.value = s.weight;
+          if (weightInput) {
+            weightInput.value = s.weight;
+            saveWeight(weightInput);
+          }
         }
         saveExerciseConfigs();
         showToast('Exercício ' + (s.exercise_name || s.label) + ' atualizado!');
@@ -3569,6 +3574,12 @@
       // Save to custom exercises list for persistence
       customExercises.push({ id: id, name: name, group: group, note: note, sets: parseInt(sets), reps: reps });
       localStorage.setItem('custom-exercises', JSON.stringify(customExercises));
+
+      // Save weight to Supabase if provided
+      if (s.weight) {
+        var newWeightInput = exDiv.querySelector('.weight-input');
+        if (newWeightInput) saveWeight(newWeightInput);
+      }
 
       // Load image for the new exercise
       loadSingleExerciseImage(exDiv);
