@@ -3823,8 +3823,8 @@
         });
 
         var duration = video.duration;
-        var frameCount = 5;
-        var interval = duration / (frameCount + 1);
+        var frameCount = Math.round(duration * 2); // 2 fps
+        var interval = duration / frameCount;
         var frames = [];
 
         var canvas = document.createElement('canvas');
@@ -3832,8 +3832,8 @@
         canvas.height = 640;
         var ctx = canvas.getContext('2d');
 
-        for (var i = 1; i <= frameCount; i++) {
-          var time = interval * i;
+        for (var i = 0; i < frameCount; i++) {
+          var time = interval * (i + 0.5);
           video.currentTime = time;
           await new Promise(function(resolve) {
             video.onseeked = resolve;
@@ -3870,7 +3870,7 @@
 
       // Build message with frames
       var content = [];
-      content.push({ type: 'text', text: 'Analise minha execução do exercício "' + exerciseName + '". Estas são 5 frames capturados durante a execução. Avalie minha postura, alinhamento, amplitude de movimento e dê feedback específico sobre o que estou fazendo certo e o que posso melhorar. Seja direto e prático.' });
+      content.push({ type: 'text', text: 'Analise minha execução do exercício "' + exerciseName + '". Estas são ' + frames.length + ' frames capturados a 2fps durante 15 segundos. Avalie minha postura, alinhamento, amplitude de movimento e dê feedback específico sobre o que estou fazendo certo e o que posso melhorar. Seja direto e prático.' });
 
       frames.forEach(function(base64, idx) {
         content.push({
@@ -3885,7 +3885,7 @@
 
       // Add to chat as user message
       chatMessages.push({ role: 'user', content: content });
-      addChatBubble('📹 Analisando execução: ' + exerciseName + ' (5 frames)', 'user');
+      addChatBubble('📹 Analisando execução: ' + exerciseName + ' (' + frames.length + ' frames)', 'user');
       addTypingIndicator();
       scrollChatToBottom();
 
