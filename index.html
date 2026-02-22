@@ -1205,6 +1205,140 @@
       flex-shrink: 0;
     }
 
+    .exercise-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .exercise-modal {
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+    }
+
+    .exercise-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg-secondary);
+      z-index: 1;
+    }
+
+    .exercise-modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .exercise-modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: none;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .exercise-modal-images {
+      display: flex;
+      gap: 4px;
+      padding: 16px 20px 8px;
+    }
+
+    .exercise-modal-images img {
+      flex: 1;
+      max-width: 50%;
+      border-radius: 10px;
+      object-fit: cover;
+      background: var(--bg-tertiary);
+    }
+
+    .exercise-modal-muscles {
+      padding: 8px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .exercise-modal-muscle-tag {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(127, 90, 240, 0.2);
+    }
+
+    .exercise-modal-muscle-tag.secondary {
+      background: var(--surface);
+      color: var(--text-secondary);
+      border-color: var(--border);
+    }
+
+    .exercise-modal-instructions {
+      padding: 12px 20px 20px;
+    }
+
+    .exercise-modal-instructions h4 {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .exercise-modal-step {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-primary);
+    }
+
+    .exercise-modal-step-num {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    .exercise-modal-meta {
+      padding: 0 20px 12px;
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
     /* Editable exercise stat inputs */
     .stat-input {
       width: 42px;
@@ -2809,51 +2943,138 @@
       return names;
     }
 
-    // Exercise image cache
+    // Exercise image cache and free-exercise-db
     const exerciseImageCache = {};
+    let exerciseDB = null;
+    const EXERCISE_DB_URL = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json';
+    const EXERCISE_IMG_BASE = 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/';
+
     const exerciseNameMap = {
       'remada aberta': 'bent over row', 'remada fechada': 'cable row',
-      'remada': 'row', 'crucifixo inclinado': 'incline fly',
-      'crucifixo inverso': 'reverse fly', 'crucifixo': 'fly',
+      'remada curvada': 'bent over row', 'remada cavaleiro': 't-bar row',
+      'remada baixa': 'seated cable row', 'remada alta': 'upright row',
+      'remada unilateral': 'dumbbell row', 'remada': 'row',
+      'crucifixo inclinado': 'incline dumbbell fly',
+      'crucifixo inverso': 'reverse fly', 'crucifixo': 'dumbbell fly',
       'supino reto': 'bench press', 'supino inclinado': 'incline bench press',
-      'supino': 'bench press',
-      'biceps barra': 'barbell curl', 'biceps': 'bicep curl',
-      'triceps corda': 'tricep pushdown', 'triceps': 'tricep',
-      'agachamento espanhol': 'spanish squat', 'agachamento': 'squat',
-      'afundo': 'lunge', 'panturrilha': 'calf raise',
-      'ponte bipodal': 'glute bridge', 'ponte': 'bridge',
+      'supino declinado': 'decline bench press', 'supino': 'bench press',
+      'biceps barra': 'barbell curl', 'biceps rosca': 'bicep curl',
+      'biceps martelo': 'hammer curl', 'biceps concentrado': 'concentration curl',
+      'biceps': 'bicep curl',
+      'triceps corda': 'tricep pushdown', 'triceps testa': 'lying tricep extension',
+      'triceps frances': 'overhead tricep extension', 'triceps banco': 'bench dip',
+      'triceps': 'tricep',
+      'agachamento espanhol': 'spanish squat', 'agachamento bulgaro': 'bulgarian split squat',
+      'agachamento frontal': 'front squat', 'agachamento sumô': 'sumo squat',
+      'agachamento': 'squat',
+      'afundo': 'lunge', 'afundo bulgaro': 'bulgarian split squat',
+      'panturrilha em pe': 'standing calf raise', 'panturrilha sentado': 'seated calf raise',
+      'panturrilha': 'calf raise',
+      'ponte bipodal': 'glute bridge', 'ponte unipodal': 'single leg glute bridge',
+      'ponte': 'glute bridge',
       'face pull': 'face pull', 'cadeira flexora': 'leg curl',
+      'cadeira extensora': 'leg extension', 'cadeira abdutora': 'hip abduction',
+      'cadeira adutora': 'hip adduction',
       'cadeira solear': 'seated calf raise', 'solear': 'seated calf raise',
       'isometria': 'isometric', 'corrida': 'running',
-      'abdominais': 'crunch', 'prancha': 'plank', 'leg press': 'leg press',
-      'elevacao lateral': 'lateral raise', 'desenvolvimento': 'shoulder press',
-      'rosca': 'curl', 'extensao': 'extension', 'pulley': 'lat pulldown'
+      'abdominais': 'crunch', 'abdominal infra': 'reverse crunch',
+      'abdominal obliquo': 'oblique crunch', 'abdominal': 'crunch',
+      'prancha': 'plank', 'prancha lateral': 'side plank',
+      'leg press': 'leg press', 'leg press 45': 'leg press',
+      'elevacao lateral': 'lateral raise', 'elevacao frontal': 'front raise',
+      'elevacao pelvica': 'hip thrust',
+      'desenvolvimento': 'shoulder press', 'desenvolvimento militar': 'military press',
+      'rosca direta': 'barbell curl', 'rosca alternada': 'dumbbell curl',
+      'rosca martelo': 'hammer curl', 'rosca scott': 'preacher curl',
+      'rosca': 'curl',
+      'extensao lombar': 'back extension', 'extensao triceps': 'tricep extension',
+      'extensao': 'extension',
+      'pulley frontal': 'lat pulldown', 'pulley costas': 'lat pulldown',
+      'pulley': 'lat pulldown',
+      'puxada': 'lat pulldown', 'puxada frontal': 'lat pulldown',
+      'barra fixa': 'pull-up', 'flexao': 'push-up', 'flexao de braço': 'push-up',
+      'mergulho': 'dip', 'paralelas': 'dip',
+      'stiff': 'stiff-legged deadlift', 'terra': 'deadlift',
+      'levantamento terra': 'deadlift', 'levantamento romeno': 'romanian deadlift',
+      'hip thrust': 'hip thrust', 'gluteo': 'glute',
+      'passada': 'walking lunge', 'step up': 'step-up',
+      'encolhimento': 'shrug', 'trapezio': 'shrug',
+      'voador': 'pec deck', 'cross over': 'cable crossover',
+      'cabo': 'cable', 'hack': 'hack squat', 'smith': 'smith machine'
     };
 
+    async function loadExerciseDB() {
+      if (exerciseDB) return exerciseDB;
+      try {
+        var res = await fetch(EXERCISE_DB_URL);
+        exerciseDB = await res.json();
+        console.log('Exercise DB loaded:', exerciseDB.length, 'exercises');
+      } catch (e) {
+        console.error('Failed to load exercise DB:', e);
+        exerciseDB = [];
+      }
+      return exerciseDB;
+    }
+
+    function findExerciseInDB(searchName) {
+      if (!exerciseDB || !exerciseDB.length) return null;
+      var lower = searchName.toLowerCase().trim();
+      // Exact match first
+      var exact = exerciseDB.find(function(ex) {
+        return ex.name.toLowerCase() === lower;
+      });
+      if (exact) return exact;
+      // Contains match - search term appears in DB name
+      var words = lower.split(/\s+/).filter(function(w) { return w.length > 2; });
+      var best = null;
+      var bestScore = 0;
+      exerciseDB.forEach(function(ex) {
+        var dbName = ex.name.toLowerCase();
+        var score = 0;
+        words.forEach(function(w) {
+          if (dbName.includes(w)) score++;
+        });
+        if (score > bestScore) {
+          bestScore = score;
+          best = ex;
+        }
+      });
+      if (bestScore > 0 && bestScore >= Math.ceil(words.length * 0.5)) return best;
+      return null;
+    }
+
     function loadExerciseImages() {
-      document.querySelectorAll('.exercise[data-id]').forEach(function(ex) {
-        loadSingleExerciseImage(ex);
+      loadExerciseDB().then(function() {
+        document.querySelectorAll('.exercise[data-id]').forEach(function(ex) {
+          loadSingleExerciseImage(ex);
+        });
       });
     }
 
     async function loadSingleExerciseImage(ex) {
-      // Skip if already has image
       if (ex.querySelector('.exercise-img')) return;
       var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
       if (!name) return;
 
-      var url = await fetchExerciseImage(name);
-      if (url) {
+      await loadExerciseDB();
+      var result = fetchExerciseImage(name);
+      if (result && result.url) {
         var header = ex.querySelector('.exercise-header');
         var numberEl = header?.querySelector('.exercise-number');
         if (header && numberEl) {
           var img = document.createElement('img');
           img.className = 'exercise-img';
-          img.src = url;
+          img.src = result.url;
           img.alt = name;
           img.loading = 'lazy';
+          img.style.cursor = 'pointer';
           img.onerror = function() { this.remove(); };
-          // Insert after number, before info
+          if (result.exercise) {
+            img.onclick = function(e) {
+              e.stopPropagation();
+              openExerciseModal(result.exercise, name);
+            };
+          }
           numberEl.insertAdjacentElement('afterend', img);
         }
       }
@@ -3808,38 +4029,112 @@
       return false;
     }
 
-    // Exercise images from wger.de API
-    async function fetchExerciseImage(exerciseName) {
-      const nameLower = exerciseName.toLowerCase();
+    // Exercise images from free-exercise-db (synchronous after DB load)
+    function fetchExerciseImage(exerciseName) {
+      var nameLower = exerciseName.toLowerCase().trim();
       if (exerciseImageCache[nameLower]) return exerciseImageCache[nameLower];
 
       // Map PT name to EN
-      let searchTerm = nameLower;
-      for (const [pt, en] of Object.entries(exerciseNameMap)) {
-        if (nameLower.includes(pt)) { searchTerm = en; break; }
+      var searchTerm = nameLower;
+      for (var pt in exerciseNameMap) {
+        if (nameLower.includes(pt)) { searchTerm = exerciseNameMap[pt]; break; }
       }
 
-      try {
-        const res = await fetch('https://wger.de/api/v2/exercise/search/?term=' + encodeURIComponent(searchTerm) + '&language=2&format=json');
-        const data = await res.json();
-        if (data.suggestions && data.suggestions.length > 0) {
-          const exId = data.suggestions[0].data?.id;
-          if (exId) {
-            const imgRes = await fetch('https://wger.de/api/v2/exerciseimage/?exercise=' + exId + '&format=json');
-            const imgData = await imgRes.json();
-            if (imgData.results && imgData.results.length > 0) {
-              const url = imgData.results[0].image;
-              exerciseImageCache[nameLower] = url;
-              return url;
-            }
-          }
-        }
-      } catch (e) { console.error('Image fetch error:', e); }
+      var found = findExerciseInDB(searchTerm);
+      if (!found && searchTerm !== nameLower) {
+        found = findExerciseInDB(nameLower);
+      }
+
+      if (found && found.images && found.images.length > 0) {
+        var result = {
+          url: EXERCISE_IMG_BASE + found.images[0],
+          exercise: found
+        };
+        exerciseImageCache[nameLower] = result;
+        return result;
+      }
 
       exerciseImageCache[nameLower] = null;
       return null;
     }
-    
+
+    function openExerciseModal(exercise, ptName) {
+      var existing = document.querySelector('.exercise-modal-overlay');
+      if (existing) existing.remove();
+
+      var overlay = document.createElement('div');
+      overlay.className = 'exercise-modal-overlay';
+      overlay.onclick = function(e) {
+        if (e.target === overlay) overlay.remove();
+      };
+
+      // Build images HTML
+      var imagesHtml = '';
+      if (exercise.images && exercise.images.length > 0) {
+        imagesHtml = '<div class="exercise-modal-images">';
+        exercise.images.forEach(function(imgPath) {
+          imagesHtml += '<img src="' + EXERCISE_IMG_BASE + imgPath + '" alt="' + exercise.name + '" loading="lazy" onerror="this.style.display=\'none\'">';
+        });
+        imagesHtml += '</div>';
+      }
+
+      // Build muscles HTML
+      var musclesHtml = '';
+      if ((exercise.primaryMuscles && exercise.primaryMuscles.length) || (exercise.secondaryMuscles && exercise.secondaryMuscles.length)) {
+        musclesHtml = '<div class="exercise-modal-muscles">';
+        (exercise.primaryMuscles || []).forEach(function(m) {
+          musclesHtml += '<span class="exercise-modal-muscle-tag">' + m + '</span>';
+        });
+        (exercise.secondaryMuscles || []).forEach(function(m) {
+          musclesHtml += '<span class="exercise-modal-muscle-tag secondary">' + m + '</span>';
+        });
+        musclesHtml += '</div>';
+      }
+
+      // Build meta HTML
+      var metaHtml = '<div class="exercise-modal-meta">';
+      if (exercise.level) metaHtml += '<span>' + exercise.level + '</span>';
+      if (exercise.equipment) metaHtml += '<span>' + exercise.equipment + '</span>';
+      if (exercise.category) metaHtml += '<span>' + exercise.category + '</span>';
+      metaHtml += '</div>';
+
+      // Build instructions HTML
+      var instructionsHtml = '';
+      if (exercise.instructions && exercise.instructions.length > 0) {
+        instructionsHtml = '<div class="exercise-modal-instructions"><h4>Instruções</h4>';
+        exercise.instructions.forEach(function(step, i) {
+          instructionsHtml += '<div class="exercise-modal-step">' +
+            '<span class="exercise-modal-step-num">' + (i + 1) + '</span>' +
+            '<span>' + step + '</span></div>';
+        });
+        instructionsHtml += '</div>';
+      }
+
+      var title = ptName || exercise.name;
+      overlay.innerHTML =
+        '<div class="exercise-modal">' +
+          '<div class="exercise-modal-header">' +
+            '<span class="exercise-modal-title">' + title + '</span>' +
+            '<button class="exercise-modal-close" onclick="this.closest(\'.exercise-modal-overlay\').remove()">✕</button>' +
+          '</div>' +
+          imagesHtml +
+          musclesHtml +
+          metaHtml +
+          instructionsHtml +
+        '</div>';
+
+      document.body.appendChild(overlay);
+
+      // Close on Escape
+      function onEsc(e) {
+        if (e.key === 'Escape') {
+          overlay.remove();
+          document.removeEventListener('keydown', onEsc);
+        }
+      }
+      document.addEventListener('keydown', onEsc);
+    }
+
     // ========== SAVE STATUS ==========
     
     function updateSaveStatus(saved = true, time = null) {
