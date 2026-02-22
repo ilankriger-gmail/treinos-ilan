@@ -787,11 +787,21 @@
       border-radius: 8px;
       margin-bottom: 8px;
     }
-    
+
     .file-item-icon {
       font-size: 20px;
     }
-    
+
+    .file-item-thumb {
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
     .file-item-name {
       flex: 1;
       font-size: 13px;
@@ -799,7 +809,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    
+
     .file-item-delete {
       width: 24px;
       height: 24px;
@@ -809,6 +819,24 @@
       color: #ef4444;
       cursor: pointer;
       font-size: 12px;
+    }
+
+    .image-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      cursor: pointer;
+    }
+
+    .image-overlay img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     }
     
     .analyze-btn {
@@ -3763,22 +3791,10 @@
 
           if (file.type.startsWith('image/')) {
             compressImage(result, 800, 0.7).then(function(compressed) {
-              uploadedFiles.push({
-                name: file.name,
-                type: file.type,
-                content: compressed
-              });
-              renderFileList();
-              saveUploadedFiles();
+              saveFileToSupabase({ name: file.name, type: file.type, content: compressed });
             });
           } else {
-            uploadedFiles.push({
-              name: file.name,
-              type: file.type,
-              content: result
-            });
-            renderFileList();
-            saveUploadedFiles();
+            saveFileToSupabase({ name: file.name, type: file.type, content: result });
           }
         };
 
@@ -3790,47 +3806,133 @@
       });
     }
 
-    function saveUploadedFiles() {
+    async function saveFileToSupabase(fileObj) {
       try {
-        localStorage.setItem('uploaded-files', JSON.stringify(uploadedFiles));
+        const res = await fetch(SUPABASE_URL + '/rest/v1/user_files', {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify({ name: fileObj.name, type: fileObj.type, content: fileObj.content })
+        });
+        if (!res.ok) throw new Error('Status ' + res.status);
+        const data = await res.json();
+        uploadedFiles.push(data[0] || { ...fileObj, id: Date.now() });
+        renderFileList();
         showToast('Arquivo salvo!');
       } catch (e) {
-        console.error('Erro ao salvar arquivos:', e);
-        if (e.name === 'QuotaExceededError' || e.code === 22) {
-          showToast('Sem espaço para salvar. Remova arquivos antigos.', 'error');
-        } else {
+        console.error('Erro ao salvar arquivo no Supabase:', e);
+        // Fallback localStorage
+        fileObj.id = Date.now();
+        uploadedFiles.push(fileObj);
+        renderFileList();
+        try {
+          localStorage.setItem('uploaded-files', JSON.stringify(uploadedFiles));
+          showToast('Arquivo salvo localmente (offline)');
+        } catch (le) {
           showToast('Erro ao salvar arquivo', 'error');
         }
       }
     }
 
-    function loadUploadedFiles() {
+    async function loadUploadedFiles() {
       try {
-        var saved = localStorage.getItem('uploaded-files');
-        if (saved) {
-          uploadedFiles = JSON.parse(saved);
-          renderFileList();
-        }
+        const res = await fetch(SUPABASE_URL + '/rest/v1/user_files?select=*&order=created_at.desc', {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        });
+        if (!res.ok) throw new Error('Status ' + res.status);
+        uploadedFiles = await res.json();
+        renderFileList();
+        // Migrar arquivos do localStorage se existirem
+        migrateLocalFiles();
       } catch (e) {
-        console.error('Erro ao carregar arquivos:', e);
+        console.error('Erro ao carregar arquivos do Supabase:', e);
+        // Fallback localStorage
+        try {
+          var saved = localStorage.getItem('uploaded-files');
+          if (saved) {
+            uploadedFiles = JSON.parse(saved);
+            renderFileList();
+          }
+        } catch (le) {
+          console.error('Erro ao carregar arquivos locais:', le);
+        }
       }
     }
-    
+
+    async function migrateLocalFiles() {
+      try {
+        var saved = localStorage.getItem('uploaded-files');
+        if (!saved) return;
+        var localFiles = JSON.parse(saved);
+        if (!localFiles.length) return;
+        var migrated = 0;
+        for (var i = 0; i < localFiles.length; i++) {
+          var f = localFiles[i];
+          try {
+            var res = await fetch(SUPABASE_URL + '/rest/v1/user_files', {
+              method: 'POST',
+              headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': 'Bearer ' + SUPABASE_KEY,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+              },
+              body: JSON.stringify({ name: f.name, type: f.type, content: f.content })
+            });
+            if (res.ok) migrated++;
+          } catch (e) { /* skip */ }
+        }
+        if (migrated > 0) {
+          localStorage.removeItem('uploaded-files');
+          showToast(migrated + ' arquivo(s) migrado(s) para a nuvem!');
+          loadUploadedFiles();
+        }
+      } catch (e) {
+        console.error('Erro na migracao:', e);
+      }
+    }
+
     function renderFileList() {
       const list = document.getElementById('fileList');
-      list.innerHTML = uploadedFiles.map((f, i) => `
-        <div class="file-item">
-          <span class="file-item-icon">${f.type.includes('pdf') ? '📄' : '📝'}</span>
-          <span class="file-item-name">${f.name}</span>
-          <button class="file-item-delete" onclick="removeFile(${i})">✕</button>
-        </div>
-      `).join('');
+      list.innerHTML = uploadedFiles.map(function(f) {
+        var isImage = f.type && f.type.startsWith('image/');
+        var icon = isImage
+          ? '<img class="file-item-thumb" src="' + f.content + '" onclick="openImagePreview(\'' + f.id + '\')" alt="' + f.name + '">'
+          : '<span class="file-item-icon">' + (f.type && f.type.includes('pdf') ? '📄' : '📝') + '</span>';
+        return '<div class="file-item">' +
+          icon +
+          '<span class="file-item-name">' + f.name + '</span>' +
+          '<button class="file-item-delete" onclick="removeFile(' + f.id + ')">✕</button>' +
+          '</div>';
+      }).join('');
     }
-    
-    function removeFile(index) {
-      uploadedFiles.splice(index, 1);
+
+    function openImagePreview(fileId) {
+      var file = uploadedFiles.find(function(f) { return String(f.id) === String(fileId); });
+      if (!file) return;
+      var overlay = document.createElement('div');
+      overlay.className = 'image-overlay';
+      overlay.onclick = function() { overlay.remove(); };
+      overlay.innerHTML = '<img src="' + file.content + '" alt="' + file.name + '">';
+      document.body.appendChild(overlay);
+    }
+
+    async function removeFile(fileId) {
+      try {
+        await fetch(SUPABASE_URL + '/rest/v1/user_files?id=eq.' + fileId, {
+          method: 'DELETE',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        });
+      } catch (e) {
+        console.error('Erro ao deletar arquivo:', e);
+      }
+      uploadedFiles = uploadedFiles.filter(function(f) { return f.id !== fileId; });
       renderFileList();
-      saveUploadedFiles();
+      showToast('Arquivo removido');
     }
     
     // Legacy runAnalysis - now redirects to chat
