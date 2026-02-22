@@ -2927,10 +2927,11 @@
         'detail: Instrucoes do exercicio substituto\n' +
         'sets: 3\nreps: 12\nweight: 0\nworkout_group: upper|lower\n' +
         '</' + sg + '>\n\n' +
-        'Para REORDENAR exercicio (mudar posicao na lista):\n' +
+        'Para REORDENAR exercicio (mudar posicao ou mover entre secoes upper/lower):\n' +
         '<' + sg + '>\n' +
         'type: exercicio\naction: reorder\nlabel: Nome do exercicio\n' +
         'exercise_name: Nome EXATO do exercicio (da lista abaixo)\nposition: 1\n' +
+        'workout_group: upper|lower (opcional, inclua para mover entre secoes)\n' +
         'detail: Motivo da mudanca de ordem\n' +
         '</' + sg + '>\n\n' +
         'Tipos validos de activity_type: corrida, surf, tenis, bike, fisio, upper, lower, caminhada, descanso, mobilidade\n' +
@@ -2940,7 +2941,8 @@
         'Quando o aluno pedir mudancas no treino (ex: "muda meu treino", "troca exercicio tal", "tira esse exercicio", "muda a ordem"), use os blocos de sugestao com action: modify, add, remove, replace ou reorder.\n' +
         'Seja proativo: se perceber que o treino pode melhorar com base no objetivo, dores ou historico do aluno, sugira mudancas.\n\n' +
         'PESOS: Quando sugerir exercicios, SEMPRE inclua o campo weight com um peso adequado baseado no historico de pesos do aluno. Se nao tem historico, sugira um peso inicial conservador. Se o aluno ja treina o exercicio, sugira progressao de carga quando apropriado.\n' +
-        'ORDEM DOS EXERCICIOS: A ordem importa! Sugira reordenacao quando necessario seguindo principios de treino: compostos pesados primeiro (supino, remada, agachamento), depois isolados. Agrupe musculos antagonistas. Se perceber que a ordem nao esta otimizada, sugira mudancas com action: reorder.\n\n' +
+        'ORDEM DOS EXERCICIOS: A ordem importa! Sugira reordenacao quando necessario seguindo principios de treino: compostos pesados primeiro (supino, remada, agachamento), depois isolados. Agrupe musculos antagonistas. Se perceber que a ordem nao esta otimizada, sugira mudancas com action: reorder.\n' +
+        'Voce tambem pode MOVER exercicios entre secoes (upper para lower ou vice-versa) usando action: reorder com workout_group. Para reorganizar o treino inteiro, crie um bloco reorder para CADA exercicio que precisa mudar de posicao.\n\n' +
         'EXERCICIOS ATUAIS DO ALUNO (use estes nomes exatos para exercise_name):\n' +
         buildExerciseNameList().join(', ');
     }
@@ -3381,7 +3383,7 @@
 
       // Handle reorder action
       if (action === 'reorder') {
-        return reorderExercise(s.exercise_name || s.label, parseInt(s.position) || 1);
+        return reorderExercise(s.exercise_name || s.label, parseInt(s.position) || 1, s.workout_group || null);
       }
 
       // Handle replace action: remove old, add new
@@ -3477,42 +3479,73 @@
       return true;
     }
 
-    function reorderExercise(name, newPosition) {
+    function reorderExercise(name, newPosition, targetGroup) {
       var exerciseEl = findExerciseByName(name);
       if (!exerciseEl) {
         showToast('Exercício "' + name + '" não encontrado.');
         return false;
       }
 
-      var container = exerciseEl.parentElement;
-      var exercises = Array.from(container.querySelectorAll('.exercise'));
-      var currentIndex = exercises.indexOf(exerciseEl);
-      var targetIndex = Math.max(0, Math.min(newPosition - 1, exercises.length - 1));
+      var oldContainer = exerciseEl.parentElement;
+      var container = oldContainer;
 
-      if (currentIndex === targetIndex) {
-        showToast('Exercício já está na posição ' + newPosition + '.');
-        return true;
+      // Move between sections if targetGroup specified
+      if (targetGroup) {
+        var newContainer = targetGroup === 'lower' ? document.getElementById('perna') : document.getElementById('braco');
+        if (newContainer && newContainer !== oldContainer) {
+          container = newContainer;
+        }
       }
+
+      var movingBetweenSections = (container !== oldContainer);
 
       // Remove from current position
       exerciseEl.remove();
 
-      // Insert at new position
-      var updatedExercises = container.querySelectorAll('.exercise');
-      if (targetIndex >= updatedExercises.length) {
-        container.appendChild(exerciseEl);
-      } else {
-        container.insertBefore(exerciseEl, updatedExercises[targetIndex]);
+      // Renumber old container if moving between sections
+      if (movingBetweenSections) {
+        oldContainer.querySelectorAll('.exercise').forEach(function(ex, i) {
+          var numEl = ex.querySelector('.exercise-number');
+          if (numEl) numEl.textContent = (i + 1);
+        });
       }
 
-      // Renumber all exercises
+      // Insert at new position in target container
+      var targetExercises = container.querySelectorAll('.exercise');
+      var targetIndex = Math.max(0, Math.min(newPosition - 1, targetExercises.length));
+
+      if (targetIndex >= targetExercises.length) {
+        container.appendChild(exerciseEl);
+      } else {
+        container.insertBefore(exerciseEl, targetExercises[targetIndex]);
+      }
+
+      // Renumber target container
       container.querySelectorAll('.exercise').forEach(function(ex, i) {
         var numEl = ex.querySelector('.exercise-number');
         if (numEl) numEl.textContent = (i + 1);
       });
 
+      // Update custom exercises storage if moved between sections
+      if (movingBetweenSections) {
+        var id = exerciseEl.dataset.id;
+        if (id.startsWith('c')) {
+          try {
+            var custom = JSON.parse(localStorage.getItem('custom-exercises') || '[]');
+            custom.forEach(function(c) {
+              if (c.id === id) c.group = targetGroup;
+            });
+            localStorage.setItem('custom-exercises', JSON.stringify(custom));
+          } catch(e) {}
+        }
+      }
+
       var exName = exerciseEl.dataset.name || exerciseEl.querySelector('.exercise-name')?.textContent || name;
-      showToast(exName + ' movido para posição ' + (targetIndex + 1) + '!');
+      var sectionName = container.id === 'perna' ? 'Lower' : 'Upper';
+      var msg = movingBetweenSections
+        ? exName + ' movido para ' + sectionName + ' (posição ' + (targetIndex + 1) + ')!'
+        : exName + ' movido para posição ' + (targetIndex + 1) + '!';
+      showToast(msg);
       return true;
     }
 
