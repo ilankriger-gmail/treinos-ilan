@@ -1087,7 +1087,7 @@
     
     .file-item {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 10px;
       padding: 10px 12px;
       background: var(--bg-tertiary);
@@ -1110,7 +1110,6 @@
     }
 
     .file-item-name {
-      flex: 1;
       font-size: 13px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -1126,6 +1125,45 @@
       color: #ef4444;
       cursor: pointer;
       font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .file-item-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .file-item-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .file-item-analyze {
+      font-size: 11px;
+      color: var(--accent);
+      background: none;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      padding: 2px 8px;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    .file-item-analyze:hover {
+      background: rgba(127, 109, 242, 0.1);
+    }
+
+    .file-item-analyzing {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      font-style: italic;
     }
 
     .image-overlay {
@@ -4461,7 +4499,12 @@
         var sets = cfg.sets || 3;
         var reps = cfg.reps || '10';
         var unit = cfg.type === 'tempo' ? 's' : 'reps';
-        upper.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : ''));
+        var weightVal = '';
+        var firstWeight = ex.querySelector('.set-row .set-weight');
+        if (firstWeight && firstWeight.value && parseFloat(firstWeight.value) > 0) {
+          weightVal = ' @' + firstWeight.value + 'kg';
+        }
+        upper.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : '') + weightVal);
       });
       document.querySelectorAll('#perna .exercise[data-id]').forEach(function(ex) {
         var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
@@ -4470,7 +4513,12 @@
         var sets = cfg.sets || 3;
         var reps = cfg.reps || '10';
         var unit = cfg.type === 'tempo' ? 's' : 'reps';
-        lower.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : ''));
+        var weightVal = '';
+        var firstWeight = ex.querySelector('.set-row .set-weight');
+        if (firstWeight && firstWeight.value && parseFloat(firstWeight.value) > 0) {
+          weightVal = ' @' + firstWeight.value + 'kg';
+        }
+        lower.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : '') + weightVal);
       });
       var mob1 = [], mob2 = [], mob3 = [];
       document.querySelectorAll('#mob1 .exercise[data-id]').forEach(function(ex) {
@@ -4480,7 +4528,12 @@
         var sets = cfg.sets || 3;
         var reps = cfg.reps || '10';
         var unit = cfg.type === 'tempo' ? 's' : 'reps';
-        mob1.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : ''));
+        var weightVal = '';
+        var firstWeight = ex.querySelector('.set-row .set-weight');
+        if (firstWeight && firstWeight.value && parseFloat(firstWeight.value) > 0) {
+          weightVal = ' @' + firstWeight.value + 'kg';
+        }
+        mob1.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : '') + weightVal);
       });
       document.querySelectorAll('#mob2 .exercise[data-id]').forEach(function(ex) {
         var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
@@ -4489,7 +4542,12 @@
         var sets = cfg.sets || 3;
         var reps = cfg.reps || '10';
         var unit = cfg.type === 'tempo' ? 's' : 'reps';
-        mob2.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : ''));
+        var weightVal = '';
+        var firstWeight = ex.querySelector('.set-row .set-weight');
+        if (firstWeight && firstWeight.value && parseFloat(firstWeight.value) > 0) {
+          weightVal = ' @' + firstWeight.value + 'kg';
+        }
+        mob2.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : '') + weightVal);
       });
       document.querySelectorAll('#mob3 .exercise[data-id]').forEach(function(ex) {
         var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
@@ -4498,7 +4556,12 @@
         var sets = cfg.sets || 3;
         var reps = cfg.reps || '10';
         var unit = cfg.type === 'tempo' ? 's' : 'reps';
-        mob3.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : ''));
+        var weightVal = '';
+        var firstWeight = ex.querySelector('.set-row .set-weight');
+        if (firstWeight && firstWeight.value && parseFloat(firstWeight.value) > 0) {
+          weightVal = ' @' + firstWeight.value + 'kg';
+        }
+        mob3.push(name + ' ' + sets + 'x' + reps + (unit === 's' ? 's' : '') + weightVal);
       });
       return 'Upper: ' + (upper.join(', ') || 'Nenhum') + '\n' +
              'Lower: ' + (lower.join(', ') || 'Nenhum') + '\n' +
@@ -4631,7 +4694,8 @@
         '3. Use blocos <' + sg + '> para sugestoes acionaveis que o aluno pode aceitar e adicionar ao calendario.\n' +
         '4. Seja breve nas respostas (maximo 3-4 paragrafos).\n' +
         '5. Nao repita informacoes que ja foram dadas no contexto.\n' +
-        '6. Conecte SEMPRE suas recomendacoes ao objetivo — explique COMO cada sugestao ajuda a chegar la.\n\n' +
+        '6. Conecte SEMPRE suas recomendacoes ao objetivo — explique COMO cada sugestao ajuda a chegar la.\n' +
+        '7. Se existirem NOTAS MEDICAS no contexto, SEMPRE respeite como restricoes. NUNCA sugira exercicios que conflitem com lesoes, condicoes ou restricoes medicas do aluno. Adapte todas as sugestoes.\n\n' +
         'DATA DE HOJE: ' + formatDate(new Date()) + ' (' + ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][new Date().getDay()] + ')\n' +
         'PROXIMOS 7 DIAS: ' + getNext7Days() + '\n\n' +
         'FORMATO DE SUGESTAO (quando aplicavel):\n' +
@@ -4685,6 +4749,11 @@
         'PESOS: Quando sugerir exercicios, SEMPRE inclua o campo weight com um peso adequado baseado no historico de pesos do aluno. Se nao tem historico, sugira um peso inicial conservador. Se o aluno ja treina o exercicio, sugira progressao de carga quando apropriado.\n' +
         'ORDEM DOS EXERCICIOS: A ordem importa! Sugira reordenacao quando necessario seguindo principios de treino: compostos pesados primeiro (supino, remada, agachamento), depois isolados. Agrupe musculos antagonistas. Se perceber que a ordem nao esta otimizada, sugira mudancas com action: reorder.\n' +
         'Voce tambem pode MOVER exercicios entre secoes (upper, lower, mob1, mob2, mob3) usando action: reorder com workout_group. Para reorganizar o treino inteiro, crie um bloco reorder para CADA exercicio que precisa mudar de posicao.\n\n' +
+        'LEGENDA DOS DADOS:\n' +
+        '- Treino atual: "Exercicio SETSxREPS @PESOkg" (@ = peso atual carregado)\n' +
+        '- Historico: "data | tipo | duracao" com exercicios: series, peso max, reps\n' +
+        '- Esforco: escala 1-10 (percepcao do aluno)\n' +
+        '- 1RM: formula Epley, base para calcular % de carga\n\n' +
         'EXERCICIOS ATUAIS DO ALUNO (use estes nomes exatos para exercise_name):\n' +
         buildExerciseNameList().join(', ');
     }
@@ -4777,17 +4846,43 @@
       return result;
     }
 
+    function formatWorkoutHistoryForCoach(sessions) {
+      return sessions.map(function(s) {
+        var date = s.date || (s.created_at ? s.created_at.split('T')[0] : '?');
+        var type = s.workout_type || '?';
+        var dur = s.duration_minutes ? s.duration_minutes + 'min' : '';
+        var line = date + ' | ' + type + (dur ? ' | ' + dur : '');
+        var exsDone = s.exercises_done;
+        if (!exsDone) return line;
+        if (!Array.isArray(exsDone)) {
+          if (exsDone.esforco) line += ' | esforco:' + exsDone.esforco + '/10';
+          if (exsDone.tempo_min) line += ' | ' + exsDone.tempo_min + 'min';
+          if (exsDone.distancia_km) line += ' | ' + exsDone.distancia_km + 'km';
+          return line;
+        }
+        var exLines = exsDone.map(function(ex) {
+          var name = ex.name || ex.exercise_id || '?';
+          var sets = ex.sets || [];
+          if (sets.length === 0) return '  ' + name;
+          var maxW = 0, totalReps = 0;
+          sets.forEach(function(set) {
+            var w = parseFloat(set.weight) || 0;
+            if (w > maxW) maxW = w;
+            totalReps += parseInt(set.reps) || 0;
+          });
+          return '  ' + name + ': ' + sets.length + 's, max ' + maxW + 'kg, ' + totalReps + ' reps';
+        });
+        return line + '\n' + exLines.join('\n');
+      }).join('\n');
+    }
+
     async function gatherCoachContext() {
       let workoutHistory = [];
-      let weightHistory = [];
       let calendarData = [];
 
       try {
-        const [whRes, wlRes, calRes] = await Promise.all([
+        const [whRes, calRes] = await Promise.all([
           fetch(SUPABASE_URL + '/rest/v1/workout_sessions?select=*&order=created_at.desc&limit=20', {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-          }),
-          fetch(SUPABASE_URL + '/rest/v1/workout_logs?select=*&order=created_at.desc&limit=50', {
             headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
           }),
           fetch(SUPABASE_URL + '/rest/v1/calendar_activities?select=*&order=date.desc&limit=30', {
@@ -4795,7 +4890,6 @@
           })
         ]);
         workoutHistory = await whRes.json();
-        weightHistory = await wlRes.json();
         calendarData = await calRes.json();
       } catch (e) { console.error(e); }
 
@@ -4807,13 +4901,25 @@
       const altura = document.getElementById('profileAltura')?.value || '';
 
       const filesText = uploadedFiles.map(function(f) {
-        if (f.type.includes('pdf')) return '[PDF: ' + f.name + ']';
-        return '--- ' + f.name + ' ---\n' + f.content.substring(0, 3000);
-      }).join('\n');
+        if (f.description) return f.name + ': ' + f.description;
+        if (f.type && f.type.includes('pdf')) return '[PDF: ' + f.name + ' - sem analise]';
+        if (f.type && f.type.startsWith('image/')) return '[Imagem: ' + f.name + ' - sem analise]';
+        return '--- ' + f.name + ' ---\n' + (f.content || '').substring(0, 3000);
+      }).join('\n\n');
 
-      const calText = calendarData.length > 0
-        ? calendarData.map(function(d) { return d.date + ': ' + JSON.stringify(d.activities); }).join('\n')
-        : 'Vazio';
+      var calText = 'Vazio';
+      if (calendarData.length > 0) {
+        calText = calendarData.slice(0, 7).map(function(d) {
+          var acts = Array.isArray(d.activities) ? d.activities : [];
+          if (acts.length === 0) return d.date + ': descanso';
+          var labels = acts.map(function(a) {
+            var lbl = a.type || '?';
+            if (a.esforco) lbl += '(esforco:' + a.esforco + '/10)';
+            return lbl;
+          });
+          return d.date + ': ' + labels.join(', ');
+        }).join('\n');
+      }
 
       // Build progress analysis
       var trends = calculateWeightTrends(workoutHistory);
@@ -4831,19 +4937,37 @@
         (topVolume.length > 0 ? 'Top exercicios por volume:\n' + topVolume.join('\n') + '\n' : '') +
         (est1rm.length > 0 ? '1RM estimado (Epley):\n' + est1rm.join('\n') + '\n' : '');
 
+      var notasMedicasText = '';
+      if (notasMedicas.length > 0) {
+        notasMedicasText = '## NOTAS MEDICAS (IMPORTANTE)\n' +
+          notasMedicas.map(function(n) {
+            return '- [' + new Date(n.data).toLocaleDateString('pt-BR') + '] ' + n.texto;
+          }).join('\n') + '\n\n';
+      }
+
+      var analiseText = '';
+      if (historicoAnalises.length > 0) {
+        analiseText = '## COACHING ANTERIOR\n' +
+          historicoAnalises.slice(0, 3).map(function(a) {
+            var dateStr = new Date(a.data).toLocaleDateString('pt-BR');
+            var resumo = (a.texto || '').substring(0, 200).replace(/\n/g, ' ');
+            return '- [' + dateStr + '] ' + resumo + '...';
+          }).join('\n') + '\n\n';
+      }
+
       return '## PERFIL\n' +
         'Nome: ' + nome + ' | Idade: ' + idade + ' | Altura: ' + altura + 'cm | Sexo: ' + (selectedSexo || '?') + '\n' +
         'Objetivo: ' + objetivo + '\n' +
         'Dores/Problemas: ' + dores + '\n' +
         'Estado hoje: ' + estado + '\n\n' +
+        notasMedicasText +
         '## TREINO ATUAL\n' +
         buildDynamicWorkoutText() + '\n\n' +
         progressText + '\n' +
+        analiseText +
         '## HISTORICO RECENTE\n' +
-        (workoutHistory.length > 0 ? JSON.stringify(workoutHistory.slice(0, 8)) : 'Nenhum') + '\n\n' +
-        '## ULTIMOS PESOS\n' +
-        (weightHistory.length > 0 ? JSON.stringify(weightHistory.slice(0, 15)) : 'Nenhum') + '\n\n' +
-        '## CALENDARIO (ultimos 30 dias)\n' + calText + '\n\n' +
+        (workoutHistory.length > 0 ? formatWorkoutHistoryForCoach(workoutHistory.slice(0, 8)) : 'Nenhum') + '\n\n' +
+        '## ULTIMOS 7 DIAS\n' + calText + '\n\n' +
         (filesText ? '## ARQUIVOS\n' + filesText : '');
     }
 
@@ -6373,6 +6497,8 @@
     }
 
     async function saveFileToSupabase(fileObj) {
+      var savedFile = null;
+      var savedToCloud = false;
       try {
         const res = await fetch(SUPABASE_URL + '/rest/v1/user_files', {
           method: 'POST',
@@ -6386,21 +6512,98 @@
         });
         if (!res.ok) throw new Error('Status ' + res.status);
         const data = await res.json();
-        uploadedFiles.push(data[0] || { ...fileObj, id: Date.now() });
+        savedFile = data[0] || { ...fileObj, id: Date.now() };
+        savedToCloud = true;
+        uploadedFiles.push(savedFile);
         renderFileList();
-        showToast('Arquivo salvo!');
+        showToast('Arquivo salvo! Analisando...');
       } catch (e) {
         console.error('Erro ao salvar arquivo no Supabase:', e);
-        // Fallback localStorage
         fileObj.id = Date.now();
+        savedFile = fileObj;
         uploadedFiles.push(fileObj);
         renderFileList();
         try {
           localStorage.setItem('uploaded-files', JSON.stringify(uploadedFiles));
-          showToast('Arquivo salvo localmente (offline)');
+          showToast('Arquivo salvo localmente. Analisando...');
         } catch (le) {
           showToast('Erro ao salvar arquivo', 'error');
         }
+      }
+
+      // Auto-analyze: gerar descricao com IA
+      if (savedFile) {
+        var description = await generateFileDescription(savedFile);
+        if (description) {
+          savedFile.description = description;
+          renderFileList();
+          // Salvar descricao no Supabase
+          if (savedToCloud && savedFile.id) {
+            try {
+              await fetch(SUPABASE_URL + '/rest/v1/user_files?id=eq.' + savedFile.id, {
+                method: 'PATCH',
+                headers: {
+                  'apikey': SUPABASE_KEY,
+                  'Authorization': 'Bearer ' + SUPABASE_KEY,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ description: description })
+              });
+            } catch (pe) {
+              console.error('Erro ao salvar descricao:', pe);
+            }
+          }
+          showToast('Arquivo analisado com sucesso');
+        } else {
+          showToast('Arquivo salvo (analise indisponivel)');
+        }
+      }
+    }
+
+    async function generateFileDescription(fileObj) {
+      try {
+        var messages = [];
+        var isImage = fileObj.type && fileObj.type.startsWith('image/');
+
+        if (isImage) {
+          // Multi-modal: envia imagem como base64
+          var base64Data = fileObj.content;
+          if (base64Data.includes(',')) {
+            base64Data = base64Data.split(',')[1];
+          }
+          var mediaType = fileObj.type || 'image/jpeg';
+          messages = [{ role: 'user', content: [
+            { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64Data } },
+            { type: 'text', text: 'Descreva este arquivo/imagem de forma concisa para uso medico/fitness. Inclua todos os dados relevantes visiveis (valores, diagnosticos, datas, recomendacoes, medidas). Responda em portugues. Maximo 500 palavras.' }
+          ]}];
+        } else {
+          // Texto/PDF: envia primeiros 4000 chars
+          var textContent = fileObj.content || '';
+          if (textContent.startsWith('data:')) {
+            // base64 encoded non-image - try to decode
+            try {
+              var b64 = textContent.split(',')[1] || textContent;
+              textContent = atob(b64);
+            } catch (e) {
+              textContent = '[Conteudo binario - nao legivel]';
+            }
+          }
+          textContent = textContent.substring(0, 4000);
+          messages = [{ role: 'user', content: 'Resuma este documento de forma concisa para uso medico/fitness. Inclua todos os dados relevantes (valores, diagnosticos, datas, recomendacoes). Responda em portugues. Maximo 500 palavras.\n\nArquivo: ' + fileObj.name + '\n\n' + textContent }];
+        }
+
+        var response = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: messages })
+        });
+
+        if (!response.ok) throw new Error('Status ' + response.status);
+        var data = await response.json();
+        return data.content || null;
+      } catch (e) {
+        console.error('Erro ao gerar descricao do arquivo:', e);
+        return null;
       }
     }
 
@@ -6469,12 +6672,54 @@
         var icon = isImage
           ? '<img class="file-item-thumb" src="' + f.content + '" onclick="openImagePreview(\'' + f.id + '\')" alt="' + f.name + '">'
           : '<span class="file-item-icon">' + (f.type && f.type.includes('pdf') ? '📄' : '📝') + '</span>';
+        var descHtml = '';
+        if (f.description) {
+          descHtml = '<div class="file-item-desc">' + f.description.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</div>';
+        } else if (f._analyzing) {
+          descHtml = '<div class="file-item-analyzing">Analisando arquivo...</div>';
+        } else {
+          descHtml = '<button class="file-item-analyze" onclick="analyzeFileManual(' + f.id + ')">Analisar</button>';
+        }
         return '<div class="file-item">' +
           icon +
-          '<span class="file-item-name">' + f.name + '</span>' +
+          '<div class="file-item-body">' +
+            '<span class="file-item-name">' + f.name + '</span>' +
+            descHtml +
+          '</div>' +
           '<button class="file-item-delete" onclick="removeFile(' + f.id + ')">✕</button>' +
           '</div>';
       }).join('');
+    }
+
+    async function analyzeFileManual(fileId) {
+      var file = uploadedFiles.find(function(f) { return f.id === fileId; });
+      if (!file) return;
+      file._analyzing = true;
+      renderFileList();
+
+      var description = await generateFileDescription(file);
+      delete file._analyzing;
+      if (description) {
+        file.description = description;
+        // Salvar no Supabase
+        try {
+          await fetch(SUPABASE_URL + '/rest/v1/user_files?id=eq.' + fileId, {
+            method: 'PATCH',
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': 'Bearer ' + SUPABASE_KEY,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ description: description })
+          });
+        } catch (e) {
+          console.error('Erro ao salvar descricao:', e);
+        }
+        showToast('Arquivo analisado com sucesso');
+      } else {
+        showToast('Erro ao analisar arquivo', 'error');
+      }
+      renderFileList();
     }
 
     function openImagePreview(fileId) {
