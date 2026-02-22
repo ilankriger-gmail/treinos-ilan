@@ -1,59 +1,69 @@
-# Treinos Ilan
+# CLAUDE.md
 
-App pessoal de acompanhamento de treinos de academia, atividades físicas e evolução corporal.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Stack
-
-- **Frontend**: HTML/CSS/JS puro em arquivo único (`index.html`) — sem framework, sem bundler
-- **Backend**: Vercel Edge Function (`api/analyze.js`) — proxy para Gemini AI
-- **Banco de dados**: Supabase (PostgreSQL) acessado diretamente via REST API do frontend
-- **Deploy**: Vercel
-- **Idioma**: Português brasileiro (PT-BR) em toda a interface e código
-
-## Estrutura
-
-```
-index.html              # App inteiro (HTML + CSS + JS inline)
-api/analyze.js          # Edge function — envia prompts para Gemini 1.5 Flash
-create-table.sql        # Tabela workout_logs (registro de pesos/reps)
-create-sessions-table.sql   # Tabela workout_sessions (sessões completadas)
-create-profile-table.sql    # Tabela user_profile (perfil + análise IA)
-create-calendar-table.sql   # Tabela calendar_activities (calendário)
-add-columns.sql         # Migrations adicionais
-add-profile-columns.sql # Migrations de perfil
-```
-
-## Banco de dados (Supabase)
-
-### Tabelas
-
-- **workout_logs**: Registros individuais de exercícios (exercise_id, weight, reps, notes)
-- **workout_sessions**: Sessões de treino completas (date, workout_type, exercises_done JSONB, duration_minutes)
-- **user_profile**: Perfil único (id=1) com objetivo, dores, estado_hoje, arquivos, ultima_analise
-- **calendar_activities**: Atividades diárias no calendário (date, activities JSONB)
-
-Todas as tabelas têm RLS habilitado com políticas permissivas (acesso anônimo).
-
-## Funcionalidades
-
-- Registro de treinos com peso/repetições por exercício
-- Calendário de atividades (musculação, corrida, fisio, funcional, etc.)
-- Perfil com objetivo, dores e estado diário
-- Análise de IA (Gemini) baseada no histórico de treinos
-- Histórico de sessões completadas
-
-## Dev local
+## Development
 
 ```bash
-vercel dev
+vercel dev                    # Start local dev server (port 3000)
+vercel dev --listen 3001      # Alternate port
 ```
 
-Roda na porta 3000 (ou especificar com `--listen <porta>`). Necessário Vercel CLI instalado e autenticado.
+Requires Vercel CLI installed and authenticated. No build step, no bundler, no npm dependencies for frontend.
 
-## Convenções
+## Architecture
 
-- Tudo em um arquivo (`index.html`): HTML, CSS e JS inline — manter essa estrutura
-- CSS usa variáveis em `:root` com tema escuro (roxo/cinza)
-- JS vanilla, sem dependências npm no frontend
-- Supabase é acessado direto via fetch no frontend (REST API)
-- A API de análise (`/api/analyze`) é um proxy para Gemini — recebe `{ prompt }` e retorna `{ content }`
+Single-file web app (`index.html`, ~6400 lines) with all HTML, CSS, and JS inline. **Never split this into separate files.**
+
+### Stack
+- **Frontend**: Vanilla HTML/CSS/JS in `index.html` — no framework
+- **API**: `api/analyze.js` — Vercel Edge Function proxying to Anthropic Claude API (`claude-sonnet-4-5-20250929`)
+- **Database**: Supabase PostgreSQL via REST API (direct fetch from frontend, anon key)
+- **Language**: All UI text and code comments in PT-BR
+
+### Views & Navigation
+Three main views controlled by `showView(view)` using `tabMap {coach:0, calendar:1, workouts:2}`:
+- **Coach** — AI chat interface ("Coach AI") with collapsible profile
+- **Calendar** — Monthly calendar with daily activities
+- **Workouts** — Exercise tracking with sub-tabs (Braço, Peito, Costas, Perna, Ombro, Cardio, Surf, Tenis, Fisio)
+
+### Key Subsystems
+
+**Set-by-Set Tracking**: Each exercise has `.sets-container` → `.set-row` elements. `toggleSet()` marks sets done and auto-copies weight/reps to next set. Progress bar counts done set-rows / total set-rows.
+
+**AI Coach Chat**: Multi-turn conversation stored in `chatMessages[]`. System prompt built dynamically by `buildSystemPrompt()` with workout data from `buildDynamicWorkoutText()`. Commands `/ajuda`, `/treino`, `/relatorio`, `/reset` intercepted in `sendChatMessage()`. Suggestions use `<suggestion>` XML blocks parsed from responses.
+
+**Cross-Device Sync**: 4 JSONB columns on `user_profile` (chat_history, workout_progress, exercise_configs, custom_exercises). Pattern: save to localStorage (cache) + fire-and-forget PATCH to Supabase. Load: try Supabase first → fallback localStorage.
+
+**Exercise Images**: Local GIF files in `exercises/gifs/`, metadata in `exercises/data.json`. Loaded async after 1s delay. Dump script: `scripts/dump-exercisedb.js`.
+
+### API Format
+`POST /api/analyze` accepts either:
+- Multi-turn: `{ messages: [...], system: "..." }`
+- Legacy: `{ prompt: "..." }`
+
+Returns: `{ content: "..." }`
+
+### Database Tables (Supabase)
+- `workout_logs` — individual exercise weight/reps
+- `workout_sessions` — completed sessions (exercises_done JSONB, duration_minutes)
+- `user_profile` — single row (id=1), profile + sync data + analysis history
+- `calendar_activities` — daily activities by date (JSONB)
+- `user_files` — uploaded files (base64 content)
+
+All tables have RLS enabled with permissive policies (anonymous access).
+
+### Init Sequence (DOMContentLoaded)
+`loadCustomExercises()` → `initExerciseControls()` → `loadUploadedFiles()` → `loadProgress()` → `loadLastWeights()` → `migrateLocalDataToCloud()` → `selectDate()` → `Promise.all([loadActivities(), loadProfile()])` → `renderDashboardCards()` → delayed `loadExerciseImages()`
+
+## Conventions
+
+- CSS variables in `:root` — obsidian dark theme (#1e1e1e, #262626, #2e2e2e), accent #7f6df2
+- Flat design only: no glassmorphism, no gradients, no box-shadows, no glow effects
+- Accent color used ONLY in: progress bar, user chat bubble, CTA buttons, active timer
+- `index.html` must be read in sections using offset/limit (too large for single read)
+- `selectedDate` is shared state used by saveActivities — save/restore when modifying from suggestions
+- `event.stopPropagation()` required on inputs inside collapsible profile header
+
+## SQL Migrations
+Migration files are in the root directory (`create-*.sql`, `add-*.sql`). Run against Supabase directly. Latest: `add-sync-columns.sql` adds JSONB sync columns to user_profile.
