@@ -1839,17 +1839,20 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      width: 100%;
+      width: calc(100% - 32px);
+      margin: 12px 16px;
       padding: 14px 20px;
       background: var(--accent);
       border: none;
+      border-radius: 12px;
       color: white;
       font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
-      transition: background 0.2s;
+      transition: all 0.2s ease;
     }
+    .coach-banner-btn:active { transform: translateY(0); }
     .coach-banner-btn:hover { background: var(--accent-dark); }
 
     /* 6.4 Touch feedback on calendar */
