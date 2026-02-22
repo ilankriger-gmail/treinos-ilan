@@ -1826,27 +1826,24 @@
       scrollbar-color: rgba(255,255,255,0.08) transparent;
     }
 
-    /* Coach FAB */
-    .coach-fab {
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      width: 48px;
-      height: 48px;
-      background: var(--accent);
-      border: none;
-      border-radius: 6px;
-      color: white;
-      font-size: 22px;
-      cursor: pointer;
-      display: none;
+    /* Coach AI inline button (top of non-coach views) */
+    .coach-banner-btn {
+      display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 99;
+      gap: 8px;
+      width: 100%;
+      padding: 14px 20px;
+      background: var(--accent);
+      border: none;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
       transition: background 0.2s;
     }
-    .coach-fab:hover { background: var(--accent-dark); }
-    .coach-fab.visible { display: flex; }
+    .coach-banner-btn:hover { background: var(--accent-dark); }
 
     /* 6.4 Touch feedback on calendar */
     .calendar-day:active { background: var(--bg-hover); }
@@ -1875,12 +1872,13 @@
     <!-- Main Navigation -->
     <div class="main-tabs">
       <button class="main-tab active" onclick="showView('calendar')">📅 Agenda</button>
-      <button class="main-tab" onclick="showView('coach')">🤖 Coach AI</button>
       <button class="main-tab" onclick="showView('workouts')">💪 Treino</button>
+      <button class="main-tab" onclick="showView('coach')">🤖 Coach AI</button>
     </div>
     
     <!-- Calendar View -->
     <div id="calendarView" class="view active">
+      <button class="coach-banner-btn" onclick="openCoachFromBanner()">🤖 Coach AI — Falar com o treinador</button>
       <!-- Como estou agora - sempre visível -->
       <div style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
@@ -1962,6 +1960,7 @@
     
     <!-- Workouts View -->
     <div id="workoutsView" class="view">
+      <button class="coach-banner-btn" onclick="openCoachFromBanner()">🤖 Coach AI — Falar com o treinador</button>
       <div id="weeklyScheduleBanner" class="schedule-banner">
         <div id="todaySchedule" class="schedule-today"></div>
         <div id="weekOverview" class="schedule-week"></div>
@@ -2759,8 +2758,6 @@
     </div>
   </div>
   
-  <button class="coach-fab" id="coachFab" onclick="openCoachFromFab()" aria-label="Abrir Coach AI">🤖</button>
-
   <div class="timer-modal" id="timerModal">
     <div class="timer-label">Descanso</div>
     <div class="timer-display" id="timerDisplay">00:00</div>
@@ -2992,17 +2989,12 @@
       document.querySelectorAll('.main-tab').forEach(function(t) { t.classList.remove('active'); });
       document.getElementById(view + 'View').classList.add('active');
 
-      // Map view name to tab index (calendar=0, coach=1, workouts=2)
-      var tabMap = { 'calendar': 0, 'coach': 1, 'workouts': 2 };
+      // Map view name to tab index (calendar=0, workouts=1, coach=2)
+      var tabMap = { 'calendar': 0, 'workouts': 1, 'coach': 2 };
       var tabs = document.querySelectorAll('.main-tab');
       if (tabs[tabMap[view]]) tabs[tabMap[view]].classList.add('active');
 
-      // Show FAB on non-coach tabs, hide on coach
-      var fab = document.getElementById('coachFab');
-      if (view === 'coach') {
-        fab.classList.remove('visible');
-      } else {
-        fab.classList.add('visible');
+      if (view !== 'coach') {
         previousView = null;
       }
 
@@ -4416,7 +4408,7 @@
       }
     }
 
-    function openCoachFromFab() {
+    function openCoachFromBanner() {
       previousView = currentView;
       showView('coach');
       startCoachChat();
@@ -6397,8 +6389,7 @@
       // Load exercise images after a delay (non-blocking)
       setTimeout(loadExerciseImages, 1000);
 
-      // Show coach FAB on initial view (calendar)
-      document.getElementById('coachFab').classList.add('visible');
+      // (coach banner button is always visible inline, no FAB needed)
 
       // Render weekly schedule
       renderWeeklySchedule();
