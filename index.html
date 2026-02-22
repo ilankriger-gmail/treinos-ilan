@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Treinos</title>
-  <meta name="theme-color" content="#1a1a2e">
+  <meta name="theme-color" content="#1e1e1e">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>">
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>">
@@ -18,23 +18,24 @@
     }
     
     :root {
-      --bg-primary: #1a1a2e;
-      --bg-secondary: #16213e;
-      --bg-tertiary: #0f3460;
-      --accent: #7f5af0;
-      --accent-dim: rgba(127, 90, 240, 0.12);
-      --accent-glow: rgba(127, 90, 240, 0.3);
-      --text-primary: #e0e0e0;
-      --text-secondary: #94a3b8;
-      --text-muted: #7c8da3;
-      --border: rgba(255,255,255,0.10);
-      --success: #2cb67d;
-      --warning: #ff8906;
-      --error: #ef4444;
-      --error-dim: rgba(239,68,68,0.1);
-      --success-dim: rgba(44,182,125,0.08);
-      --accent-dark: #6025d1;
+      --bg-primary: #1e1e1e;
+      --bg-secondary: #262626;
+      --bg-tertiary: #2e2e2e;
+      --accent: #7f6df2;
+      --accent-dim: rgba(127,109,242,0.08);
+      --accent-glow: rgba(127,109,242,0.0);
+      --text-primary: #dcddde;
+      --text-secondary: #a7a9ab;
+      --text-muted: #6b6e73;
+      --border: rgba(255,255,255,0.05);
+      --success: #59a869;
+      --warning: #e0a256;
+      --error: #d95555;
+      --error-dim: rgba(217,85,85,0.1);
+      --success-dim: rgba(89,168,105,0.08);
+      --accent-dark: #6c5ce7;
       --surface: rgba(255,255,255,0.03);
+      --bg-hover: #333333;
     }
     
     body {
@@ -54,11 +55,9 @@
     }
     
     header {
-      padding: 24px 20px 16px;
+      padding: 16px 20px 12px;
       border-bottom: 1px solid var(--border);
-      background: rgba(26, 26, 46, 0.8);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: var(--bg-primary);
     }
     
     .header-top {
@@ -68,8 +67,8 @@
     }
     
     h1 {
-      font-size: 20px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 500;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -86,7 +85,7 @@
     /* Reusable Button System */
     .btn {
       padding: 10px 16px;
-      border-radius: 8px;
+      border-radius: 4px;
       font-size: 13px;
       font-weight: 600;
       cursor: pointer;
@@ -113,7 +112,7 @@
       border-color: var(--border);
       color: var(--text-secondary);
     }
-    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); }
     .btn-sm { padding: 6px 12px; font-size: 12px; }
     .btn-lg { padding: 14px 20px; font-size: 15px; }
 
@@ -123,12 +122,12 @@
       padding: 10px 12px;
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 4px;
       color: var(--text-primary);
       font-size: 14px;
       font-family: 'Inter', sans-serif;
     }
-    .form-input:focus { outline: none; border-color: var(--accent); }
+    .form-input:focus { outline: none; border-color: var(--text-muted); }
     .form-input::placeholder { color: var(--text-muted); }
     .form-textarea {
       width: 100%;
@@ -136,13 +135,13 @@
       padding: 12px;
       background: var(--bg-tertiary);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 4px;
       color: var(--text-primary);
       font-family: 'Inter', sans-serif;
       font-size: 14px;
       resize: vertical;
     }
-    .form-textarea:focus { outline: none; border-color: var(--accent); }
+    .form-textarea:focus { outline: none; border-color: var(--text-muted); }
     .form-textarea::placeholder { color: var(--text-muted); }
     .form-label {
       font-size: 12px;
@@ -158,12 +157,10 @@
     /* Main Tabs */
     .main-tabs {
       display: flex;
-      padding: 12px 20px;
-      gap: 8px;
+      padding: 8px 20px;
+      gap: 4px;
       border-bottom: 1px solid var(--border);
-      background: rgba(26, 26, 46, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: var(--bg-primary);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -171,13 +168,13 @@
 
     .main-tab {
       flex: 1;
-      padding: 12px;
+      padding: 8px;
       border: 1px solid var(--border);
-      border-radius: 50px;
+      border-radius: 6px;
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: background 0.2s;
       background: transparent;
       color: var(--text-secondary);
       font-family: 'Inter', sans-serif;
@@ -188,10 +185,9 @@
     }
 
     .main-tab.active {
-      background: var(--accent-dim);
-      border-color: var(--accent);
-      color: var(--accent);
-      box-shadow: 0 0 16px var(--accent-glow);
+      background: var(--bg-tertiary);
+      border-color: var(--border);
+      color: var(--text-primary);
     }
     
     /* Views */
@@ -215,7 +211,7 @@
       width: 36px;
       height: 36px;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 4px;
       background: var(--bg-secondary);
       color: var(--text-primary);
       cursor: pointer;
@@ -255,25 +251,26 @@
     .calendar-day {
       aspect-ratio: 1;
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 4px;
       background: var(--bg-secondary);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: background 0.2s;
       position: relative;
       font-size: 14px;
     }
-    
+
     .calendar-day:hover {
-      border-color: var(--accent);
+      background: var(--bg-hover);
     }
-    
+
     .calendar-day.today {
-      border-color: var(--accent);
-      background: var(--accent-dim);
+      border-color: var(--border);
+      color: var(--accent);
+      font-weight: 600;
     }
     
     .calendar-day.other-month {
@@ -291,8 +288,9 @@
     }
     
     .calendar-day.selected {
-      background: var(--accent);
-      color: white;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border-color: var(--text-muted);
     }
     
     /* Activity Types */
@@ -318,11 +316,11 @@
     .activity-btn {
       padding: 12px 8px;
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 4px;
       background: var(--bg-secondary);
       color: var(--text-primary);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: background 0.2s;
       font-family: 'Inter', sans-serif;
       font-size: 12px;
       display: flex;
@@ -330,10 +328,9 @@
       align-items: center;
       gap: 4px;
     }
-    
+
     .activity-btn:hover {
-      border-color: var(--accent);
-      background: var(--accent-dim);
+      background: var(--bg-hover);
     }
     
     .activity-btn .emoji {
@@ -361,7 +358,7 @@
       gap: 12px;
       padding: 12px;
       background: var(--bg-secondary);
-      border-radius: 10px;
+      border-radius: 4px;
       margin-bottom: 8px;
       border: 1px solid var(--border);
     }
@@ -388,9 +385,9 @@
       width: 28px;
       height: 28px;
       border: none;
-      border-radius: 6px;
-      background: rgba(239, 68, 68, 0.1);
-      color: #ef4444;
+      border-radius: 4px;
+      background: var(--error-dim);
+      color: var(--error);
       cursor: pointer;
       font-size: 14px;
     }
@@ -419,7 +416,7 @@
       white-space: nowrap;
       padding: 10px 12px;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 4px;
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
@@ -429,9 +426,9 @@
     }
 
     .workout-tab.active {
-      background: var(--accent-dim);
-      border-color: var(--accent);
-      color: var(--accent);
+      background: var(--bg-tertiary);
+      border-color: var(--border);
+      color: var(--text-primary);
     }
 
     .workout-tab-separator {
@@ -444,7 +441,7 @@
     /* Weekly Schedule Banner */
     .schedule-banner {
       padding: 14px 20px;
-      background: var(--accent-dim);
+      background: var(--bg-secondary);
       border-bottom: 1px solid var(--border);
     }
     .schedule-today {
@@ -462,7 +459,7 @@
       flex: 1;
       text-align: center;
       padding: 6px 2px;
-      border-radius: 8px;
+      border-radius: 4px;
       font-size: 11px;
       font-weight: 500;
       color: var(--text-muted);
@@ -470,9 +467,9 @@
       border: 1px solid transparent;
     }
     .schedule-day.today {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--accent-dim);
+      border-color: var(--text-muted);
+      color: var(--text-primary);
+      background: var(--bg-tertiary);
       font-weight: 700;
     }
     .schedule-day .day-label { display: block; font-size: 10px; opacity: 0.7; }
@@ -496,10 +493,10 @@
     }
     .session-timer-bar button {
       padding: 6px 14px;
-      border-radius: 6px;
+      border-radius: 4px;
       border: 1px solid var(--border);
-      background: var(--accent-dim);
-      color: var(--accent);
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
@@ -520,7 +517,7 @@
     .cardio-type-btn {
       flex: 1;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 4px;
       border: 1px solid var(--border);
       background: var(--surface);
       color: var(--text-secondary);
@@ -528,12 +525,12 @@
       font-weight: 600;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
-      transition: all 0.2s;
+      transition: background 0.2s;
     }
     .cardio-type-btn.active {
-      background: var(--accent-dim);
-      border-color: var(--accent);
-      color: var(--accent);
+      background: var(--bg-tertiary);
+      border-color: var(--border);
+      color: var(--text-primary);
     }
     .cardio-form-grid {
       display: grid;
@@ -550,7 +547,7 @@
     .cardio-field input, .cardio-field textarea {
       width: 100%;
       padding: 10px;
-      border-radius: 8px;
+      border-radius: 4px;
       border: 1px solid var(--border);
       background: var(--bg-secondary);
       color: var(--text-primary);
@@ -561,14 +558,14 @@
     .pace-display {
       text-align: center;
       padding: 16px;
-      background: var(--accent-dim);
-      border-radius: 12px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
       margin-bottom: 16px;
     }
     .pace-display .pace-value {
       font-size: 32px;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--text-primary);
     }
     .pace-display .pace-label {
       font-size: 12px;
@@ -592,7 +589,7 @@
     .simple-activity-form textarea {
       width: 100%;
       padding: 10px;
-      border-radius: 8px;
+      border-radius: 4px;
       border: 1px solid var(--border);
       background: var(--bg-secondary);
       color: var(--text-primary);
@@ -607,21 +604,21 @@
     }
     .effort-slider input[type="range"] {
       flex: 1;
-      accent-color: var(--accent);
+      accent-color: var(--text-muted);
     }
     .effort-slider .effort-value {
       font-size: 18px;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--text-primary);
       min-width: 30px;
       text-align: center;
     }
     .simple-finish-btn {
       width: 100%;
       padding: 14px;
-      background: linear-gradient(135deg, #22c55e, #16a34a);
+      background: var(--success);
       border: none;
-      border-radius: 8px;
+      border-radius: 4px;
       color: white;
       font-size: 14px;
       font-weight: 600;
@@ -639,23 +636,22 @@
       font-weight: 600;
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      color: var(--accent);
+      color: var(--text-muted);
       margin: 20px 0 12px;
-      padding: 8px 12px;
-      background: var(--accent-dim);
-      border-radius: 6px;
+      padding: 8px 0;
+      background: transparent;
+      border-bottom: 1px solid var(--border);
     }
     
     .section-title:first-child { margin-top: 0; }
     
     .exercise {
       background: var(--bg-secondary);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 10px;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 6px;
       border: 1px solid var(--border);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-      transition: all 0.3s ease;
+      transition: background 0.2s;
     }
     
     .exercise.done {
@@ -670,8 +666,8 @@
     }
     
     .exercise-number {
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
       background: var(--bg-tertiary);
       border-radius: 6px;
       display: flex;
@@ -710,11 +706,11 @@
     .exercise-note {
       margin-top: 12px;
       padding: 10px 12px;
-      background: rgba(245, 158, 11, 0.08);
-      border-radius: 6px;
+      background: var(--bg-tertiary);
+      border-radius: 4px;
       font-size: 12px;
-      color: var(--warning);
-      border-left: 2px solid var(--warning);
+      color: var(--text-secondary);
+      border-left: 2px solid var(--text-muted);
     }
     
     .weight-row {
@@ -738,18 +734,18 @@
     }
     
     .weight-input::placeholder { color: var(--text-muted); font-weight: 400; }
-    .weight-input:focus { outline: none; border-color: var(--accent); }
-    
+    .weight-input:focus { outline: none; border-color: var(--text-muted); }
+
     .weight-unit { color: var(--text-muted); font-size: 12px; }
     .weight-last { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
-    .weight-last strong { color: var(--accent); }
+    .weight-last strong { color: var(--text-primary); }
 
     .sets-container { padding: 4px 0 0; }
     .set-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); }
     .set-row:last-child { border-bottom: none; }
     .set-label { width: 20px; font-size: 12px; color: var(--text-muted); text-align: center; flex-shrink: 0; }
     .set-weight, .set-reps { width: 56px; padding: 6px 4px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 13px; text-align: center; font-family: 'Inter', sans-serif; }
-    .set-weight:focus, .set-reps:focus { outline: none; border-color: var(--accent); }
+    .set-weight:focus, .set-reps:focus { outline: none; border-color: var(--text-muted); }
     .set-x { color: var(--text-muted); font-size: 12px; }
     .set-check { width: 28px; height: 28px; border-radius: 6px; border: 2px solid var(--border); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
     .set-row.done .set-check { background: var(--success); border-color: var(--success); }
@@ -763,7 +759,7 @@
       padding: 6px 12px;
       background: transparent;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 4px;
       color: var(--text-secondary);
       font-size: 11px;
       font-family: 'Inter', sans-serif;
@@ -798,7 +794,7 @@
     .record-overlay video {
       width: 100%;
       max-width: 500px;
-      border-radius: 12px;
+      border-radius: 8px;
       transform: scaleX(-1);
     }
     .record-countdown {
@@ -806,7 +802,6 @@
       font-size: 72px;
       font-weight: 800;
       color: white;
-      text-shadow: 0 0 30px rgba(127, 90, 240, 0.8);
       z-index: 10001;
     }
     .record-countdown-picker {
@@ -816,9 +811,9 @@
     }
     .record-countdown-picker button {
       padding: 14px 28px;
-      background: rgba(127, 90, 240, 0.3);
-      border: 2px solid var(--accent);
-      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
       color: white;
       font-size: 20px;
       font-weight: 700;
@@ -828,7 +823,7 @@
     }
     .record-countdown-picker button:hover,
     .record-countdown-picker button:active {
-      background: var(--accent);
+      background: rgba(255, 255, 255, 0.2);
     }
     .record-timer {
       margin-top: 16px;
@@ -849,7 +844,7 @@
       padding: 10px 24px;
       background: transparent;
       border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 8px;
+      border-radius: 4px;
       color: white;
       font-size: 14px;
       font-family: 'Inter', sans-serif;
@@ -861,7 +856,7 @@
       height: 36px;
       min-width: 36px;
       border: 2px solid var(--text-muted);
-      border-radius: 8px;
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -897,8 +892,8 @@
     }
     
     .timer-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
+      background: var(--bg-hover);
+      color: var(--text-primary);
     }
     
     /* Progress Bar */
@@ -923,12 +918,12 @@
     }
     
     .progress-info span:last-child {
-      color: var(--accent);
+      color: var(--text-primary);
       font-weight: 600;
     }
-    
+
     .progress-track {
-      height: 4px;
+      height: 3px;
       background: var(--bg-tertiary);
       border-radius: 2px;
       overflow: hidden;
@@ -948,7 +943,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(26, 26, 46, 0.95);
+      background: rgba(30, 30, 30, 0.95);
       display: none;
       justify-content: center;
       align-items: center;
@@ -977,7 +972,7 @@
       padding: 12px 32px;
       background: transparent;
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 4px;
       color: var(--text-secondary);
       font-size: 13px;
       font-family: 'Inter', sans-serif;
@@ -992,7 +987,7 @@
       background: var(--success);
       color: white;
       padding: 12px 24px;
-      border-radius: 8px;
+      border-radius: 4px;
       font-size: 14px;
       font-weight: 600;
       transition: transform 0.3s;
@@ -1021,11 +1016,10 @@
     
     .coach-card {
       background: var(--bg-secondary);
-      border-radius: 12px;
+      border-radius: 6px;
       padding: 16px;
       margin-bottom: 16px;
       border: 1px solid var(--border);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
     
     .coach-card h3 {
@@ -1994,7 +1988,7 @@
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Puxe na direção do bolso, cotovelos a 45º</div>
+          <div class="exercise-note">Puxe a barra na direção do umbigo. Cotovelos a 45°, junte as escápulas (ossos das costas) no topo. Peito pra fora, lombar neutra</div>
           <div class="weight-row">
             <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
             <span class="weight-unit">kg</span>
@@ -2016,7 +2010,7 @@
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Abra o peito, não desça a mão abaixo da linha do ombro</div>
+          <div class="exercise-note">Banco a 30°. Abra os braços em arco, cotovelos levemente flexionados. Não desça abaixo da linha do ombro. Sinta o peitoral (músculo do peito) esticar</div>
           <div class="weight-row">
             <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
             <span class="weight-unit">kg</span>
@@ -2038,7 +2032,7 @@
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Esmague as costas no final. Ombros longe da orelha</div>
+          <div class="exercise-note">Puxe o triângulo até o abdômen. Junte as escápulas (ossos das costas) no final — "esmague" as costas. Ombros longe da orelha, peito aberto</div>
           <div class="weight-row">
             <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
             <span class="weight-unit">kg</span>
@@ -2060,7 +2054,7 @@
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Carga LEVE. Foco total na parte de trás do ombro</div>
+          <div class="exercise-note">Carga LEVE. Foco no deltóide posterior (parte de trás do ombro). Abra os braços para os lados com cotovelos levemente flexionados. Aperte as escápulas no final</div>
           <div class="weight-row">
             <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
             <span class="weight-unit">kg</span>
@@ -2082,7 +2076,7 @@
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Carga LEVE. Puxe na testa. Segure 2s atrás</div>
+          <div class="exercise-note">Carga LEVE. Puxe a corda até a altura da testa, abrindo as mãos para fora. Segure 2s com as escápulas (ossos das costas) apertadas. Fortalece o manguito rotador (músculos profundos do ombro)</div>
           <div class="weight-row">
             <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
             <span class="weight-unit">kg</span>
@@ -2104,7 +2098,7 @@
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Estenda tudo lá embaixo abrindo a corda</div>
+          <div class="exercise-note">Cotovelos grudados no corpo. Estenda os braços totalmente lá embaixo, abrindo a corda para os lados. Contraia o tríceps (parte de trás do braço) no final</div>
           <div class="weight-row">
             <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
             <span class="weight-unit">kg</span>
@@ -2126,7 +2120,7 @@
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Cotovelos fechados (seta), não abertos (cruz)</div>
+          <div class="exercise-note">Cotovelos a 45° do corpo (posição de seta ↗), nunca abertos a 90° (posição de cruz ✚). Desça até o halter na linha do peito. Empurre juntando os peitorais no topo</div>
           <div class="weight-row">
             <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
             <span class="weight-unit">kg</span>
@@ -2148,7 +2142,7 @@
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Cotovelos colados na costela. Sem balanço</div>
+          <div class="exercise-note">Cotovelos colados na lateral do corpo (na costela). Suba contraindo o bíceps sem balançar o tronco. Desça controlado, sem soltar o peso</div>
           <div class="weight-row">
             <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
             <span class="weight-unit">kg</span>
@@ -2174,7 +2168,7 @@
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">"Desliga" o sinal de dor do tendão para treinar o resto</div>
+          <div class="exercise-note">Isometria analgésica: pressione o joelho contra a parede lateralmente (abdução = abrir a perna). Mantém 45s — "desliga" o sinal de dor do tendão para treinar o resto</div>
         </div>
         
         <p class="section-title">🎯 Ativação Segura — Chão</p>
@@ -2191,7 +2185,7 @@
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Apertar MUITO o glúteo lá em cima</div>
+          <div class="exercise-note">Deitado, pés no chão. Suba o quadril apertando MUITO o glúteo (músculo do bumbum) lá em cima. Segure 1s. Joelhos alinhados com os pés, não deixe abrir</div>
         </div>
         
         <p class="section-title">⚡ Força Principal — Em pé</p>
@@ -2208,7 +2202,7 @@
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Com elástico no joelho — substitui agachamento pesado</div>
+          <div class="exercise-note">Elástico atrás do joelho preso em algo fixo. Sente como se fosse sentar, tronco reto. Foco no quadríceps (músculo da frente da coxa). Substitui agachamento pesado protegendo o tendão</div>
           <div class="weight-row">
             <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
             <span class="weight-unit">kg</span>
@@ -2228,7 +2222,7 @@
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">NÃO deixe o joelho entrar</div>
+          <div class="exercise-note">Dê um passo à frente e flexione. Joelho da frente alinhado com o pé — NÃO deixe entrar (valgo). Incline o tronco à frente para ativar mais o glúteo</div>
           <div class="weight-row">
             <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
             <span class="weight-unit">kg</span>
@@ -2298,49 +2292,49 @@
 
       <!-- Mobilidade 1 -->
       <div id="mob1" class="workout">
-        <div class="exercise" data-id="m1-1" data-name="Cat-Cow">
+        <div class="exercise" data-id="m1-1" data-name="Gato-Vaca">
           <div class="exercise-header">
             <div class="exercise-number">1</div>
             <div class="exercise-info">
-              <div class="exercise-name">Cat-Cow</div>
+              <div class="exercise-name">Gato-Vaca</div>
               <div class="exercise-stats">
-                <span><strong>3</strong> series</span>
+                <span><strong>3</strong> séries</span>
                 <span><strong>10</strong> reps</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Alterne entre flexao e extensao da coluna</div>
+          <div class="exercise-note">De quatro apoios. Arqueie as costas para cima (gato) arredondando a coluna, depois solte a barriga para baixo (vaca) abrindo o peito. Movimento lento e controlado</div>
         </div>
 
-        <div class="exercise" data-id="m1-2" data-name="World's Greatest Stretch">
+        <div class="exercise" data-id="m1-2" data-name="Maior Alongamento do Mundo">
           <div class="exercise-header">
             <div class="exercise-number">2</div>
             <div class="exercise-info">
-              <div class="exercise-name">World's Greatest Stretch</div>
+              <div class="exercise-name">Maior Alongamento do Mundo</div>
               <div class="exercise-stats">
-                <span><strong>3</strong> series</span>
+                <span><strong>3</strong> séries</span>
                 <span><strong>5</strong> reps/lado</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Afundo + rotacao toracica + extensao de braco</div>
+          <div class="exercise-note">Afundo à frente, mão no chão. Gire o tronco abrindo o braço pro teto (rotação torácica = girar a parte de cima das costas). Alonga quadril, costas e ombros de uma vez</div>
         </div>
 
-        <div class="exercise" data-id="m1-3" data-name="90/90 Hip Switch">
+        <div class="exercise" data-id="m1-3" data-name="90/90 Rotacao de Quadril">
           <div class="exercise-header">
             <div class="exercise-number">3</div>
             <div class="exercise-info">
-              <div class="exercise-name">90/90 Hip Switch</div>
+              <div class="exercise-name">90/90 Rotacao de Quadril</div>
               <div class="exercise-stats">
-                <span><strong>3</strong> series</span>
+                <span><strong>3</strong> séries</span>
                 <span><strong>8</strong> reps/lado</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Rotacao interna e externa do quadril controlada</div>
+          <div class="exercise-note">Sentado, ambos os joelhos a 90°. Gire as pernas para o outro lado alternando. Trabalha rotação interna e externa do quadril (capacidade de girar a perna para dentro e para fora)</div>
         </div>
 
         <div class="exercise" data-id="m1-4" data-name="Toracica em Quadrupedia">
@@ -2349,184 +2343,184 @@
             <div class="exercise-info">
               <div class="exercise-name">Toracica em Quadrupedia</div>
               <div class="exercise-stats">
-                <span><strong>3</strong> series</span>
+                <span><strong>3</strong> séries</span>
                 <span><strong>8</strong> reps/lado</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Mao na nuca, abre e fecha rotando o tronco</div>
+          <div class="exercise-note">De quatro apoios, mão na nuca. Gire o tronco abrindo o cotovelo pro teto, depois feche trazendo pro chão. Mobiliza a coluna torácica (região do meio das costas)</div>
         </div>
 
-        <div class="exercise" data-id="m1-5" data-name="Bretzel Stretch">
+        <div class="exercise" data-id="m1-5" data-name="Alongamento Bretzel">
           <div class="exercise-header">
             <div class="exercise-number">5</div>
             <div class="exercise-info">
-              <div class="exercise-name">Bretzel Stretch</div>
+              <div class="exercise-name">Alongamento Bretzel</div>
               <div class="exercise-stats">
-                <span><strong>2</strong> series</span>
+                <span><strong>2</strong> séries</span>
                 <span><strong>30s</strong> hold/lado</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Deitado de lado, abre peito e quadril simultaneamente</div>
+          <div class="exercise-note">Deitado de lado, perna de cima flexionada à frente, perna de baixo flexionada atrás. Gire o tronco abrindo o peito. Alonga quadril, peito e coluna torácica ao mesmo tempo</div>
         </div>
       </div>
 
       <!-- Mobilidade 2 -->
       <div id="mob2" class="workout">
-        <div class="exercise" data-id="m2-1" data-name="Shoulder CARs">
+        <div class="exercise" data-id="m2-1" data-name="CARs de Ombro">
           <div class="exercise-header">
             <div class="exercise-number">1</div>
             <div class="exercise-info">
-              <div class="exercise-name">Shoulder CARs</div>
+              <div class="exercise-name">CARs de Ombro</div>
               <div class="exercise-stats">
-                <span><strong>3</strong> series</span>
+                <span><strong>3</strong> séries</span>
                 <span><strong>5</strong> reps/lado</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Rotacao controlada e lenta do ombro (amplitude maxima)</div>
+          <div class="exercise-note">CARs = Rotações Articulares Controladas. Em pé, gire o braço lentamente fazendo o maior círculo possível. Força máxima no movimento. Mapeia a amplitude do ombro</div>
         </div>
 
-        <div class="exercise" data-id="m2-2" data-name="Hip CARs">
+        <div class="exercise" data-id="m2-2" data-name="CARs de Quadril">
           <div class="exercise-header">
             <div class="exercise-number">2</div>
             <div class="exercise-info">
-              <div class="exercise-name">Hip CARs</div>
+              <div class="exercise-name">CARs de Quadril</div>
               <div class="exercise-stats">
-                <span><strong>3</strong> series</span>
+                <span><strong>3</strong> séries</span>
                 <span><strong>5</strong> reps/lado</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Rotacao controlada do quadril em pe, amplitude maxima</div>
+          <div class="exercise-note">Em pé (apoie numa parede). Levante o joelho à frente, abra pro lado e leve pra trás — o maior círculo possível com a perna. Controle total, sem compensar com o tronco</div>
         </div>
 
-        <div class="exercise" data-id="m2-3" data-name="Scorpion Stretch">
+        <div class="exercise" data-id="m2-3" data-name="Alongamento Escorpiao">
           <div class="exercise-header">
             <div class="exercise-number">3</div>
             <div class="exercise-info">
-              <div class="exercise-name">Scorpion Stretch</div>
+              <div class="exercise-name">Alongamento Escorpiao</div>
               <div class="exercise-stats">
-                <span><strong>3</strong> series</span>
+                <span><strong>3</strong> séries</span>
                 <span><strong>8</strong> reps/lado</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">De brucos, leva o pe pro lado oposto rotando o tronco</div>
+          <div class="exercise-note">Deitado de barriga pra baixo, braços abertos. Leve o pé por cima do corpo até o lado oposto, girando o quadril e a coluna. Alonga peito, quadril e coluna torácica</div>
         </div>
 
-        <div class="exercise" data-id="m2-4" data-name="Deep Squat Hold">
+        <div class="exercise" data-id="m2-4" data-name="Agachamento Profundo Isometrico">
           <div class="exercise-header">
             <div class="exercise-number">4</div>
             <div class="exercise-info">
-              <div class="exercise-name">Deep Squat Hold</div>
+              <div class="exercise-name">Agachamento Profundo Isometrico</div>
               <div class="exercise-stats">
-                <span><strong>3</strong> series</span>
+                <span><strong>3</strong> séries</span>
                 <span><strong>30s</strong> hold</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Agachamento profundo, cotovelos empurrando joelhos</div>
+          <div class="exercise-note">Desça no agachamento mais fundo que conseguir e segure a posição. Use os cotovelos para empurrar os joelhos pra fora. Alonga quadril, tornozelos e parte interna da coxa (adutores)</div>
         </div>
 
-        <div class="exercise" data-id="m2-5" data-name="Pigeon Stretch">
+        <div class="exercise" data-id="m2-5" data-name="Alongamento Pombo">
           <div class="exercise-header">
             <div class="exercise-number">5</div>
             <div class="exercise-info">
-              <div class="exercise-name">Pigeon Stretch</div>
+              <div class="exercise-name">Alongamento Pombo</div>
               <div class="exercise-stats">
-                <span><strong>2</strong> series</span>
+                <span><strong>2</strong> séries</span>
                 <span><strong>45s</strong> hold/lado</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Pombo: abre o quadril e alonga gluteo profundo</div>
+          <div class="exercise-note">Perna da frente cruzada com canela no chão, perna de trás estendida. Desça o tronco à frente. Alonga o glúteo profundo (piriforme) e abre o quadril</div>
         </div>
       </div>
 
       <!-- Mobilidade 3 -->
       <div id="mob3" class="workout">
-        <div class="exercise" data-id="m3-1" data-name="Inchworm">
+        <div class="exercise" data-id="m3-1" data-name="Minhoca">
           <div class="exercise-header">
             <div class="exercise-number">1</div>
             <div class="exercise-info">
-              <div class="exercise-name">Inchworm</div>
+              <div class="exercise-name">Minhoca</div>
               <div class="exercise-stats">
-                <span><strong>3</strong> series</span>
+                <span><strong>3</strong> séries</span>
                 <span><strong>6</strong> reps</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Caminha com as maos ate prancha, volta aos pes</div>
+          <div class="exercise-note">Em pé, incline e caminhe com as mãos no chão até posição de prancha. Volte caminhando as mãos de volta aos pés. Alonga posterior da coxa (isquiotibiais) e ativa o core (centro do corpo)</div>
         </div>
 
-        <div class="exercise" data-id="m3-2" data-name="Spiderman com Rotacao">
+        <div class="exercise" data-id="m3-2" data-name="Homem-Aranha com Rotacao">
           <div class="exercise-header">
             <div class="exercise-number">2</div>
             <div class="exercise-info">
-              <div class="exercise-name">Spiderman com Rotacao</div>
+              <div class="exercise-name">Homem-Aranha com Rotacao</div>
               <div class="exercise-stats">
-                <span><strong>3</strong> series</span>
+                <span><strong>3</strong> séries</span>
                 <span><strong>6</strong> reps/lado</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Afundo do homem-aranha + abre o braco pro teto</div>
+          <div class="exercise-note">Posição de prancha, traga o pé ao lado da mão (afundo profundo). Gire o tronco abrindo o braço pro teto. Alonga quadril, mobiliza coluna torácica (meio das costas)</div>
         </div>
 
-        <div class="exercise" data-id="m3-3" data-name="Cossack Squat">
+        <div class="exercise" data-id="m3-3" data-name="Agachamento Cossaco">
           <div class="exercise-header">
             <div class="exercise-number">3</div>
             <div class="exercise-info">
-              <div class="exercise-name">Cossack Squat</div>
+              <div class="exercise-name">Agachamento Cossaco</div>
               <div class="exercise-stats">
-                <span><strong>3</strong> series</span>
+                <span><strong>3</strong> séries</span>
                 <span><strong>8</strong> reps/lado</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Agachamento lateral alternando, perna estendida fica reta</div>
+          <div class="exercise-note">Pernas bem abertas. Agache para um lado com a outra perna estendida (pé apontando pra cima). Alterna os lados. Trabalha mobilidade do quadril e tornozelo, alonga adutores (parte interna da coxa)</div>
         </div>
 
-        <div class="exercise" data-id="m3-4" data-name="Wall Slides">
+        <div class="exercise" data-id="m3-4" data-name="Deslize na Parede">
           <div class="exercise-header">
             <div class="exercise-number">4</div>
             <div class="exercise-info">
-              <div class="exercise-name">Wall Slides</div>
+              <div class="exercise-name">Deslize na Parede</div>
               <div class="exercise-stats">
-                <span><strong>3</strong> series</span>
+                <span><strong>3</strong> séries</span>
                 <span><strong>10</strong> reps</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Costas na parede, desliza bracos pra cima mantendo contato</div>
+          <div class="exercise-note">Costas e braços colados na parede. Deslize os braços pra cima mantendo contato total com a parede. Trabalha mobilidade do ombro e postura das escápulas (ossos das costas)</div>
         </div>
 
-        <div class="exercise" data-id="m3-5" data-name="Child's Pose com Rotacao">
+        <div class="exercise" data-id="m3-5" data-name="Posicao de Crianca com Rotacao">
           <div class="exercise-header">
             <div class="exercise-number">5</div>
             <div class="exercise-info">
-              <div class="exercise-name">Child's Pose com Rotacao</div>
+              <div class="exercise-name">Posicao de Crianca com Rotacao</div>
               <div class="exercise-stats">
-                <span><strong>2</strong> series</span>
+                <span><strong>2</strong> séries</span>
                 <span><strong>30s</strong> hold/lado</span>
               </div>
             </div>
             <div class="checkbox" onclick="toggleExercise(this)"></div>
           </div>
-          <div class="exercise-note">Posicao de crianca com braco passando por baixo do tronco</div>
+          <div class="exercise-note">Sentado nos calcanhares, braços estendidos à frente (posição de criança). Passe um braço por baixo do tronco girando. Alonga costas e mobiliza a coluna torácica (região do meio das costas)</div>
         </div>
       </div>
 
@@ -3668,31 +3662,76 @@
     
     async function loadLastWeights() {
       try {
+        // Fetch last sessions to get per-set weight AND reps
+        const sessRes = await fetch(`${SUPABASE_URL}/rest/v1/workout_sessions?select=exercises_done,date&order=date.desc&limit=10`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        const sessions = await sessRes.json();
+
+        // Build per-exercise last set data from sessions
+        const lastSets = {};
+        sessions.forEach(session => {
+          if (!session.exercises_done) return;
+          session.exercises_done.forEach(ex => {
+            if (!lastSets[ex.id] && ex.sets && ex.sets.length > 0) {
+              lastSets[ex.id] = { sets: ex.sets, date: session.date };
+            }
+          });
+        });
+
+        // Also fetch from workout_logs for "Ultimo" display and fallback
         const res = await fetch(`${SUPABASE_URL}/rest/v1/workout_logs?select=exercise_id,weight,created_at&order=created_at.desc`, {
           headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
         });
         const data = await res.json();
-        
+
         const latest = {};
         data.forEach(log => {
           if (!latest[log.exercise_id]) latest[log.exercise_id] = log;
         });
-        
-        Object.keys(latest).forEach(id => {
-          const el = document.getElementById(`last-${id}`);
-          if (el) {
-            const date = new Date(latest[id].created_at).toLocaleDateString('pt-BR');
-            const config = exerciseConfigs[id];
-            const unit = config && config.type === 'tempo' ? 's' : 'kg';
-            el.innerHTML = 'Último: <strong>' + latest[id].weight + unit + '</strong> (' + date + ')';
-          }
-          // Pre-fill set weight inputs if empty
+
+        // Pre-fill from session data (per-set weight + reps)
+        Object.keys(lastSets).forEach(id => {
           var exercise = document.querySelector('[data-id="' + id + '"]');
-          if (exercise) {
+          if (!exercise) return;
+          var sessionData = lastSets[id];
+          exercise.querySelectorAll('.set-row').forEach(function(row) {
+            var setNum = parseInt(row.dataset.set);
+            var matchingSet = sessionData.sets.find(s => s.set === setNum);
+            if (matchingSet) {
+              var wi = row.querySelector('.set-weight');
+              var ri = row.querySelector('.set-reps');
+              if (wi && !wi.value && matchingSet.weight) wi.value = matchingSet.weight;
+              if (ri && matchingSet.reps) ri.value = matchingSet.reps;
+            }
+          });
+          // Show "Ultimo treino" with date
+          var lastLabel = document.getElementById('last-' + id);
+          if (lastLabel && sessionData.date) {
+            var d = new Date(sessionData.date + 'T12:00:00');
+            var dateStr = d.toLocaleDateString('pt-BR');
+            lastLabel.innerHTML = 'Ultimo treino: <strong>' + dateStr + '</strong>';
+          }
+        });
+
+        // For exercises without session data, fallback to workout_logs
+        Object.keys(latest).forEach(id => {
+          var exercise = document.querySelector('[data-id="' + id + '"]');
+          if (exercise && !lastSets[id]) {
             exercise.querySelectorAll('.set-row').forEach(function(row) {
               var wi = row.querySelector('.set-weight');
               if (wi && !wi.value) wi.value = latest[id].weight;
             });
+          }
+          // Show "Ultimo" label if no session data
+          if (!lastSets[id]) {
+            const el = document.getElementById('last-' + id);
+            if (el) {
+              const date = new Date(latest[id].created_at).toLocaleDateString('pt-BR');
+              const config = exerciseConfigs[id];
+              const unit = config && config.type === 'tempo' ? 's' : 'kg';
+              el.innerHTML = 'Ultimo: <strong>' + latest[id].weight + unit + '</strong> (' + date + ')';
+            }
           }
         });
       } catch (e) {
@@ -3795,7 +3834,12 @@
         var setsContainer = document.createElement('div');
         setsContainer.className = 'sets-container';
         var weightPlaceholder = config.type === 'tempo' ? 'seg' : 'kg';
-        var repsPlaceholder = 'reps';
+        // Parse default reps from config (e.g. "10-12" → 10, "15" → 15)
+        var defaultReps = '';
+        if (config.reps) {
+          var repsMatch = String(config.reps).match(/(\d+)/);
+          if (repsMatch) defaultReps = repsMatch[1];
+        }
         for (var s = 1; s <= numSets; s++) {
           var setRow = document.createElement('div');
           setRow.className = 'set-row';
@@ -3804,7 +3848,7 @@
             '<span class="set-label">' + s + '</span>' +
             '<input type="number" class="set-weight" placeholder="' + weightPlaceholder + '" step="' + (config.type === 'tempo' ? '1' : '0.5') + '">' +
             '<span class="set-x">\u00d7</span>' +
-            '<input type="number" class="set-reps" placeholder="' + repsPlaceholder + '">' +
+            '<input type="number" class="set-reps" value="' + defaultReps + '">' +
             '<div class="set-check" onclick="toggleSet(this)"></div>';
           setsContainer.appendChild(setRow);
         }
@@ -5076,7 +5120,7 @@
       }
 
       var exName = exerciseEl.dataset.name || exerciseEl.querySelector('.exercise-name')?.textContent || name;
-      var sectionNameMap = { perna: 'Lower', braco: 'Upper', mob1: 'Mob 1', mob2: 'Mob 2', mob3: 'Mob 3' };
+      var sectionNameMap = { perna: 'Perna', braco: 'Braço', mob1: 'Mob 1', mob2: 'Mob 2', mob3: 'Mob 3' };
       var sectionName = sectionNameMap[container.id] || 'Upper';
       var msg = movingBetweenSections
         ? exName + ' movido para ' + sectionName + ' (posição ' + (targetIndex + 1) + ')!'
