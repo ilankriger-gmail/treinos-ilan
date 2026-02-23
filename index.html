@@ -2418,6 +2418,7 @@
     }
     .onb-input:focus { outline: none; border-color: var(--accent); }
     .onb-input::placeholder { color: var(--text-muted); }
+    .onb-input[type="date"] { color-scheme: dark; }
     .onb-cards {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -2507,6 +2508,85 @@
     .onb-btn-next:hover { background: var(--accent-dark); }
     .onb-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
     textarea.onb-input { min-height: 80px; resize: none; }
+
+    /* Onboarding — Step 1 features */
+    .onb-features { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+    .onb-feature-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px; background: var(--bg-secondary);
+      border: 1px solid var(--border); border-radius: 10px;
+    }
+    .onb-feature-item .feat-icon { font-size: 22px; flex-shrink: 0; }
+    .onb-feature-item .feat-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+    .onb-feature-item .feat-text strong { color: var(--text-primary); }
+
+    /* Onboarding — Step 3 hint */
+    .onb-hint {
+      font-size: 12px; color: var(--text-muted); line-height: 1.5;
+      padding: 10px 12px; background: var(--bg-secondary);
+      border-radius: 8px; margin-top: 4px;
+    }
+
+    /* Onboarding — Step 3 grid */
+    .onb-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* Onboarding — Step 4 medical why */
+    .onb-medical-why {
+      font-size: 12px; color: var(--text-muted); line-height: 1.6;
+      padding: 12px 14px; background: var(--bg-secondary);
+      border: 1px solid var(--border); border-radius: 8px;
+      margin-bottom: 14px;
+    }
+    .onb-medical-why strong { color: var(--text-secondary); }
+
+    /* Onboarding — Step 6 activity rows */
+    .onb-activity-row {
+      padding: 14px; background: var(--bg-secondary);
+      border: 1px solid var(--border); border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .onb-activity-row-header {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; font-weight: 600; margin-bottom: 10px;
+    }
+    .onb-activity-row-controls { display: flex; flex-direction: column; gap: 8px; }
+    .onb-control-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+
+    /* Onboarding — intensity buttons */
+    .onb-intensity-btns { display: flex; gap: 6px; }
+    .onb-intensity-btn {
+      flex: 1; padding: 8px 4px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg-tertiary);
+      color: var(--text-secondary); font-size: 12px; font-weight: 600;
+      cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
+      text-align: center;
+    }
+    .onb-intensity-btn:hover { border-color: var(--text-muted); }
+    .onb-intensity-btn.selected { border-color: var(--accent); background: var(--accent); color: white; }
+
+    /* Onboarding — freq mini buttons (inside activity row) */
+    .onb-freq-mini { display: flex; gap: 4px; }
+    .onb-freq-mini .onb-freq-btn {
+      width: 34px; height: 34px; font-size: 13px; border-radius: 8px;
+    }
+
+    /* Onboarding — Step 7 summary */
+    .onb-summary { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .onb-summary-item {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 10px 14px; background: var(--bg-secondary);
+      border-radius: 8px; font-size: 13px;
+    }
+    .onb-summary-label { color: var(--text-muted); }
+    .onb-summary-value { color: var(--text-primary); font-weight: 600; text-align: right; max-width: 60%; }
+
+    /* Onboarding — AI teaser box */
+    .onb-ai-teaser {
+      padding: 16px; background: var(--bg-secondary);
+      border: 1px solid var(--accent); border-radius: 10px;
+      font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+    }
+    .onb-ai-teaser strong { color: var(--accent); }
   </style>
 </head>
 <body>
@@ -2551,24 +2631,38 @@
     </div>
     <div class="onboarding-progress" id="onbProgress"></div>
     <div class="onboarding-body" id="onbBody">
-      <!-- Step 1: Welcome -->
+      <!-- Step 1: Seu Coach AI pessoal -->
       <div class="onb-step active" data-step="1">
-        <div style="text-align: center; padding-top: 40px;">
-          <div style="font-size: 48px; margin-bottom: 16px;">🏋️</div>
-          <div class="onb-title">Vamos configurar seu treino!</div>
-          <div class="onb-subtitle">Responda 7 perguntas rapidas para o Coach AI montar um plano 100% personalizado pra voce.</div>
+        <div style="text-align: center; padding-top: 24px;">
+          <div style="font-size: 48px; margin-bottom: 16px;">🤖</div>
+          <div class="onb-title">Seu Coach AI pessoal</div>
+          <div class="onb-subtitle">A IA analisa seus dados e cria um plano de treino que evolui com voce — semana a semana.</div>
+        </div>
+        <div class="onb-features">
+          <div class="onb-feature-item">
+            <span class="feat-icon">🎯</span>
+            <span class="feat-text"><strong>Plano sob medida</strong> — montado a partir dos seus objetivos, nivel e rotina.</span>
+          </div>
+          <div class="onb-feature-item">
+            <span class="feat-icon">📈</span>
+            <span class="feat-text"><strong>Ajustes automaticos</strong> — o Coach acompanha seu progresso e adapta cargas, volume e exercicios.</span>
+          </div>
+          <div class="onb-feature-item">
+            <span class="feat-icon">🩺</span>
+            <span class="feat-text"><strong>Respeita sua saude</strong> — lesoes, dores e restricoes sao consideradas em cada recomendacao.</span>
+          </div>
         </div>
       </div>
-      <!-- Step 2: Dados basicos -->
+      <!-- Step 2: Sobre voce -->
       <div class="onb-step" data-step="2">
         <div class="onb-title">Sobre voce</div>
-        <div class="onb-subtitle">Precisamos de alguns dados basicos.</div>
+        <div class="onb-subtitle">Dados basicos para calibrar seu plano. Tudo editavel depois.</div>
         <div class="onb-label">Nome</div>
-        <input class="onb-input" type="text" id="onbNome" placeholder="Seu nome">
+        <input class="onb-input" type="text" id="onbNome" placeholder="Como quer ser chamado?">
         <div class="onb-label">Idade</div>
-        <input class="onb-input" type="number" id="onbIdade" placeholder="Ex: 30">
+        <input class="onb-input" type="number" id="onbIdade" placeholder="Ex: 30" inputmode="numeric">
         <div class="onb-label">Altura (cm)</div>
-        <input class="onb-input" type="number" id="onbAltura" placeholder="Ex: 175">
+        <input class="onb-input" type="number" id="onbAltura" placeholder="Ex: 175" inputmode="numeric">
         <div class="onb-label">Sexo</div>
         <div class="onb-sexo-cards">
           <div class="onb-sexo-card" onclick="selectOnbSexo('M', this)">
@@ -2581,37 +2675,29 @@
           </div>
         </div>
       </div>
-      <!-- Step 3: Objetivo -->
+      <!-- Step 3: Qual seu objetivo? -->
       <div class="onb-step" data-step="3">
-        <div class="onb-title">Qual seu objetivo principal?</div>
-        <div class="onb-subtitle">Escolha o que mais importa agora.</div>
-        <div class="onb-cards">
-          <div class="onb-card" onclick="selectOnbGoal('massa', this)">
-            <div class="onb-card-icon">💪</div>
-            <div class="onb-card-label">Ganhar massa</div>
+        <div class="onb-title">Qual seu objetivo?</div>
+        <div class="onb-subtitle">Descreva com suas palavras o que voce quer alcançar.</div>
+        <div class="onb-label">Meu objetivo</div>
+        <textarea class="onb-input" id="onbObjetivoTexto" placeholder="Ex: Ganhar 5kg de massa muscular, correr 10km sem parar, voltar a treinar apos lesao..."></textarea>
+        <div class="onb-grid-2">
+          <div>
+            <div class="onb-label">Prazo</div>
+            <input class="onb-input" type="date" id="onbObjetivoData">
           </div>
-          <div class="onb-card" onclick="selectOnbGoal('gordura', this)">
-            <div class="onb-card-icon">🔥</div>
-            <div class="onb-card-label">Perder gordura</div>
-          </div>
-          <div class="onb-card" onclick="selectOnbGoal('saude', this)">
-            <div class="onb-card-icon">❤️</div>
-            <div class="onb-card-label">Saude geral</div>
-          </div>
-          <div class="onb-card" onclick="selectOnbGoal('performance', this)">
-            <div class="onb-card-icon">🏆</div>
-            <div class="onb-card-label">Performance</div>
-          </div>
-          <div class="onb-card" onclick="selectOnbGoal('reabilitacao', this)" style="grid-column: span 2;">
-            <div class="onb-card-icon">🏥</div>
-            <div class="onb-card-label">Reabilitacao</div>
+          <div>
+            <div class="onb-label">Resultado esperado</div>
+            <input class="onb-input" type="text" id="onbObjetivoResultado" placeholder="Ex: 80kg, sub-50min">
           </div>
         </div>
+        <div class="onb-hint">Exemplos: "Quero ganhar 5kg de massa ate julho", "Completar meia maratona em outubro", "Eliminar dor lombar em 3 meses"</div>
       </div>
-      <!-- Step 4: Nivel -->
+      <!-- Step 4: Experiencia e saude -->
       <div class="onb-step" data-step="4">
-        <div class="onb-title">Qual seu nivel de experiencia?</div>
-        <div class="onb-subtitle">Sem julgamento, e pra calibrar o plano.</div>
+        <div class="onb-title">Experiencia e saude</div>
+        <div class="onb-subtitle">Para calibrar intensidade e respeitar seus limites.</div>
+        <div class="onb-label">Nivel de experiencia</div>
         <div class="onb-cards" style="grid-template-columns: 1fr;">
           <div class="onb-card" onclick="selectOnbLevel('iniciante', this)">
             <div class="onb-card-label">Iniciante</div>
@@ -2626,17 +2712,16 @@
             <div class="onb-card-desc">Mais de 2 anos consistentes</div>
           </div>
         </div>
+        <div class="onb-label">Restricoes, lesoes ou dores</div>
+        <div class="onb-medical-why">
+          <strong>Por que isso importa?</strong> O Coach usa essas informacoes para evitar exercicios que agravem lesoes, adaptar movimentos e sugerir alternativas seguras. Nada e compartilhado fora do app.
+        </div>
+        <textarea class="onb-input" id="onbRestricoes" placeholder="Ex: Dor no ombro direito, hernia de disco, tendinite no joelho... (opcional)"></textarea>
       </div>
-      <!-- Step 5: Restricoes -->
+      <!-- Step 5: O que voce pratica? -->
       <div class="onb-step" data-step="5">
-        <div class="onb-title">Alguma restricao ou lesao?</div>
-        <div class="onb-subtitle">Opcional. Se tiver, o Coach vai adaptar tudo.</div>
-        <textarea class="onb-input" id="onbRestricoes" placeholder="Ex: Dor no ombro direito, hérnia de disco..."></textarea>
-      </div>
-      <!-- Step 6: Atividades -->
-      <div class="onb-step" data-step="6">
         <div class="onb-title">O que voce pratica?</div>
-        <div class="onb-subtitle">Selecione todas que se aplicam.</div>
+        <div class="onb-subtitle">Selecione todas as atividades. Na proxima tela voce detalha frequencia e intensidade de cada uma.</div>
         <div class="onb-cards">
           <div class="onb-card" data-activity="academia" onclick="toggleOnbActivity('academia', this)">
             <div class="onb-card-icon">🏋️</div>
@@ -2672,18 +2757,19 @@
           </div>
         </div>
       </div>
-      <!-- Step 7: Frequencia -->
+      <!-- Step 6: Frequencia e intensidade -->
+      <div class="onb-step" data-step="6">
+        <div class="onb-title">Frequencia e intensidade</div>
+        <div class="onb-subtitle">Para cada atividade, defina quantas vezes por semana e a intensidade.</div>
+        <div id="onbActivityDetails"></div>
+      </div>
+      <!-- Step 7: Tudo pronto! -->
       <div class="onb-step" data-step="7">
-        <div class="onb-title">Quantas vezes por semana?</div>
-        <div class="onb-subtitle">Quantos dias voce consegue treinar.</div>
-        <div class="onb-freq-btns">
-          <button class="onb-freq-btn" onclick="selectOnbFreq(1, this)">1</button>
-          <button class="onb-freq-btn" onclick="selectOnbFreq(2, this)">2</button>
-          <button class="onb-freq-btn" onclick="selectOnbFreq(3, this)">3</button>
-          <button class="onb-freq-btn" onclick="selectOnbFreq(4, this)">4</button>
-          <button class="onb-freq-btn" onclick="selectOnbFreq(5, this)">5</button>
-          <button class="onb-freq-btn" onclick="selectOnbFreq(6, this)">6</button>
-          <button class="onb-freq-btn" onclick="selectOnbFreq(7, this)">7</button>
+        <div class="onb-title">Tudo pronto!</div>
+        <div class="onb-subtitle">Confira seus dados antes de comecar.</div>
+        <div id="onbSummary" class="onb-summary"></div>
+        <div class="onb-ai-teaser">
+          <strong>O que acontece agora?</strong> O Coach AI vai analisar tudo que voce informou e criar um plano de treino personalizado. Conforme voce treina e registra progresso, o plano evolui automaticamente — ajustando cargas, volume e exercicios pra voce continuar evoluindo.
         </div>
       </div>
     </div>
@@ -3837,7 +3923,20 @@
 
     var onbStep = 1;
     var onbTotalSteps = 7;
-    var onbData = { nome: '', idade: '', altura: '', sexo: '', objetivo: '', nivel: '', restricoes: '', atividades: [], frequencia: 0 };
+    var onbData = {
+      nome: '', idade: '', altura: '', sexo: '',
+      objetivo_texto: '',
+      objetivo_data: '',
+      objetivo_resultado: '',
+      nivel: '', restricoes: '',
+      atividades: [],
+      atividades_detalhes: []
+    };
+
+    var onbActivityIcons = {
+      academia: '🏋️', surf: '🏄', tenis: '🎾', corrida: '🏃',
+      fisio: '🏥', bike: '🚴', natacao: '🏊', yoga: '🧘'
+    };
 
     function showOnboarding() {
       document.getElementById('authScreen').classList.add('hidden');
@@ -3858,6 +3957,10 @@
       document.querySelectorAll('.onb-step').forEach(function(s) { s.classList.remove('active'); });
       var stepEl = document.querySelector('.onb-step[data-step="' + onbStep + '"]');
       if (stepEl) stepEl.classList.add('active');
+
+      // Render dynamic content for steps 6 and 7
+      if (onbStep === 6) renderActivityDetails();
+      if (onbStep === 7) renderOnbSummary();
 
       // Update nav buttons
       var backBtn = document.getElementById('onbBackBtn');
@@ -3880,7 +3983,12 @@
         onbData.idade = document.getElementById('onbIdade').value.trim();
         onbData.altura = document.getElementById('onbAltura').value.trim();
       }
-      if (onbStep === 5) {
+      if (onbStep === 3) {
+        onbData.objetivo_texto = document.getElementById('onbObjetivoTexto').value.trim();
+        onbData.objetivo_data = document.getElementById('onbObjetivoData').value;
+        onbData.objetivo_resultado = document.getElementById('onbObjetivoResultado').value.trim();
+      }
+      if (onbStep === 4) {
         onbData.restricoes = document.getElementById('onbRestricoes').value.trim();
       }
 
@@ -3893,21 +4001,52 @@
     }
 
     function prevOnboardingStep() {
+      // Collect data before going back so it's preserved
+      if (onbStep === 3) {
+        onbData.objetivo_texto = document.getElementById('onbObjetivoTexto').value.trim();
+        onbData.objetivo_data = document.getElementById('onbObjetivoData').value;
+        onbData.objetivo_resultado = document.getElementById('onbObjetivoResultado').value.trim();
+      }
+      if (onbStep === 4) {
+        onbData.restricoes = document.getElementById('onbRestricoes').value.trim();
+      }
       if (onbStep > 1) {
         onbStep--;
         renderOnboardingStep();
+        // Restore input values after render
+        if (onbStep === 2) {
+          if (onbData.nome) document.getElementById('onbNome').value = onbData.nome;
+          if (onbData.idade) document.getElementById('onbIdade').value = onbData.idade;
+          if (onbData.altura) document.getElementById('onbAltura').value = onbData.altura;
+        }
+        if (onbStep === 3) {
+          if (onbData.objetivo_texto) document.getElementById('onbObjetivoTexto').value = onbData.objetivo_texto;
+          if (onbData.objetivo_data) document.getElementById('onbObjetivoData').value = onbData.objetivo_data;
+          if (onbData.objetivo_resultado) document.getElementById('onbObjetivoResultado').value = onbData.objetivo_resultado;
+        }
+        if (onbStep === 4) {
+          if (onbData.restricoes) document.getElementById('onbRestricoes').value = onbData.restricoes;
+          // Re-select nivel card
+          if (onbData.nivel) {
+            document.querySelectorAll('.onb-step[data-step="4"] .onb-card').forEach(function(c) {
+              c.classList.remove('selected');
+              if (c.textContent.toLowerCase().indexOf(onbData.nivel) > -1) c.classList.add('selected');
+            });
+          }
+        }
+        if (onbStep === 5) {
+          // Re-select activity cards
+          onbData.atividades.forEach(function(act) {
+            var card = document.querySelector('.onb-card[data-activity="' + act + '"]');
+            if (card) card.classList.add('selected');
+          });
+        }
       }
     }
 
     function selectOnbSexo(sexo, el) {
       onbData.sexo = sexo;
       document.querySelectorAll('.onb-sexo-card').forEach(function(c) { c.classList.remove('selected'); });
-      el.classList.add('selected');
-    }
-
-    function selectOnbGoal(goal, el) {
-      onbData.objetivo = goal;
-      el.closest('.onb-cards').querySelectorAll('.onb-card').forEach(function(c) { c.classList.remove('selected'); });
       el.classList.add('selected');
     }
 
@@ -3922,24 +4061,128 @@
       if (idx > -1) {
         onbData.atividades.splice(idx, 1);
         el.classList.remove('selected');
+        // Remove from detalhes
+        onbData.atividades_detalhes = onbData.atividades_detalhes.filter(function(d) { return d.nome !== activity; });
       } else {
         onbData.atividades.push(activity);
         el.classList.add('selected');
+        // Add to detalhes with defaults
+        onbData.atividades_detalhes.push({ nome: activity, frequencia: 3, intensidade: 'moderada' });
       }
     }
 
-    function selectOnbFreq(freq, el) {
-      onbData.frequencia = freq;
-      document.querySelectorAll('.onb-freq-btn').forEach(function(b) { b.classList.remove('selected'); });
+    function updateActivityDetail(actName, field, value) {
+      var detail = onbData.atividades_detalhes.find(function(d) { return d.nome === actName; });
+      if (detail) detail[field] = value;
+    }
+
+    function setActivityFreq(actName, freq, el) {
+      updateActivityDetail(actName, 'frequencia', freq);
+      el.closest('.onb-freq-mini').querySelectorAll('.onb-freq-btn').forEach(function(b) { b.classList.remove('selected'); });
       el.classList.add('selected');
+    }
+
+    function setActivityIntensity(actName, intens, el) {
+      updateActivityDetail(actName, 'intensidade', intens);
+      el.closest('.onb-intensity-btns').querySelectorAll('.onb-intensity-btn').forEach(function(b) { b.classList.remove('selected'); });
+      el.classList.add('selected');
+    }
+
+    function renderActivityDetails() {
+      var container = document.getElementById('onbActivityDetails');
+      if (!container) return;
+
+      if (onbData.atividades.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 24px 0;">Nenhuma atividade selecionada. Volte e selecione ao menos uma.</div>';
+        return;
+      }
+
+      var html = '';
+      onbData.atividades.forEach(function(act) {
+        var detail = onbData.atividades_detalhes.find(function(d) { return d.nome === act; });
+        if (!detail) {
+          detail = { nome: act, frequencia: 3, intensidade: 'moderada' };
+          onbData.atividades_detalhes.push(detail);
+        }
+        var icon = onbActivityIcons[act] || '🏃';
+        var label = act.charAt(0).toUpperCase() + act.slice(1);
+
+        html += '<div class="onb-activity-row">';
+        html += '<div class="onb-activity-row-header"><span>' + icon + '</span><span>' + label + '</span></div>';
+        html += '<div class="onb-activity-row-controls">';
+
+        // Frequencia
+        html += '<div class="onb-control-label">Vezes por semana</div>';
+        html += '<div class="onb-freq-mini">';
+        for (var f = 1; f <= 7; f++) {
+          var selClass = detail.frequencia === f ? ' selected' : '';
+          html += '<button class="onb-freq-btn' + selClass + '" onclick="setActivityFreq(\'' + act + '\',' + f + ',this)">' + f + '</button>';
+        }
+        html += '</div>';
+
+        // Intensidade
+        html += '<div class="onb-control-label" style="margin-top: 6px;">Intensidade</div>';
+        html += '<div class="onb-intensity-btns">';
+        ['leve', 'moderada', 'intensa'].forEach(function(intens) {
+          var selClass = detail.intensidade === intens ? ' selected' : '';
+          var label = intens.charAt(0).toUpperCase() + intens.slice(1);
+          html += '<button class="onb-intensity-btn' + selClass + '" onclick="setActivityIntensity(\'' + act + '\',\'' + intens + '\',this)">' + label + '</button>';
+        });
+        html += '</div>';
+
+        html += '</div></div>';
+      });
+      container.innerHTML = html;
+    }
+
+    function renderOnbSummary() {
+      var container = document.getElementById('onbSummary');
+      if (!container) return;
+
+      var items = [];
+      if (onbData.nome) items.push({ label: 'Nome', value: onbData.nome });
+      if (onbData.idade) items.push({ label: 'Idade', value: onbData.idade + ' anos' });
+      if (onbData.altura) items.push({ label: 'Altura', value: onbData.altura + ' cm' });
+      if (onbData.sexo) items.push({ label: 'Sexo', value: onbData.sexo === 'M' ? 'Masculino' : 'Feminino' });
+      if (onbData.objetivo_texto) items.push({ label: 'Objetivo', value: onbData.objetivo_texto });
+      if (onbData.objetivo_data) {
+        var parts = onbData.objetivo_data.split('-');
+        items.push({ label: 'Prazo', value: parts[2] + '/' + parts[1] + '/' + parts[0] });
+      }
+      if (onbData.objetivo_resultado) items.push({ label: 'Resultado esperado', value: onbData.objetivo_resultado });
+      if (onbData.nivel) items.push({ label: 'Nivel', value: onbData.nivel.charAt(0).toUpperCase() + onbData.nivel.slice(1) });
+      if (onbData.restricoes) items.push({ label: 'Restricoes', value: onbData.restricoes });
+
+      // Atividades com detalhes
+      if (onbData.atividades_detalhes.length > 0) {
+        onbData.atividades_detalhes.forEach(function(d) {
+          var label = d.nome.charAt(0).toUpperCase() + d.nome.slice(1);
+          items.push({ label: label, value: d.frequencia + 'x/sem — ' + d.intensidade });
+        });
+      }
+
+      // Total frequencia
+      var totalFreq = onbData.atividades_detalhes.reduce(function(sum, d) { return sum + d.frequencia; }, 0);
+      if (totalFreq > 0) items.push({ label: 'Total semanal', value: totalFreq + ' sessoes' });
+
+      var html = '';
+      items.forEach(function(item) {
+        html += '<div class="onb-summary-item"><span class="onb-summary-label">' + item.label + '</span><span class="onb-summary-value">' + item.value + '</span></div>';
+      });
+      container.innerHTML = html;
     }
 
     async function completeOnboarding() {
       localStorage.setItem('onboarding-completed', 'true');
 
-      // Build objetivo text
-      var objetivoMap = { massa: 'Ganhar massa muscular', gordura: 'Perder gordura', saude: 'Saude geral', performance: 'Performance esportiva', reabilitacao: 'Reabilitacao' };
-      var objetivoText = objetivoMap[onbData.objetivo] || onbData.objetivo;
+      // Build objetivo text for legacy field
+      var objetivoText = onbData.objetivo_texto || '';
+
+      // Build atividades_praticadas with new format [{nome, frequencia, intensidade}]
+      var atividadesFormatted = onbData.atividades_detalhes.length > 0 ? onbData.atividades_detalhes : onbData.atividades;
+
+      // Calculate total frequencia
+      var totalFreq = onbData.atividades_detalhes.reduce(function(sum, d) { return sum + (d.frequencia || 0); }, 0);
 
       // Save to Supabase
       try {
@@ -3953,10 +4196,15 @@
             altura: onbData.altura ? parseInt(onbData.altura) : null,
             sexo: onbData.sexo || null,
             objetivo: objetivoText,
-            objetivo_treino: onbData.objetivo || null,
+            objetivo_treino: objetivoText || null,
+            objetivo_data: {
+              texto: onbData.objetivo_texto,
+              data_alvo: onbData.objetivo_data,
+              resultado_esperado: onbData.objetivo_resultado
+            },
             nivel_experiencia: onbData.nivel || null,
-            atividades_praticadas: onbData.atividades,
-            frequencia_semanal: onbData.frequencia || null,
+            atividades_praticadas: atividadesFormatted,
+            frequencia_semanal: totalFreq || null,
             restricoes: onbData.restricoes || null,
             dores: onbData.restricoes || null
           })
@@ -4000,28 +4248,29 @@
     }
 
     function startCoachChatOnboarding() {
-      // Build an automatic message from the onboarding data
-      var nivelMap = { iniciante: 'iniciante', intermediario: 'intermediario', avancado: 'avancado' };
-      var objetivoMap = { massa: 'ganhar massa muscular', gordura: 'perder gordura', saude: 'melhorar minha saude', performance: 'melhorar minha performance', reabilitacao: 'reabilitacao' };
-
       var parts = [];
       if (onbData.nome) parts.push('Meu nome e ' + onbData.nome + '.');
       if (onbData.idade) parts.push('Tenho ' + onbData.idade + ' anos');
       if (onbData.altura) parts.push('e ' + onbData.altura + 'cm.');
-      if (onbData.objetivo) parts.push('Meu objetivo e ' + (objetivoMap[onbData.objetivo] || onbData.objetivo) + '.');
-      if (onbData.nivel) parts.push('Sou nivel ' + (nivelMap[onbData.nivel] || onbData.nivel) + '.');
-      if (onbData.atividades.length > 0) parts.push('Pratico: ' + onbData.atividades.join(', ') + '.');
-      if (onbData.frequencia) parts.push('Consigo treinar ' + onbData.frequencia + 'x por semana.');
-      if (onbData.restricoes) parts.push('Restricoes: ' + onbData.restricoes + '.');
+      if (onbData.sexo) parts.push('Sexo: ' + (onbData.sexo === 'M' ? 'masculino' : 'feminino') + '.');
+      if (onbData.objetivo_texto) parts.push('Meu objetivo: ' + onbData.objetivo_texto + '.');
+      if (onbData.objetivo_data) parts.push('Prazo: ' + onbData.objetivo_data + '.');
+      if (onbData.objetivo_resultado) parts.push('Resultado esperado: ' + onbData.objetivo_resultado + '.');
+      if (onbData.nivel) parts.push('Nivel: ' + onbData.nivel + '.');
+      if (onbData.atividades_detalhes.length > 0) {
+        var actParts = onbData.atividades_detalhes.map(function(d) {
+          return d.nome + ' ' + d.frequencia + 'x/sem (' + d.intensidade + ')';
+        });
+        parts.push('Atividades: ' + actParts.join(', ') + '.');
+      }
+      if (onbData.restricoes) parts.push('Restricoes medicas: ' + onbData.restricoes + '.');
       parts.push('Monta um plano de treino pra mim!');
 
       var msg = parts.join(' ');
 
-      // Simulate sending the message via chat
       var chatInput = document.getElementById('chatInput');
       if (chatInput) {
         chatInput.value = msg;
-        // Trigger send
         if (typeof sendChatMessage === 'function') sendChatMessage();
       }
     }
@@ -5907,15 +6156,35 @@
 
       // Onboarding enrichment
       var nivelExp = onbData.nivel || localStorage.getItem('onb-nivel') || '';
-      var atividadesP = onbData.atividades.length > 0 ? onbData.atividades.join(', ') : (localStorage.getItem('onb-atividades') || '');
-      var freqSemanal = onbData.frequencia || localStorage.getItem('onb-frequencia') || '';
+      var atividadesP = '';
+      if (onbData.atividades_detalhes && onbData.atividades_detalhes.length > 0) {
+        atividadesP = onbData.atividades_detalhes.map(function(d) {
+          return d.nome + ' ' + d.frequencia + 'x/sem (' + d.intensidade + ')';
+        }).join(', ');
+      } else if (onbData.atividades.length > 0) {
+        atividadesP = onbData.atividades.join(', ');
+      } else {
+        atividadesP = localStorage.getItem('onb-atividades') || '';
+      }
+      var freqSemanal = '';
+      if (onbData.atividades_detalhes && onbData.atividades_detalhes.length > 0) {
+        freqSemanal = onbData.atividades_detalhes.reduce(function(sum, d) { return sum + (d.frequencia || 0); }, 0);
+      } else {
+        freqSemanal = localStorage.getItem('onb-frequencia') || '';
+      }
+      var objetivoTexto = onbData.objetivo_texto || '';
+      var objetivoPrazo = onbData.objetivo_data || '';
+      var objetivoResultado = onbData.objetivo_resultado || '';
 
       return '## PERFIL\n' +
         'Nome: ' + nome + ' | Idade: ' + idade + ' | Altura: ' + altura + 'cm | Sexo: ' + (selectedSexo || '?') + '\n' +
         'Objetivo: ' + objetivo + '\n' +
+        (objetivoTexto ? 'Objetivo detalhado: ' + objetivoTexto + '\n' : '') +
+        (objetivoPrazo ? 'Prazo: ' + objetivoPrazo + '\n' : '') +
+        (objetivoResultado ? 'Resultado esperado: ' + objetivoResultado + '\n' : '') +
         (nivelExp ? 'Nivel: ' + nivelExp + '\n' : '') +
         (atividadesP ? 'Atividades: ' + atividadesP + '\n' : '') +
-        (freqSemanal ? 'Frequencia semanal: ' + freqSemanal + 'x\n' : '') +
+        (freqSemanal ? 'Frequencia semanal total: ' + freqSemanal + 'x\n' : '') +
         'Dores/Problemas: ' + dores + '\n' +
         'Estado hoje: ' + estado + '\n\n' +
         notasMedicasText +
