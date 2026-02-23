@@ -749,6 +749,25 @@
     .set-row.done .set-check { background: var(--success); border-color: var(--success); }
     .set-row.done .set-check::after { content: '✓'; color: white; font-size: 14px; }
     .set-row.done { opacity: 0.6; }
+    .set-row:has(+ .add-set-btn) { border-bottom: none; }
+
+    .add-set-btn {
+      width: 100%;
+      padding: 6px 0;
+      background: transparent;
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 4px;
+    }
+    .add-set-btn:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-secondary);
+    }
 
     .exercise-record-btn {
       display: flex;
@@ -2182,18 +2201,510 @@
     .chat-messages {
       height: calc(100dvh - 220px);
     }
+
+    /* Auth Screen */
+    .auth-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-primary);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-screen.hidden {
+      display: none;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .auth-logo-icon {
+      font-size: 40px;
+      margin-bottom: 8px;
+    }
+
+    .auth-logo-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .auth-logo-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s;
+    }
+
+    .auth-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .auth-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .auth-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s;
+      margin-top: 4px;
+    }
+
+    .auth-submit:hover {
+      background: var(--accent-dark);
+    }
+
+    .auth-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .auth-toggle {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .auth-toggle a {
+      color: var(--accent);
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .auth-toggle a:hover {
+      text-decoration: underline;
+    }
+
+    .auth-error {
+      background: var(--error-dim);
+      border: 1px solid var(--error);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--error);
+      display: none;
+    }
+
+    .auth-error.visible {
+      display: block;
+    }
+
+    .logout-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-muted);
+      font-size: 11px;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--error);
+      color: var(--error);
+    }
+
+    /* Onboarding */
+    .onboarding-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      background: var(--bg-primary);
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .onboarding-screen.visible { display: flex; }
+    .onboarding-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .onboarding-skip {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .onboarding-skip:hover { color: var(--text-secondary); }
+    .onboarding-progress {
+      display: flex;
+      gap: 4px;
+      padding: 12px 20px 0;
+    }
+    .onboarding-progress-dot {
+      flex: 1;
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+    .onboarding-progress-dot.active { background: var(--accent); }
+    .onboarding-body {
+      flex: 1;
+      padding: 24px 20px;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .onb-step { display: none; }
+    .onb-step.active { display: block; }
+    .onb-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .onb-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .onb-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      margin-bottom: 12px;
+    }
+    .onb-input:focus { outline: none; border-color: var(--accent); }
+    .onb-input::placeholder { color: var(--text-muted); }
+    .onb-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .onb-card {
+      padding: 14px 12px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .onb-card:hover { border-color: var(--text-muted); }
+    .onb-card.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .onb-card-icon { font-size: 24px; margin-bottom: 6px; }
+    .onb-card-label { font-size: 13px; font-weight: 600; }
+    .onb-card-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .onb-sexo-cards { display: flex; gap: 10px; margin-bottom: 16px; }
+    .onb-sexo-card {
+      flex: 1;
+      padding: 14px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .onb-sexo-card:hover { border-color: var(--text-muted); }
+    .onb-sexo-card.selected { border-color: var(--accent); background: var(--accent-dim); }
+    .onb-freq-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .onb-freq-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+    .onb-freq-btn:hover { border-color: var(--text-muted); }
+    .onb-freq-btn.selected { border-color: var(--accent); background: var(--accent); color: white; }
+    .onboarding-nav {
+      display: flex;
+      gap: 10px;
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .onb-btn-back {
+      padding: 12px 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .onb-btn-next {
+      flex: 1;
+      padding: 12px 20px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
+    .onb-btn-next:hover { background: var(--accent-dark); }
+    .onb-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; }
+    textarea.onb-input { min-height: 80px; resize: none; }
   </style>
 </head>
 <body>
+  <!-- Auth Screen -->
+  <div class="auth-screen" id="authScreen">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="auth-logo-icon">🏋️</div>
+        <div class="auth-logo-title">Treinos</div>
+        <div class="auth-logo-subtitle">Seu treino inteligente</div>
+      </div>
+
+      <div class="auth-error" id="authError"></div>
+
+      <!-- Login Form -->
+      <form class="auth-form" id="loginForm" onsubmit="handleAuthSubmit(event, 'login')">
+        <input class="auth-input" type="email" id="loginEmail" placeholder="Email" autocomplete="email" required>
+        <input class="auth-input" type="password" id="loginPassword" placeholder="Senha" autocomplete="current-password" required>
+        <button class="auth-submit" type="submit" id="loginBtn">Entrar</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form class="auth-form" id="signupForm" style="display: none;" onsubmit="handleAuthSubmit(event, 'signup')">
+        <input class="auth-input" type="text" id="signupNome" placeholder="Nome (opcional)" autocomplete="name">
+        <input class="auth-input" type="email" id="signupEmail" placeholder="Email" autocomplete="email" required>
+        <input class="auth-input" type="password" id="signupPassword" placeholder="Senha (min. 6 caracteres)" autocomplete="new-password" required minlength="6">
+        <input class="auth-input" type="password" id="signupPasswordConfirm" placeholder="Confirmar senha" autocomplete="new-password" required minlength="6">
+        <button class="auth-submit" type="submit" id="signupBtn">Criar Conta</button>
+      </form>
+
+      <div class="auth-toggle" id="authToggle">
+        Não tem conta? <a onclick="toggleAuthMode()">Criar conta</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Onboarding Screen -->
+  <div class="onboarding-screen" id="onboardingScreen">
+    <div class="onboarding-header">
+      <span style="font-size: 14px; font-weight: 600;">Treinos 🏋️</span>
+      <button class="onboarding-skip" onclick="skipOnboarding()">Pular</button>
+    </div>
+    <div class="onboarding-progress" id="onbProgress"></div>
+    <div class="onboarding-body" id="onbBody">
+      <!-- Step 1: Welcome -->
+      <div class="onb-step active" data-step="1">
+        <div style="text-align: center; padding-top: 40px;">
+          <div style="font-size: 48px; margin-bottom: 16px;">🏋️</div>
+          <div class="onb-title">Vamos configurar seu treino!</div>
+          <div class="onb-subtitle">Responda 7 perguntas rapidas para o Coach AI montar um plano 100% personalizado pra voce.</div>
+        </div>
+      </div>
+      <!-- Step 2: Dados basicos -->
+      <div class="onb-step" data-step="2">
+        <div class="onb-title">Sobre voce</div>
+        <div class="onb-subtitle">Precisamos de alguns dados basicos.</div>
+        <div class="onb-label">Nome</div>
+        <input class="onb-input" type="text" id="onbNome" placeholder="Seu nome">
+        <div class="onb-label">Idade</div>
+        <input class="onb-input" type="number" id="onbIdade" placeholder="Ex: 30">
+        <div class="onb-label">Altura (cm)</div>
+        <input class="onb-input" type="number" id="onbAltura" placeholder="Ex: 175">
+        <div class="onb-label">Sexo</div>
+        <div class="onb-sexo-cards">
+          <div class="onb-sexo-card" onclick="selectOnbSexo('M', this)">
+            <div class="onb-card-icon">♂️</div>
+            <div class="onb-card-label">Masculino</div>
+          </div>
+          <div class="onb-sexo-card" onclick="selectOnbSexo('F', this)">
+            <div class="onb-card-icon">♀️</div>
+            <div class="onb-card-label">Feminino</div>
+          </div>
+        </div>
+      </div>
+      <!-- Step 3: Objetivo -->
+      <div class="onb-step" data-step="3">
+        <div class="onb-title">Qual seu objetivo principal?</div>
+        <div class="onb-subtitle">Escolha o que mais importa agora.</div>
+        <div class="onb-cards">
+          <div class="onb-card" onclick="selectOnbGoal('massa', this)">
+            <div class="onb-card-icon">💪</div>
+            <div class="onb-card-label">Ganhar massa</div>
+          </div>
+          <div class="onb-card" onclick="selectOnbGoal('gordura', this)">
+            <div class="onb-card-icon">🔥</div>
+            <div class="onb-card-label">Perder gordura</div>
+          </div>
+          <div class="onb-card" onclick="selectOnbGoal('saude', this)">
+            <div class="onb-card-icon">❤️</div>
+            <div class="onb-card-label">Saude geral</div>
+          </div>
+          <div class="onb-card" onclick="selectOnbGoal('performance', this)">
+            <div class="onb-card-icon">🏆</div>
+            <div class="onb-card-label">Performance</div>
+          </div>
+          <div class="onb-card" onclick="selectOnbGoal('reabilitacao', this)" style="grid-column: span 2;">
+            <div class="onb-card-icon">🏥</div>
+            <div class="onb-card-label">Reabilitacao</div>
+          </div>
+        </div>
+      </div>
+      <!-- Step 4: Nivel -->
+      <div class="onb-step" data-step="4">
+        <div class="onb-title">Qual seu nivel de experiencia?</div>
+        <div class="onb-subtitle">Sem julgamento, e pra calibrar o plano.</div>
+        <div class="onb-cards" style="grid-template-columns: 1fr;">
+          <div class="onb-card" onclick="selectOnbLevel('iniciante', this)">
+            <div class="onb-card-label">Iniciante</div>
+            <div class="onb-card-desc">Menos de 6 meses treinando</div>
+          </div>
+          <div class="onb-card" onclick="selectOnbLevel('intermediario', this)">
+            <div class="onb-card-label">Intermediario</div>
+            <div class="onb-card-desc">6 meses a 2 anos</div>
+          </div>
+          <div class="onb-card" onclick="selectOnbLevel('avancado', this)">
+            <div class="onb-card-label">Avancado</div>
+            <div class="onb-card-desc">Mais de 2 anos consistentes</div>
+          </div>
+        </div>
+      </div>
+      <!-- Step 5: Restricoes -->
+      <div class="onb-step" data-step="5">
+        <div class="onb-title">Alguma restricao ou lesao?</div>
+        <div class="onb-subtitle">Opcional. Se tiver, o Coach vai adaptar tudo.</div>
+        <textarea class="onb-input" id="onbRestricoes" placeholder="Ex: Dor no ombro direito, hérnia de disco..."></textarea>
+      </div>
+      <!-- Step 6: Atividades -->
+      <div class="onb-step" data-step="6">
+        <div class="onb-title">O que voce pratica?</div>
+        <div class="onb-subtitle">Selecione todas que se aplicam.</div>
+        <div class="onb-cards">
+          <div class="onb-card" data-activity="academia" onclick="toggleOnbActivity('academia', this)">
+            <div class="onb-card-icon">🏋️</div>
+            <div class="onb-card-label">Academia</div>
+          </div>
+          <div class="onb-card" data-activity="surf" onclick="toggleOnbActivity('surf', this)">
+            <div class="onb-card-icon">🏄</div>
+            <div class="onb-card-label">Surf</div>
+          </div>
+          <div class="onb-card" data-activity="tenis" onclick="toggleOnbActivity('tenis', this)">
+            <div class="onb-card-icon">🎾</div>
+            <div class="onb-card-label">Tenis</div>
+          </div>
+          <div class="onb-card" data-activity="corrida" onclick="toggleOnbActivity('corrida', this)">
+            <div class="onb-card-icon">🏃</div>
+            <div class="onb-card-label">Corrida</div>
+          </div>
+          <div class="onb-card" data-activity="fisio" onclick="toggleOnbActivity('fisio', this)">
+            <div class="onb-card-icon">🏥</div>
+            <div class="onb-card-label">Fisio</div>
+          </div>
+          <div class="onb-card" data-activity="bike" onclick="toggleOnbActivity('bike', this)">
+            <div class="onb-card-icon">🚴</div>
+            <div class="onb-card-label">Bike</div>
+          </div>
+          <div class="onb-card" data-activity="natacao" onclick="toggleOnbActivity('natacao', this)">
+            <div class="onb-card-icon">🏊</div>
+            <div class="onb-card-label">Natacao</div>
+          </div>
+          <div class="onb-card" data-activity="yoga" onclick="toggleOnbActivity('yoga', this)">
+            <div class="onb-card-icon">🧘</div>
+            <div class="onb-card-label">Yoga</div>
+          </div>
+        </div>
+      </div>
+      <!-- Step 7: Frequencia -->
+      <div class="onb-step" data-step="7">
+        <div class="onb-title">Quantas vezes por semana?</div>
+        <div class="onb-subtitle">Quantos dias voce consegue treinar.</div>
+        <div class="onb-freq-btns">
+          <button class="onb-freq-btn" onclick="selectOnbFreq(1, this)">1</button>
+          <button class="onb-freq-btn" onclick="selectOnbFreq(2, this)">2</button>
+          <button class="onb-freq-btn" onclick="selectOnbFreq(3, this)">3</button>
+          <button class="onb-freq-btn" onclick="selectOnbFreq(4, this)">4</button>
+          <button class="onb-freq-btn" onclick="selectOnbFreq(5, this)">5</button>
+          <button class="onb-freq-btn" onclick="selectOnbFreq(6, this)">6</button>
+          <button class="onb-freq-btn" onclick="selectOnbFreq(7, this)">7</button>
+        </div>
+      </div>
+    </div>
+    <div class="onboarding-nav">
+      <button class="onb-btn-back" id="onbBackBtn" onclick="prevOnboardingStep()" style="display: none;">Voltar</button>
+      <button class="onb-btn-next" id="onbNextBtn" onclick="nextOnboardingStep()">Comecar</button>
+    </div>
+  </div>
+
   <div class="sync-indicator" id="syncIndicator"><span id="syncText">Salvando...</span></div>
-  
-  <div class="container">
+
+  <div class="container" id="appContainer" style="display: none;">
     <header>
       <div class="header-top">
         <h1>Treinos</h1>
-        <div id="saveStatus" style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-          <span id="saveStatusDot" style="width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted);"></span>
-          <span id="saveStatusText">Carregando...</span>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div id="saveStatus" style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+            <span id="saveStatusDot" style="width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted);"></span>
+            <span id="saveStatusText">Carregando...</span>
+          </div>
+          <button class="logout-btn" onclick="handleLogout()" title="Sair">Sair</button>
         </div>
       </div>
     </header>
@@ -3138,12 +3649,355 @@
   </div>
   
   <script>
-    const SUPABASE_URL = 'https://gsxanzgwstlpfvnqcmiu.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzeGFuemd3c3RscGZ2bnFjbWl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2NjYyMDIsImV4cCI6MjA4MzI0MjIwMn0.OapNhZJbbeH0eEJWIU_zg4ihEvtxSC9rAG-dLBQCmvE';
-    
+    const SUPABASE_URL = 'https://nxvwihwpzungfeovkevx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54dndpaHdwenVuZ2Zlb3ZrZXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MDYxMTIsImV4cCI6MjA4NzM4MjExMn0._dvPEH9t3_C-wTsHpyNlsOks7VURSCdVOFM9kctxoYs';
+
+    // ========== AUTH ==========
+    let currentUser = null;
+    let authMode = 'login';
+
+    function toggleAuthMode() {
+      authMode = authMode === 'login' ? 'signup' : 'login';
+      document.getElementById('loginForm').style.display = authMode === 'login' ? 'flex' : 'none';
+      document.getElementById('signupForm').style.display = authMode === 'signup' ? 'flex' : 'none';
+      document.getElementById('authToggle').innerHTML = authMode === 'login'
+        ? 'Não tem conta? <a onclick="toggleAuthMode()">Criar conta</a>'
+        : 'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
+      hideAuthError();
+    }
+
+    function showAuthError(msg) {
+      var el = document.getElementById('authError');
+      el.textContent = msg;
+      el.classList.add('visible');
+    }
+
+    function hideAuthError() {
+      document.getElementById('authError').classList.remove('visible');
+    }
+
+    async function handleAuthSubmit(event, action) {
+      event.preventDefault();
+      hideAuthError();
+
+      var btn = action === 'login'
+        ? document.getElementById('loginBtn')
+        : document.getElementById('signupBtn');
+      var originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Aguarde...';
+
+      try {
+        var body = {};
+
+        if (action === 'login') {
+          body.email = document.getElementById('loginEmail').value.trim();
+          body.password = document.getElementById('loginPassword').value;
+        } else {
+          body.email = document.getElementById('signupEmail').value.trim();
+          body.password = document.getElementById('signupPassword').value;
+          body.nome = document.getElementById('signupNome').value.trim() || undefined;
+
+          var confirm = document.getElementById('signupPasswordConfirm').value;
+          if (body.password !== confirm) {
+            showAuthError('As senhas não coincidem');
+            btn.disabled = false;
+            btn.textContent = originalText;
+            return;
+          }
+        }
+
+        var res = await fetch('/api/auth?action=' + action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        var data = await res.json();
+
+        if (!res.ok) {
+          showAuthError(data.error || 'Erro ao processar. Tente novamente.');
+          btn.disabled = false;
+          btn.textContent = originalText;
+          return;
+        }
+
+        // Save token and user
+        localStorage.setItem('auth-token', data.token);
+        localStorage.setItem('auth-user', JSON.stringify(data.user));
+        currentUser = data.user;
+
+        if (action === 'signup') {
+          showOnboarding();
+        } else {
+          showApp();
+          initApp();
+        }
+      } catch (e) {
+        console.error('Auth error:', e);
+        showAuthError('Erro de conexão. Tente novamente.');
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    }
+
+    async function verifySession() {
+      var token = localStorage.getItem('auth-token');
+      if (!token) return false;
+
+      try {
+        var res = await fetch('/api/auth?action=verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: token })
+        });
+
+        if (!res.ok) {
+          localStorage.removeItem('auth-token');
+          localStorage.removeItem('auth-user');
+          return false;
+        }
+
+        var data = await res.json();
+        currentUser = data.user;
+        localStorage.setItem('auth-user', JSON.stringify(data.user));
+        return true;
+      } catch (e) {
+        // Offline fallback: trust cached user
+        var cached = localStorage.getItem('auth-user');
+        if (cached) {
+          currentUser = JSON.parse(cached);
+          return true;
+        }
+        return false;
+      }
+    }
+
+    async function handleLogout() {
+      var token = localStorage.getItem('auth-token');
+      if (token) {
+        try {
+          await fetch('/api/auth?action=logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: token })
+          });
+        } catch (e) { /* ignore */ }
+      }
+
+      localStorage.removeItem('auth-token');
+      localStorage.removeItem('auth-user');
+      currentUser = null;
+
+      // Show auth screen, hide app
+      document.getElementById('authScreen').classList.remove('hidden');
+      document.getElementById('appContainer').style.display = 'none';
+    }
+
+    function showApp() {
+      document.getElementById('authScreen').classList.add('hidden');
+      document.getElementById('onboardingScreen').classList.remove('visible');
+      document.getElementById('appContainer').style.display = '';
+    }
+
+    // ========== ONBOARDING ==========
+
+    var onbStep = 1;
+    var onbTotalSteps = 7;
+    var onbData = { nome: '', idade: '', altura: '', sexo: '', objetivo: '', nivel: '', restricoes: '', atividades: [], frequencia: 0 };
+
+    function showOnboarding() {
+      document.getElementById('authScreen').classList.add('hidden');
+      document.getElementById('onboardingScreen').classList.add('visible');
+      onbStep = 1;
+      renderOnboardingStep();
+    }
+
+    function renderOnboardingStep() {
+      // Update progress dots
+      var progressHtml = '';
+      for (var i = 1; i <= onbTotalSteps; i++) {
+        progressHtml += '<div class="onboarding-progress-dot' + (i <= onbStep ? ' active' : '') + '"></div>';
+      }
+      document.getElementById('onbProgress').innerHTML = progressHtml;
+
+      // Show correct step
+      document.querySelectorAll('.onb-step').forEach(function(s) { s.classList.remove('active'); });
+      var stepEl = document.querySelector('.onb-step[data-step="' + onbStep + '"]');
+      if (stepEl) stepEl.classList.add('active');
+
+      // Update nav buttons
+      var backBtn = document.getElementById('onbBackBtn');
+      var nextBtn = document.getElementById('onbNextBtn');
+      backBtn.style.display = onbStep === 1 ? 'none' : 'block';
+
+      if (onbStep === 1) {
+        nextBtn.textContent = 'Comecar';
+      } else if (onbStep === onbTotalSteps) {
+        nextBtn.textContent = 'Conhecer meu Coach AI';
+      } else {
+        nextBtn.textContent = 'Proximo';
+      }
+    }
+
+    function nextOnboardingStep() {
+      // Collect data from current step
+      if (onbStep === 2) {
+        onbData.nome = document.getElementById('onbNome').value.trim();
+        onbData.idade = document.getElementById('onbIdade').value.trim();
+        onbData.altura = document.getElementById('onbAltura').value.trim();
+      }
+      if (onbStep === 5) {
+        onbData.restricoes = document.getElementById('onbRestricoes').value.trim();
+      }
+
+      if (onbStep < onbTotalSteps) {
+        onbStep++;
+        renderOnboardingStep();
+      } else {
+        completeOnboarding();
+      }
+    }
+
+    function prevOnboardingStep() {
+      if (onbStep > 1) {
+        onbStep--;
+        renderOnboardingStep();
+      }
+    }
+
+    function selectOnbSexo(sexo, el) {
+      onbData.sexo = sexo;
+      document.querySelectorAll('.onb-sexo-card').forEach(function(c) { c.classList.remove('selected'); });
+      el.classList.add('selected');
+    }
+
+    function selectOnbGoal(goal, el) {
+      onbData.objetivo = goal;
+      el.closest('.onb-cards').querySelectorAll('.onb-card').forEach(function(c) { c.classList.remove('selected'); });
+      el.classList.add('selected');
+    }
+
+    function selectOnbLevel(level, el) {
+      onbData.nivel = level;
+      el.closest('.onb-cards').querySelectorAll('.onb-card').forEach(function(c) { c.classList.remove('selected'); });
+      el.classList.add('selected');
+    }
+
+    function toggleOnbActivity(activity, el) {
+      var idx = onbData.atividades.indexOf(activity);
+      if (idx > -1) {
+        onbData.atividades.splice(idx, 1);
+        el.classList.remove('selected');
+      } else {
+        onbData.atividades.push(activity);
+        el.classList.add('selected');
+      }
+    }
+
+    function selectOnbFreq(freq, el) {
+      onbData.frequencia = freq;
+      document.querySelectorAll('.onb-freq-btn').forEach(function(b) { b.classList.remove('selected'); });
+      el.classList.add('selected');
+    }
+
+    async function completeOnboarding() {
+      localStorage.setItem('onboarding-completed', 'true');
+
+      // Build objetivo text
+      var objetivoMap = { massa: 'Ganhar massa muscular', gordura: 'Perder gordura', saude: 'Saude geral', performance: 'Performance esportiva', reabilitacao: 'Reabilitacao' };
+      var objetivoText = objetivoMap[onbData.objetivo] || onbData.objetivo;
+
+      // Save to Supabase
+      try {
+        await fetch(SUPABASE_URL + '/rest/v1/user_profile?id=eq.1', {
+          method: 'PATCH',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            onboarding_completed: true,
+            nome: onbData.nome || null,
+            idade: onbData.idade ? parseInt(onbData.idade) : null,
+            altura: onbData.altura ? parseInt(onbData.altura) : null,
+            sexo: onbData.sexo || null,
+            objetivo: objetivoText,
+            objetivo_treino: onbData.objetivo || null,
+            nivel_experiencia: onbData.nivel || null,
+            atividades_praticadas: onbData.atividades,
+            frequencia_semanal: onbData.frequencia || null,
+            restricoes: onbData.restricoes || null,
+            dores: onbData.restricoes || null
+          })
+        });
+      } catch(e) { console.error('onboarding save error:', e); }
+
+      // Pre-fill profile fields
+      var nomeInput = document.getElementById('profileNome');
+      var idadeInput = document.getElementById('profileIdade');
+      var alturaInput = document.getElementById('profileAltura');
+      var objetivoInput = document.getElementById('objetivoInput');
+      var doresInput = document.getElementById('doresInput');
+
+      if (nomeInput && onbData.nome) nomeInput.value = onbData.nome;
+      if (idadeInput && onbData.idade) idadeInput.value = onbData.idade;
+      if (alturaInput && onbData.altura) alturaInput.value = onbData.altura;
+      if (objetivoInput) objetivoInput.value = objetivoText;
+      if (doresInput && onbData.restricoes) doresInput.value = onbData.restricoes;
+      if (onbData.sexo) selectSexo(onbData.sexo);
+
+      // Show app and init
+      showApp();
+      await initApp();
+
+      // Navigate to Coach and send onboarding message
+      showView('coach');
+      startCoachChatOnboarding();
+    }
+
+    function skipOnboarding() {
+      localStorage.setItem('onboarding-completed', 'true');
+      try {
+        fetch(SUPABASE_URL + '/rest/v1/user_profile?id=eq.1', {
+          method: 'PATCH',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ onboarding_completed: true })
+        });
+      } catch(e) {}
+      showApp();
+      initApp();
+    }
+
+    function startCoachChatOnboarding() {
+      // Build an automatic message from the onboarding data
+      var nivelMap = { iniciante: 'iniciante', intermediario: 'intermediario', avancado: 'avancado' };
+      var objetivoMap = { massa: 'ganhar massa muscular', gordura: 'perder gordura', saude: 'melhorar minha saude', performance: 'melhorar minha performance', reabilitacao: 'reabilitacao' };
+
+      var parts = [];
+      if (onbData.nome) parts.push('Meu nome e ' + onbData.nome + '.');
+      if (onbData.idade) parts.push('Tenho ' + onbData.idade + ' anos');
+      if (onbData.altura) parts.push('e ' + onbData.altura + 'cm.');
+      if (onbData.objetivo) parts.push('Meu objetivo e ' + (objetivoMap[onbData.objetivo] || onbData.objetivo) + '.');
+      if (onbData.nivel) parts.push('Sou nivel ' + (nivelMap[onbData.nivel] || onbData.nivel) + '.');
+      if (onbData.atividades.length > 0) parts.push('Pratico: ' + onbData.atividades.join(', ') + '.');
+      if (onbData.frequencia) parts.push('Consigo treinar ' + onbData.frequencia + 'x por semana.');
+      if (onbData.restricoes) parts.push('Restricoes: ' + onbData.restricoes + '.');
+      parts.push('Monta um plano de treino pra mim!');
+
+      var msg = parts.join(' ');
+
+      // Simulate sending the message via chat
+      var chatInput = document.getElementById('chatInput');
+      if (chatInput) {
+        chatInput.value = msg;
+        // Trigger send
+        if (typeof sendChatMessage === 'function') sendChatMessage();
+      }
+    }
+
+    // ========== END AUTH ==========
+
     let currentWorkout = 'braco';
-    let currentDate = new Date();
-    let selectedDate = new Date();
+    let currentDate = getSaoPauloNow();
+    let selectedDate = getSaoPauloNow();
     let timerInterval = null;
     let activities = {};
 
@@ -3308,7 +4162,7 @@
 
       var activity = {
         type: type,
-        time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
         duration: duration ? parseInt(duration) : null,
         intensity: selectedIntensity,
         effort: parseInt(effort),
@@ -3383,9 +4237,9 @@
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const daysInPrevMonth = new Date(year, month, 0).getDate();
       
-      const today = new Date();
+      const today = getSaoPauloNow();
       let html = '';
-      
+
       // Previous month days
       for (let i = firstDay - 1; i >= 0; i--) {
         const day = daysInPrevMonth - i;
@@ -3428,7 +4282,7 @@
     }
 
     function goToToday() {
-      var today = new Date();
+      var today = getSaoPauloNow();
       currentDate = new Date(today.getFullYear(), today.getMonth(), 1);
       selectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
       renderCalendar();
@@ -3444,7 +4298,18 @@
     function formatDate(date) {
       return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     }
-    
+
+    function getSaoPauloNow() {
+      return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+    }
+    function getTodayDateStr() {
+      var d = getSaoPauloNow();
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+    function getTodayDateString() {
+      return getSaoPauloNow().toDateString();
+    }
+
     function renderDayActivities() {
       const dateStr = formatDate(selectedDate);
       const dayActivities = activities[dateStr] || [];
@@ -3571,7 +4436,7 @@
     // ========== WEEKLY SCHEDULE ==========
 
     function renderWeeklySchedule() {
-      const now = new Date();
+      const now = getSaoPauloNow();
       const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon...
       const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
       const scheduleEmojis = { tenis: '🎾', surf: '🏄', fisio: '🏥', upper: '💪', lower: '🦵', mobilidade: '🧘', cardio: '🏃' };
@@ -3724,7 +4589,7 @@
 
       showSync('Salvando...');
       try {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getTodayDateStr();
         const workoutTypeMap = { cardio: 'cardio', surf: 'surf', tenis: 'tenis', fisio: 'fisioterapia' };
         const workoutType = workoutTypeMap[type] || type;
         const label = type === 'cardio' ? data.tipo : type;
@@ -3753,7 +4618,7 @@
           if (!activities[today]) activities[today] = [];
           activities[today].push({
             type: workoutType,
-            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })
           });
           saveActivities();
 
@@ -3851,6 +4716,45 @@
       updateProgress();
     }
 
+    function addSet(btn) {
+      var exercise = btn.closest('.exercise');
+      if (!exercise) return;
+      var setsContainer = exercise.querySelector('.sets-container');
+      if (!setsContainer) return;
+      var id = exercise.dataset.id;
+      var config = exerciseConfigs[id] || {};
+      var existingRows = setsContainer.querySelectorAll('.set-row');
+      var nextNum = existingRows.length + 1;
+
+      // Copy weight/reps from last set if available
+      var lastRow = existingRows[existingRows.length - 1];
+      var lastWeight = lastRow ? (lastRow.querySelector('.set-weight').value || '') : '';
+      var lastReps = lastRow ? (lastRow.querySelector('.set-reps').value || '') : '';
+
+      var weightPlaceholder = config.type === 'tempo' ? 'seg' : 'kg';
+      var setRow = document.createElement('div');
+      setRow.className = 'set-row';
+      setRow.dataset.set = nextNum;
+      setRow.innerHTML =
+        '<span class="set-label">' + nextNum + '</span>' +
+        '<input type="number" class="set-reps" value="' + lastReps + '">' +
+        '<span class="set-x">\u00d7</span>' +
+        '<input type="number" class="set-weight" placeholder="' + weightPlaceholder + '" step="' + (config.type === 'tempo' ? '1' : '0.5') + '" value="' + lastWeight + '">' +
+        '<div class="set-check" onclick="toggleSet(this)"></div>';
+
+      setsContainer.insertBefore(setRow, btn);
+
+      // Update config and stat-input
+      config.sets = nextNum;
+      exerciseConfigs[id] = config;
+      saveExerciseConfigs();
+      var statInput = exercise.querySelector('.stat-input');
+      if (statInput) statInput.value = nextNum;
+
+      saveProgress();
+      updateProgress();
+    }
+
     function updateProgress() {
       const workout = document.getElementById(currentWorkout);
       if (!workout) return;
@@ -3901,7 +4805,7 @@
       showSync('Salvando treino...');
 
       try {
-        const today = new Date().toISOString().split('T')[0];
+        const today = getTodayDateStr();
         const workoutTypeMap = { braco: 'upper', perna: 'lower', mob1: 'mobilidade', mob2: 'mobilidade', mob3: 'mobilidade' };
         const workoutType = workoutTypeMap[currentWorkout] || 'upper';
 
@@ -3932,7 +4836,7 @@
           if (!activities[dateStr]) activities[dateStr] = [];
           activities[dateStr].push({
             type: workoutType,
-            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })
           });
           saveActivities();
 
@@ -3974,13 +4878,13 @@
         progress[id] = { sets: setsData };
       });
       localStorage.setItem('workout-progress-v6', JSON.stringify(progress));
-      localStorage.setItem('workout-date', new Date().toDateString());
+      localStorage.setItem('workout-date', getTodayDateString());
       // Sync to Supabase (fire-and-forget)
       try {
         fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
           method: 'PATCH',
           headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ workout_progress: { progress: progress, date: new Date().toDateString() } })
+          body: JSON.stringify({ workout_progress: { progress: progress, date: getTodayDateString() } })
         }).catch(function(e) { console.error('sync progress:', e); });
       } catch(e) {}
     }
@@ -3995,7 +4899,7 @@
           headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
         });
         var data = await res.json();
-        if (data[0]?.workout_progress?.progress && data[0].workout_progress.date === new Date().toDateString()) {
+        if (data[0]?.workout_progress?.progress && data[0].workout_progress.date === getTodayDateString()) {
           progress = data[0].workout_progress.progress;
           localStorage.setItem('workout-progress-v6', JSON.stringify(progress));
           localStorage.setItem('workout-date', data[0].workout_progress.date);
@@ -4004,7 +4908,7 @@
       // Fallback localStorage
       if (!progress) {
         var savedDate = localStorage.getItem('workout-date');
-        if (savedDate !== new Date().toDateString()) {
+        if (savedDate !== getTodayDateString()) {
           localStorage.removeItem('workout-progress-v6');
           localStorage.removeItem('workout-progress-v5');
           return;
@@ -4119,7 +5023,7 @@
           var lastLabel = document.getElementById('last-' + id);
           if (lastLabel && sessionData.date) {
             var d = new Date(sessionData.date + 'T12:00:00');
-            var dateStr = d.toLocaleDateString('pt-BR');
+            var dateStr = d.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
             lastLabel.innerHTML = 'Ultimo treino: <strong>' + dateStr + '</strong>';
           }
         });
@@ -4137,7 +5041,7 @@
           if (!lastSets[id]) {
             const el = document.getElementById('last-' + id);
             if (el) {
-              const date = new Date(latest[id].created_at).toLocaleDateString('pt-BR');
+              const date = new Date(latest[id].created_at).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
               const config = exerciseConfigs[id];
               const unit = config && config.type === 'tempo' ? 's' : 'kg';
               el.innerHTML = 'Ultimo: <strong>' + latest[id].weight + unit + '</strong> (' + date + ')';
@@ -4277,12 +5181,17 @@
           setRow.dataset.set = s;
           setRow.innerHTML =
             '<span class="set-label">' + s + '</span>' +
-            '<input type="number" class="set-weight" placeholder="' + weightPlaceholder + '" step="' + (config.type === 'tempo' ? '1' : '0.5') + '">' +
-            '<span class="set-x">\u00d7</span>' +
             '<input type="number" class="set-reps" value="' + defaultReps + '">' +
+            '<span class="set-x">\u00d7</span>' +
+            '<input type="number" class="set-weight" placeholder="' + weightPlaceholder + '" step="' + (config.type === 'tempo' ? '1' : '0.5') + '">' +
             '<div class="set-check" onclick="toggleSet(this)"></div>';
           setsContainer.appendChild(setRow);
         }
+        var addBtn = document.createElement('button');
+        addBtn.className = 'add-set-btn';
+        addBtn.textContent = '+ Série';
+        addBtn.setAttribute('onclick', 'addSet(this)');
+        setsContainer.appendChild(addBtn);
         var lastDiv = ex.querySelector('[id^="last-"]');
         if (lastDiv) {
           ex.insertBefore(setsContainer, lastDiv);
@@ -4354,12 +5263,17 @@
         setRow.dataset.set = s;
         setRow.innerHTML =
           '<span class="set-label">' + s + '</span>' +
-          '<input type="number" class="set-weight" placeholder="' + weightPlaceholder + '" step="' + (config.type === 'tempo' ? '1' : '0.5') + '">' +
-          '<span class="set-x">\u00d7</span>' +
           '<input type="number" class="set-reps" placeholder="reps">' +
+          '<span class="set-x">\u00d7</span>' +
+          '<input type="number" class="set-weight" placeholder="' + weightPlaceholder + '" step="' + (config.type === 'tempo' ? '1' : '0.5') + '">' +
           '<div class="set-check" onclick="toggleSet(this)"></div>';
         setsContainer.appendChild(setRow);
       }
+      var addBtn = document.createElement('button');
+      addBtn.className = 'add-set-btn';
+      addBtn.textContent = '+ Série';
+      addBtn.setAttribute('onclick', 'addSet(this)');
+      setsContainer.appendChild(addBtn);
       var lastDiv = ex.querySelector('[id^="last-"]');
       if (lastDiv) {
         ex.insertBefore(setsContainer, lastDiv);
@@ -4482,7 +5396,7 @@
       var dayNames = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
       var days = [];
       for (var i = 0; i < 7; i++) {
-        var d = new Date();
+        var d = getSaoPauloNow();
         d.setDate(d.getDate() + i);
         days.push(dayNames[d.getDay()] + ' ' + formatDate(d));
       }
@@ -4696,7 +5610,7 @@
         '5. Nao repita informacoes que ja foram dadas no contexto.\n' +
         '6. Conecte SEMPRE suas recomendacoes ao objetivo — explique COMO cada sugestao ajuda a chegar la.\n' +
         '7. Se existirem NOTAS MEDICAS no contexto, SEMPRE respeite como restricoes. NUNCA sugira exercicios que conflitem com lesoes, condicoes ou restricoes medicas do aluno. Adapte todas as sugestoes.\n\n' +
-        'DATA DE HOJE: ' + formatDate(new Date()) + ' (' + ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][new Date().getDay()] + ')\n' +
+        'DATA DE HOJE: ' + getTodayDateStr() + ' (' + ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][getSaoPauloNow().getDay()] + ')\n' +
         'PROXIMOS 7 DIAS: ' + getNext7Days() + '\n\n' +
         'FORMATO DE SUGESTAO (quando aplicavel):\n' +
         '<' + sg + '>\n' +
@@ -4941,7 +5855,7 @@
       if (notasMedicas.length > 0) {
         notasMedicasText = '## NOTAS MEDICAS (IMPORTANTE)\n' +
           notasMedicas.map(function(n) {
-            return '- [' + new Date(n.data).toLocaleDateString('pt-BR') + '] ' + n.texto;
+            return '- [' + new Date(n.data).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) + '] ' + n.texto;
           }).join('\n') + '\n\n';
       }
 
@@ -4949,15 +5863,23 @@
       if (historicoAnalises.length > 0) {
         analiseText = '## COACHING ANTERIOR\n' +
           historicoAnalises.slice(0, 3).map(function(a) {
-            var dateStr = new Date(a.data).toLocaleDateString('pt-BR');
+            var dateStr = new Date(a.data).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
             var resumo = (a.texto || '').substring(0, 200).replace(/\n/g, ' ');
             return '- [' + dateStr + '] ' + resumo + '...';
           }).join('\n') + '\n\n';
       }
 
+      // Onboarding enrichment
+      var nivelExp = onbData.nivel || localStorage.getItem('onb-nivel') || '';
+      var atividadesP = onbData.atividades.length > 0 ? onbData.atividades.join(', ') : (localStorage.getItem('onb-atividades') || '');
+      var freqSemanal = onbData.frequencia || localStorage.getItem('onb-frequencia') || '';
+
       return '## PERFIL\n' +
         'Nome: ' + nome + ' | Idade: ' + idade + ' | Altura: ' + altura + 'cm | Sexo: ' + (selectedSexo || '?') + '\n' +
         'Objetivo: ' + objetivo + '\n' +
+        (nivelExp ? 'Nivel: ' + nivelExp + '\n' : '') +
+        (atividadesP ? 'Atividades: ' + atividadesP + '\n' : '') +
+        (freqSemanal ? 'Frequencia semanal: ' + freqSemanal + 'x\n' : '') +
         'Dores/Problemas: ' + dores + '\n' +
         'Estado hoje: ' + estado + '\n\n' +
         notasMedicasText +
@@ -5563,6 +6485,7 @@
       container.appendChild(bubble);
       var contentEl = bubble.querySelector('.stream-content');
       var safeText = '';
+      var pendingRaf = null;
 
       return {
         appendDelta: function(delta, accumulated) {
@@ -5572,17 +6495,21 @@
           var sgClose = '</' + 'suggestion>';
           var closeIdx = accumulated.lastIndexOf(sgClose);
           if (openIdx > -1 && (closeIdx === -1 || closeIdx < openIdx)) {
-            // Inside an open suggestion block — show only text before it
             safeText = accumulated.substring(0, openIdx);
           } else {
-            // Remove any closed suggestion blocks from display
             var sgRegex = new RegExp(sgOpen + '[\\s\\S]*?' + sgClose, 'g');
             safeText = accumulated.replace(sgRegex, '');
           }
-          contentEl.innerHTML = formatMarkdown(safeText.trim());
-          scrollChatToBottom();
+          if (!pendingRaf) {
+            pendingRaf = requestAnimationFrame(function() {
+              contentEl.innerHTML = formatMarkdown(safeText.trim());
+              scrollChatToBottom();
+              pendingRaf = null;
+            });
+          }
         },
         finalize: function(fullText) {
+          if (pendingRaf) { cancelAnimationFrame(pendingRaf); pendingRaf = null; }
           bubble.remove();
           renderAssistantMessage(fullText);
         }
@@ -5666,6 +6593,11 @@
       const emoji = s.activity_type ? (activityEmojis[s.activity_type] || '📋') : (emojiMap[action] || '💡');
       const badge = s.type === 'atividade' ? 'Atividade' : (s.type === 'exercicio' ? (badgeMap[action] || 'Exercício') : 'Sugestão');
 
+      var displayLabel = s.label;
+      if (action === 'replace' && s.exercise_name && s.exercise_name !== s.label) {
+        displayLabel = s.exercise_name + ' → ' + s.label;
+      }
+
       let detailHtml = s.detail || '';
       if (s.date) {
         var dayNames = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -5683,7 +6615,7 @@
       card.innerHTML =
         '<div class="suggestion-card-header">' +
           '<span>' + emoji + '</span>' +
-          '<span class="label">' + s.label + '</span>' +
+          '<span class="label">' + displayLabel + '</span>' +
           '<span class="badge">' + badge + '</span>' +
         '</div>' +
         '<div class="suggestion-card-detail">' + detailHtml + '</div>' +
@@ -5930,12 +6862,13 @@
         setsHtml +=
           '<div class="set-row" data-set="' + si + '">' +
             '<span class="set-label">' + si + '</span>' +
-            '<input type="number" class="set-weight" placeholder="kg" step="0.5">' +
-            '<span class="set-x">\u00d7</span>' +
             '<input type="number" class="set-reps" placeholder="reps">' +
+            '<span class="set-x">\u00d7</span>' +
+            '<input type="number" class="set-weight" placeholder="kg" step="0.5">' +
             '<div class="set-check" onclick="toggleSet(this)"></div>' +
           '</div>';
       }
+      setsHtml += '<button class="add-set-btn" onclick="addSet(this)">+ Série</button>';
       setsHtml += '</div>';
 
       exDiv.innerHTML =
@@ -6085,11 +7018,11 @@
 
       if (type) {
         // Use date from suggestion, fallback to today
-        var targetDate = s.date && /^\d{4}-\d{2}-\d{2}$/.test(s.date) ? s.date : formatDate(new Date());
+        var targetDate = s.date && /^\d{4}-\d{2}-\d{2}$/.test(s.date) ? s.date : getTodayDateStr();
         if (!activities[targetDate]) activities[targetDate] = [];
         activities[targetDate].push({
           type: type,
-          time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+          time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
           duration: s.duration ? parseInt(s.duration) : null,
           notes: s.detail || s.label,
           effort: null
@@ -6105,7 +7038,7 @@
         renderCalendar();
         renderDayActivities();
 
-        var dateLabel = targetDate === formatDate(new Date()) ? 'hoje' : targetDate;
+        var dateLabel = targetDate === getTodayDateStr() ? 'hoje' : targetDate;
         card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Adicionado em ' + dateLabel + '</span>';
         showToast('Adicionado ao calendário (' + dateLabel + ')!');
       } else {
@@ -6206,14 +7139,14 @@
     function saveChatToStorage() {
       try {
         localStorage.setItem('chat-messages', JSON.stringify(chatMessages));
-        localStorage.setItem('chat-date', new Date().toDateString());
+        localStorage.setItem('chat-date', getTodayDateString());
       } catch (e) { console.error(e); }
       // Sync to Supabase (fire-and-forget)
       try {
         fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
           method: 'PATCH',
           headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_history: { messages: chatMessages, date: new Date().toDateString() } })
+          body: JSON.stringify({ chat_history: { messages: chatMessages, date: getTodayDateString() } })
         }).catch(function(e) { console.error('sync chat:', e); });
       } catch(e) {}
     }
@@ -6226,7 +7159,7 @@
         });
         var data = await res.json();
         if (data[0]?.chat_history?.messages?.length > 0) {
-          if (data[0].chat_history.date === new Date().toDateString()) {
+          if (data[0].chat_history.date === getTodayDateString()) {
             chatMessages = data[0].chat_history.messages;
             localStorage.setItem('chat-messages', JSON.stringify(chatMessages));
             localStorage.setItem('chat-date', data[0].chat_history.date);
@@ -6237,7 +7170,7 @@
       // Fallback localStorage
       try {
         var savedDate = localStorage.getItem('chat-date');
-        if (savedDate !== new Date().toDateString()) {
+        if (savedDate !== getTodayDateString()) {
           localStorage.removeItem('chat-messages');
           return false;
         }
@@ -6347,7 +7280,7 @@
         lastSaveTime = time;
         hasUnsavedChanges = false;
         dot.style.background = 'var(--success)';
-        text.textContent = `Salvo às ${time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+        text.textContent = `Salvo às ${time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })}`;
       } else if (!saved) {
         hasUnsavedChanges = true;
         dot.style.background = 'var(--warning)';
@@ -6900,7 +7833,7 @@
       
       showSync('Salvando...');
       try {
-        const notasText = notasMedicas.map(n => `[${new Date(n.data).toLocaleDateString('pt-BR')}] ${n.texto}`).join('\n\n');
+        const notasText = notasMedicas.map(n => `[${new Date(n.data).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}] ${n.texto}`).join('\n\n');
         await fetch(`${SUPABASE_URL}/rest/v1/user_profile?id=eq.1`, {
           method: 'PATCH',
           headers: {
@@ -6931,7 +7864,7 @@
       
       container.innerHTML = notasMedicas.map((n, i) => `
         <div style="padding: 10px 12px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 8px; border-left: 3px solid var(--success);">
-          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">${new Date(n.data).toLocaleDateString('pt-BR')}</div>
+          <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">${new Date(n.data).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</div>
           <div style="font-size: 13px; color: var(--text-primary);">${escapeHtml(n.texto)}</div>
         </div>
       `).join('');
@@ -6952,7 +7885,7 @@
         <div style="padding: 12px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 8px; cursor: pointer;" onclick="showAnalysis(${i})">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span style="font-size: 13px; font-weight: 500;">Análise ${historicoAnalises.length - i}</span>
-            <span style="font-size: 11px; color: var(--text-muted);">${new Date(a.data).toLocaleDateString('pt-BR')}</span>
+            <span style="font-size: 11px; color: var(--text-muted);">${new Date(a.data).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</span>
           </div>
           <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${a.texto.substring(0, 100)}...</div>
         </div>
@@ -6979,7 +7912,7 @@
 
       var entry = {
         texto: estado,
-        hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
         timestamp: new Date().toISOString()
       };
       estadoEntries.push(entry);
@@ -7080,7 +8013,7 @@
           if (estadoMain) estadoMain.value = '';
           if (profile.updated_at) {
             var updatedDate = new Date(profile.updated_at).toDateString();
-            var todayDate = new Date().toDateString();
+            var todayDate = getTodayDateString();
             if (updatedDate === todayDate && profile.estado_hoje) {
               // Parse entries from saved text: "[HH:MM] texto"
               var lines = profile.estado_hoje.split('\n').filter(function(l) { return l.trim(); });
@@ -7161,7 +8094,7 @@
       if (!container) return;
 
       // --- Card Hoje (agenda) ---
-      var todayStr = formatDate(new Date());
+      var todayStr = getTodayDateStr();
       var todayActs = activities[todayStr] || [];
       var hojeValue = '';
       if (todayActs.length > 0) {
@@ -7422,7 +8355,7 @@
       var current = 0;
       var longest = 0;
       var streak = 0;
-      var today = new Date();
+      var today = getSaoPauloNow();
       var checkDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
       for (var i = 0; i < 365; i++) {
@@ -7475,7 +8408,7 @@
         if ((!profile.chat_history || !profile.chat_history.messages?.length) && localStorage.getItem('chat-messages')) {
           try {
             var msgs = JSON.parse(localStorage.getItem('chat-messages'));
-            var date = localStorage.getItem('chat-date') || new Date().toDateString();
+            var date = localStorage.getItem('chat-date') || getTodayDateString();
             if (msgs?.length > 0) updates.chat_history = { messages: msgs, date: date };
           } catch(e) {}
         }
@@ -7483,7 +8416,7 @@
         if ((!profile.workout_progress || !profile.workout_progress.progress) && localStorage.getItem('workout-progress-v6')) {
           try {
             var prog = JSON.parse(localStorage.getItem('workout-progress-v6'));
-            var date = localStorage.getItem('workout-date') || new Date().toDateString();
+            var date = localStorage.getItem('workout-date') || getTodayDateString();
             if (prog && Object.keys(prog).length > 0) updates.workout_progress = { progress: prog, date: date };
           } catch(e) {}
         }
@@ -7512,7 +8445,7 @@
       } catch(e) { console.error('migration error:', e); }
     }
 
-    document.addEventListener('DOMContentLoaded', async function() {
+    async function initApp() {
       // Phase 1: sequential dependencies
       await loadCustomExercises();
       await initExerciseControls();
@@ -7553,6 +8486,35 @@
         sessionTimerInterval = setInterval(updateSessionTimerDisplay, 1000);
         updateSessionTimerDisplay();
       }
+    }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      // Check auth before showing app
+      var isAuthenticated = await verifySession();
+      if (isAuthenticated) {
+        // Check onboarding status
+        var onboardingDone = localStorage.getItem('onboarding-completed') === 'true';
+        if (!onboardingDone) {
+          // Check Supabase as fallback
+          try {
+            var res = await fetch(SUPABASE_URL + '/rest/v1/user_profile?id=eq.1&select=onboarding_completed', {
+              headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+            });
+            var data = await res.json();
+            if (data[0] && data[0].onboarding_completed) {
+              onboardingDone = true;
+              localStorage.setItem('onboarding-completed', 'true');
+            }
+          } catch(e) {}
+        }
+        if (onboardingDone) {
+          showApp();
+          initApp();
+        } else {
+          showOnboarding();
+        }
+      }
+      // If not authenticated, auth screen is already visible
     });
   </script>
 </body>
