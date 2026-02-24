@@ -2592,6 +2592,35 @@
       font-size: 13px; color: var(--text-secondary); line-height: 1.6;
     }
     .onb-ai-teaser strong { color: var(--accent); }
+
+    /* Workout empty state */
+    .workout-empty-state { text-align:center; padding:40px 20px; color:var(--text-muted); }
+    .workout-empty-icon { font-size:48px; margin-bottom:16px; }
+    .workout-empty-title { font-size:16px; font-weight:600; color:var(--text-secondary); margin-bottom:10px; }
+    .workout-empty-desc { font-size:13px; line-height:1.6; margin-bottom:20px; max-width:280px; margin:0 auto 20px; }
+    .workout-empty-cta { display:inline-block; padding:12px 24px; background:var(--accent); border:none; border-radius:8px; color:white; font-size:14px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; }
+
+    /* Daily coach card */
+    .daily-coach-card { background:var(--bg-secondary); border:1px solid var(--border); border-radius:10px; padding:14px 16px; }
+    .daily-coach-card-header { display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12px; color:var(--text-muted); font-weight:500; }
+    .daily-coach-card-preview { font-size:14px; color:var(--text-secondary); line-height:1.5; margin-bottom:10px; }
+    .daily-coach-card-btn { font-size:12px; color:var(--accent); background:none; border:none; cursor:pointer; font-family:'Inter',sans-serif; padding:0; font-weight:600; }
+
+    /* Goal progress card */
+    .goal-progress-bar-track { height:6px; background:var(--bg-tertiary); border-radius:3px; overflow:hidden; margin:8px 0; }
+    .goal-progress-bar-fill { height:6px; border-radius:3px; transition:width 0.5s ease; }
+    .goal-card-footer { display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-top:4px; }
+
+    /* Goal celebration modal */
+    .goal-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; display:flex; align-items:center; justify-content:center; }
+    .goal-modal-box { background:var(--bg-secondary); border:1px solid var(--border); border-radius:14px; padding:28px 24px; max-width:340px; width:90%; text-align:center; }
+    .goal-modal-emoji { font-size:56px; margin-bottom:12px; }
+    .goal-modal-title { font-size:20px; font-weight:700; margin-bottom:8px; }
+    .goal-modal-desc { font-size:14px; color:var(--text-secondary); line-height:1.5; margin-bottom:20px; }
+    .goal-modal-actions { display:flex; flex-direction:column; gap:10px; }
+    .goal-modal-btn { padding:12px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; border:none; }
+    .goal-modal-btn-primary { background:var(--accent); color:white; }
+    .goal-modal-btn-secondary { background:var(--bg-tertiary); color:var(--text-secondary); border:1px solid var(--border); }
   </style>
 </head>
 <body>
@@ -2668,6 +2697,8 @@
         <input class="onb-input" type="number" id="onbIdade" placeholder="Ex: 30" inputmode="numeric">
         <div class="onb-label">Altura (cm)</div>
         <input class="onb-input" type="number" id="onbAltura" placeholder="Ex: 175" inputmode="numeric">
+        <div class="onb-label">Peso (kg) <span style="font-weight:400; color: var(--text-muted); font-size: 12px;">(opcional)</span></div>
+        <input class="onb-input" type="number" id="onbPeso" placeholder="Ex: 75" inputmode="decimal" step="0.1">
         <div class="onb-label">Sexo <span style="font-weight:400; color: var(--text-muted); font-size: 12px;">(opcional)</span></div>
         <div class="onb-sexo-cards">
           <div class="onb-sexo-card" onclick="selectOnbSexo('M', this)">
@@ -3630,8 +3661,9 @@
             </div>
             <div id="notasMedicasList" style="margin-top: 8px;"></div>
           </div>
-          <div style="display: flex; gap: 8px;">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <button onclick="event.stopPropagation(); saveProfile(); saveField('objetivo'); saveField('dores')" style="flex: 1; padding: 10px; background: var(--accent); border: none; border-radius: 10px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;">Salvar Perfil</button>
+            <button onclick="event.stopPropagation(); resetOnboarding()" style="padding: 10px 14px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 10px; color: var(--text-secondary); font-size: 12px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap;">⟳ Refazer onboarding</button>
           </div>
         </div>
       </div>
@@ -3653,6 +3685,8 @@
       <div id="chatStartArea">
         <!-- Dashboard summary cards -->
         <div class="dashboard-cards" id="dashboardCards"></div>
+
+        <div id="dailyCoachCard" style="display:none; margin: 0 20px 12px;"></div>
 
         <button class="chat-start-btn" onclick="startCoachChat()">
           🤖 Iniciar Conversa com Coach AI
@@ -3939,15 +3973,20 @@
 
     var onbStep = 1;
     var onbTotalSteps = 7;
-    var onbData = {
-      nome: '', idade: '', altura: '', sexo: '',
-      objetivo_texto: '',
-      objetivo_data: '',
-      objetivo_resultado: '',
-      nivel: '', restricoes: '',
-      atividades: [],
-      atividades_detalhes: []
-    };
+    var isNewUser = false;
+
+    function buildDefaultOnbData() {
+      return {
+        nome: '', idade: '', altura: '', peso: '', sexo: '',
+        objetivo_texto: '',
+        objetivo_data: '',
+        objetivo_resultado: '',
+        nivel: '', restricoes: '',
+        atividades: [],
+        atividades_detalhes: []
+      };
+    }
+    var onbData = buildDefaultOnbData();
 
     var onbActivityIcons = {
       academia: '🏋️', surf: '🏄', tenis: '🎾', corrida: '🏃',
@@ -3998,6 +4037,7 @@
         onbData.nome = document.getElementById('onbNome').value.trim();
         onbData.idade = document.getElementById('onbIdade').value.trim();
         onbData.altura = document.getElementById('onbAltura').value.trim();
+        onbData.peso = document.getElementById('onbPeso').value.trim();
       }
       if (onbStep === 3) {
         onbData.objetivo_texto = document.getElementById('onbObjetivoTexto').value.trim();
@@ -4034,6 +4074,7 @@
           if (onbData.nome) document.getElementById('onbNome').value = onbData.nome;
           if (onbData.idade) document.getElementById('onbIdade').value = onbData.idade;
           if (onbData.altura) document.getElementById('onbAltura').value = onbData.altura;
+          if (onbData.peso) document.getElementById('onbPeso').value = onbData.peso;
         }
         if (onbStep === 3) {
           if (onbData.objetivo_texto) document.getElementById('onbObjetivoTexto').value = onbData.objetivo_texto;
@@ -4077,6 +4118,25 @@
       el.classList.add('selected');
     }
 
+    function buildDefaultDetail(nome) {
+      var base = { nome: nome, frequencia: 3, intensidade: 'moderada', dias: [], horario: '' };
+      if (nome === 'academia') {
+        base.tem_planilha = false; base.planilha_file_id = null;
+        base.divisao = ''; base.series_por_exercicio = 3;
+      } else if (nome === 'surf') {
+        base.nivel_surf = 'intermediario';
+      } else if (nome === 'fisio') {
+        base.descricao_fisio = ''; base.sessoes_semana = 2;
+      } else if (nome === 'tenis') {
+        base.contexto_tenis = 'aula';
+      } else if (nome === 'corrida') {
+        base.pace_atual = ''; base.km_semanal = '';
+      } else {
+        base.duracao_media = '1h';
+      }
+      return base;
+    }
+
     function toggleOnbActivity(activity, el) {
       var idx = onbData.atividades.indexOf(activity);
       if (idx > -1) {
@@ -4088,7 +4148,7 @@
         onbData.atividades.push(activity);
         el.classList.add('selected');
         // Add to detalhes with defaults
-        onbData.atividades_detalhes.push({ nome: activity, frequencia: 3, intensidade: 'moderada', dias: [], horario: '' });
+        onbData.atividades_detalhes.push(buildDefaultDetail(activity));
       }
     }
 
@@ -4098,7 +4158,7 @@
       if (!nome) return;
       if (onbData.atividades.indexOf(nome) > -1) { input.value = ''; return; }
       onbData.atividades.push(nome);
-      onbData.atividades_detalhes.push({ nome: nome, frequencia: 3, intensidade: 'moderada', dias: [], horario: '' });
+      onbData.atividades_detalhes.push(buildDefaultDetail(nome));
       var container = document.getElementById('onbCustomActivities');
       var tag = document.createElement('div');
       tag.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--accent-dim);border:1px solid var(--accent);border-radius:20px;font-size:13px;color:var(--text-primary);';
@@ -4146,6 +4206,69 @@
       }
     }
 
+    function renderSportSpecificFields(act, detail) {
+      var html = '';
+      if (act === 'academia') {
+        // Divisão
+        html += '<div class="onb-control-label" style="margin-top: 8px;">Divisão de treino</div>';
+        html += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">';
+        ['AB', 'PPL', 'Upper-Lower', 'Full Body'].forEach(function(div) {
+          var sel = detail.divisao === div ? ' background:var(--accent);color:white;border-color:var(--accent);' : '';
+          html += '<button style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg-tertiary);color:var(--text-secondary);font-size:12px;cursor:pointer;font-family:Inter,sans-serif;' + sel + '" onclick="updateActivityDetail(\'' + act + '\',\'divisao\',\'' + div + '\');this.closest(\'.onb-activity-row-controls\').querySelectorAll(\'.div-btn\').forEach(b=>b.removeAttribute(\'data-sel\'));this.setAttribute(\'data-sel\',\'1\');renderActivityDetails()" class="div-btn">' + div + '</button>';
+        });
+        html += '</div>';
+        // Series por exercicio
+        html += '<div class="onb-control-label" style="margin-top: 8px;">Séries por exercício</div>';
+        html += '<div class="onb-freq-mini">';
+        for (var s = 1; s <= 6; s++) {
+          var selClass = detail.series_por_exercicio === s ? ' selected' : '';
+          html += '<button class="onb-freq-btn' + selClass + '" onclick="updateActivityDetail(\'' + act + '\',\'series_por_exercicio\',' + s + ');renderActivityDetails()">' + s + '</button>';
+        }
+        html += '</div>';
+      } else if (act === 'surf') {
+        html += '<div class="onb-control-label" style="margin-top: 8px;">Nível no surf</div>';
+        html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">';
+        ['iniciante','intermediario','avancado'].forEach(function(nivel) {
+          var selS = detail.nivel_surf === nivel ? 'background:var(--accent);color:white;border-color:var(--accent);' : '';
+          var lbl = nivel === 'intermediario' ? 'Intermediário' : nivel.charAt(0).toUpperCase() + nivel.slice(1);
+          html += '<button style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg-tertiary);color:var(--text-secondary);font-size:12px;cursor:pointer;font-family:Inter,sans-serif;' + selS + '" onclick="updateActivityDetail(\'' + act + '\',\'nivel_surf\',\'' + nivel + '\');renderActivityDetails()">' + lbl + '</button>';
+        });
+        html += '</div>';
+      } else if (act === 'fisio') {
+        html += '<div class="onb-control-label" style="margin-top: 8px;">Descrição / queixas</div>';
+        html += '<textarea class="onb-input" style="margin:4px 0 0;min-height:60px;" placeholder="Ex: reabilitação joelho direito, dor lombar..." onchange="updateActivityDetail(\'' + act + '\',\'descricao_fisio\',this.value)">' + (detail.descricao_fisio || '') + '</textarea>';
+        html += '<div class="onb-control-label" style="margin-top: 6px;">Sessões por semana</div>';
+        html += '<div class="onb-freq-mini">';
+        for (var fs = 1; fs <= 5; fs++) {
+          var fsc = detail.sessoes_semana === fs ? ' selected' : '';
+          html += '<button class="onb-freq-btn' + fsc + '" onclick="updateActivityDetail(\'' + act + '\',\'sessoes_semana\',' + fs + ');renderActivityDetails()">' + fs + '</button>';
+        }
+        html += '</div>';
+      } else if (act === 'tenis') {
+        html += '<div class="onb-control-label" style="margin-top: 8px;">Contexto</div>';
+        html += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">';
+        [{v:'sozinho',l:'Sozinho'},{v:'parceiro',l:'Com parceiro'},{v:'aula',l:'Aula'}].forEach(function(o) {
+          var selS = detail.contexto_tenis === o.v ? 'background:var(--accent);color:white;border-color:var(--accent);' : '';
+          html += '<button style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg-tertiary);color:var(--text-secondary);font-size:12px;cursor:pointer;font-family:Inter,sans-serif;' + selS + '" onclick="updateActivityDetail(\'' + act + '\',\'contexto_tenis\',\'' + o.v + '\');renderActivityDetails()">' + o.l + '</button>';
+        });
+        html += '</div>';
+      } else if (act === 'corrida') {
+        html += '<div style="display:flex;gap:10px;margin-top:8px;">';
+        html += '<div style="flex:1;"><div class="onb-control-label">Pace atual (min/km)</div><input type="text" class="onb-input" style="margin:4px 0 0;" placeholder="Ex: 5:30" value="' + (detail.pace_atual || '') + '" onchange="updateActivityDetail(\'' + act + '\',\'pace_atual\',this.value)"></div>';
+        html += '<div style="flex:1;"><div class="onb-control-label">Km/semana</div><input type="number" class="onb-input" style="margin:4px 0 0;" placeholder="Ex: 20" value="' + (detail.km_semanal || '') + '" onchange="updateActivityDetail(\'' + act + '\',\'km_semanal\',this.value)"></div>';
+        html += '</div>';
+      } else {
+        html += '<div class="onb-control-label" style="margin-top: 8px;">Duração média</div>';
+        html += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">';
+        ['30min','45min','1h','1h30','2h+'].forEach(function(dur) {
+          var selS = detail.duracao_media === dur ? 'background:var(--accent);color:white;border-color:var(--accent);' : '';
+          html += '<button style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg-tertiary);color:var(--text-secondary);font-size:12px;cursor:pointer;font-family:Inter,sans-serif;' + selS + '" onclick="updateActivityDetail(\'' + act + '\',\'duracao_media\',\'' + dur + '\');renderActivityDetails()">' + dur + '</button>';
+        });
+        html += '</div>';
+      }
+      return html;
+    }
+
     function renderActivityDetails() {
       var container = document.getElementById('onbActivityDetails');
       if (!container) return;
@@ -4159,7 +4282,7 @@
       onbData.atividades.forEach(function(act) {
         var detail = onbData.atividades_detalhes.find(function(d) { return d.nome === act; });
         if (!detail) {
-          detail = { nome: act, frequencia: 3, intensidade: 'moderada' };
+          detail = buildDefaultDetail(act);
           onbData.atividades_detalhes.push(detail);
         }
         var icon = onbActivityIcons[act] || '🏃';
@@ -4183,8 +4306,8 @@
         html += '<div class="onb-intensity-btns">';
         ['leve', 'moderada', 'intensa'].forEach(function(intens) {
           var selClass = detail.intensidade === intens ? ' selected' : '';
-          var label = intens.charAt(0).toUpperCase() + intens.slice(1);
-          html += '<button class="onb-intensity-btn' + selClass + '" onclick="setActivityIntensity(\'' + act + '\',\'' + intens + '\',this)">' + label + '</button>';
+          var ilabel = intens.charAt(0).toUpperCase() + intens.slice(1);
+          html += '<button class="onb-intensity-btn' + selClass + '" onclick="setActivityIntensity(\'' + act + '\',\'' + intens + '\',this)">' + ilabel + '</button>';
         });
         html += '</div>';
 
@@ -4203,6 +4326,9 @@
         html += '<div class="onb-control-label" style="margin-top: 8px;">Horario</div>';
         html += '<input type="time" class="onb-input onb-time-input" style="margin: 0; width: auto;" value="' + (detail.horario || '') + '" onchange="updateActivityDetail(\'' + act + '\',\'horario\',this.value)">';
 
+        // Sport-specific fields
+        html += renderSportSpecificFields(act, detail);
+
         html += '</div></div>';
       });
       container.innerHTML = html;
@@ -4216,6 +4342,7 @@
       if (onbData.nome) items.push({ label: 'Nome', value: onbData.nome });
       if (onbData.idade) items.push({ label: 'Idade', value: onbData.idade + ' anos' });
       if (onbData.altura) items.push({ label: 'Altura', value: onbData.altura + ' cm' });
+      if (onbData.peso) items.push({ label: 'Peso', value: onbData.peso + ' kg' });
       if (onbData.sexo) items.push({ label: 'Sexo', value: onbData.sexo === 'M' ? 'Masculino' : 'Feminino' });
       if (onbData.objetivo_texto) items.push({ label: 'Objetivo', value: onbData.objetivo_texto });
       if (onbData.objetivo_data) {
@@ -4260,6 +4387,18 @@
       // Calculate total frequencia
       var totalFreq = onbData.atividades_detalhes.reduce(function(sum, d) { return sum + (d.frequencia || 0); }, 0);
 
+      // Detect if this is a truly new user (no exercises in cloud yet) or a redo
+      var checkingNew = false;
+      try {
+        var checkRes = await fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId() + '&select=onboarding_at,custom_exercises', {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        });
+        var checkData = await checkRes.json();
+        var hadOnboarding = checkData[0] && checkData[0].onboarding_at;
+        var hadCustomEx = checkData[0] && checkData[0].custom_exercises && Array.isArray(checkData[0].custom_exercises) && checkData[0].custom_exercises.length > 0;
+        if (!hadOnboarding && !hadCustomEx) isNewUser = true;
+      } catch(e) { isNewUser = true; }
+
       // Save to Supabase
       try {
         await fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId(), {
@@ -4267,9 +4406,11 @@
           headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
           body: JSON.stringify({
             onboarding_completed: true,
+            onboarding_at: new Date().toISOString(),
             nome: onbData.nome || null,
             idade: onbData.idade ? parseInt(onbData.idade) : null,
             altura: onbData.altura ? parseInt(onbData.altura) : null,
+            peso: onbData.peso ? parseFloat(onbData.peso) : null,
             sexo: onbData.sexo || null,
             objetivo: objetivoText,
             objetivo_treino: objetivoText || null,
@@ -4282,7 +4423,11 @@
             atividades_praticadas: atividadesFormatted,
             frequencia_semanal: totalFreq || null,
             restricoes: onbData.restricoes || null,
-            dores: onbData.restricoes || null
+            dores: onbData.restricoes || null,
+            // Reset daily message so Coach generates fresh message
+            last_daily_message_date: null,
+            last_weekly_review_date: null,
+            daily_message_cache: {}
           })
         });
       } catch(e) { console.error('onboarding save error:', e); }
@@ -4310,6 +4455,27 @@
       startCoachChatOnboarding();
     }
 
+    function resetOnboarding() {
+      if (!confirm('Refazer onboarding vai atualizar seus dados e objetivo. Continuar?')) return;
+      // Reset flags
+      localStorage.removeItem('onboarding-completed');
+      try {
+        fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId(), {
+          method: 'PATCH',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ onboarding_completed: false, onboarding_at: null })
+        });
+      } catch(e) {}
+      // Reset onbData
+      onbData = buildDefaultOnbData();
+      isNewUser = false; // preserve existing exercises
+      // Show onboarding
+      document.getElementById('onboardingScreen').classList.add('visible');
+      document.getElementById('appContainer').style.display = 'none';
+      onbStep = 1;
+      renderOnboardingStep();
+    }
+
     function skipOnboarding() {
       localStorage.setItem('onboarding-completed', 'true');
       try {
@@ -4324,28 +4490,73 @@
     }
 
     function startCoachChatOnboarding() {
-      var parts = [];
-      if (onbData.nome) parts.push('Meu nome e ' + onbData.nome + '.');
-      if (onbData.idade) parts.push('Tenho ' + onbData.idade + ' anos');
-      if (onbData.altura) parts.push('e ' + onbData.altura + 'cm.');
-      if (onbData.sexo) parts.push('Sexo: ' + (onbData.sexo === 'M' ? 'masculino' : 'feminino') + '.');
-      if (onbData.objetivo_texto) parts.push('Meu objetivo: ' + onbData.objetivo_texto + '.');
-      if (onbData.objetivo_data) parts.push('Prazo: ' + onbData.objetivo_data + '.');
-      if (onbData.objetivo_resultado) parts.push('Resultado esperado: ' + onbData.objetivo_resultado + '.');
-      if (onbData.nivel) parts.push('Nivel: ' + onbData.nivel + '.');
-      if (onbData.atividades_detalhes.length > 0) {
-        var actParts = onbData.atividades_detalhes.map(function(d) {
-          var part = d.nome + ' ' + d.frequencia + 'x/sem (' + d.intensidade + ')';
-          if (d.dias && d.dias.length > 0) part += ' dias: ' + d.dias.join(',');
-          if (d.horario) part += ' as ' + d.horario;
-          return part;
-        });
-        parts.push('Atividades: ' + actParts.join(', ') + '.');
-      }
-      if (onbData.restricoes) parts.push('Restricoes medicas: ' + onbData.restricoes + '.');
-      parts.push('Com base nessas informacoes, cria um plano de treino personalizado pra mim do zero. Sugira exercicios, series, repeticoes e cargas iniciais para cada grupo muscular relevante. Use as acoes de sugestao para adicionar os exercicios diretamente no app.');
+      var lines = ['Olá! Aqui estão meus dados:'];
 
-      var msg = parts.join(' ');
+      // Dados pessoais
+      var pessoal = [];
+      if (onbData.nome) pessoal.push('Nome: ' + onbData.nome);
+      if (onbData.idade) pessoal.push('Idade: ' + onbData.idade + ' anos');
+      if (onbData.altura) pessoal.push('Altura: ' + onbData.altura + 'cm');
+      if (onbData.peso) pessoal.push('Peso: ' + onbData.peso + 'kg');
+      if (onbData.sexo) pessoal.push('Sexo: ' + (onbData.sexo === 'M' ? 'masculino' : 'feminino'));
+      if (pessoal.length > 0) lines.push('**Dados pessoais:** ' + pessoal.join(', '));
+
+      // Objetivo
+      if (onbData.objetivo_texto) {
+        var obj = 'Objetivo: ' + onbData.objetivo_texto;
+        if (onbData.objetivo_data) obj += ' — Prazo: ' + onbData.objetivo_data;
+        if (onbData.objetivo_resultado) obj += ' — Resultado esperado: ' + onbData.objetivo_resultado;
+        lines.push('**' + obj + '**');
+      }
+
+      // Nível
+      if (onbData.nivel) lines.push('**Nível:** ' + onbData.nivel.charAt(0).toUpperCase() + onbData.nivel.slice(1));
+
+      // Restrições
+      if (onbData.restricoes) lines.push('**Restrições/lesões:** ' + onbData.restricoes);
+
+      // Atividades detalhadas
+      if (onbData.atividades_detalhes.length > 0) {
+        lines.push('**Atividades que pratico:**');
+        onbData.atividades_detalhes.forEach(function(d) {
+          var parts = [];
+          var label = d.nome.charAt(0).toUpperCase() + d.nome.slice(1);
+          if (d.dias && d.dias.length > 0) parts.push('dias: ' + d.dias.join('/'));
+          if (d.horario) parts.push(d.horario);
+          parts.push(d.frequencia + 'x/semana');
+          parts.push('intensidade ' + d.intensidade);
+          // Sport-specific
+          if (d.nome === 'academia') {
+            if (d.divisao) parts.push('divisão: ' + d.divisao);
+            if (d.series_por_exercicio) parts.push(d.series_por_exercicio + ' séries/exercício');
+            if (!d.tem_planilha) parts.push('sem planilha prévia');
+          } else if (d.nome === 'surf' && d.nivel_surf) {
+            parts.push('nível ' + d.nivel_surf);
+          } else if (d.nome === 'fisio') {
+            if (d.descricao_fisio) parts.push('queixas: ' + d.descricao_fisio);
+            if (d.sessoes_semana) parts.push(d.sessoes_semana + ' sessões/sem');
+          } else if (d.nome === 'tenis' && d.contexto_tenis) {
+            parts.push(d.contexto_tenis);
+          } else if (d.nome === 'corrida') {
+            if (d.pace_atual) parts.push('pace: ' + d.pace_atual + '/km');
+            if (d.km_semanal) parts.push(d.km_semanal + 'km/sem');
+          } else if (d.duracao_media) {
+            parts.push('duração: ' + d.duracao_media);
+          }
+          lines.push('- ' + label + ': ' + parts.join(', '));
+        });
+      }
+
+      lines.push('');
+      lines.push('Com base nessas informações:');
+      lines.push('1. Crie meu planejamento semanal (use blocos de sugestão para atividades no calendário)');
+      if (onbData.atividades.indexOf('academia') > -1) {
+        lines.push('2. Monte meu treino de musculação do zero com exercícios, séries e cargas iniciais — use as ações de sugestão para adicionar os exercícios direto no app');
+      }
+      lines.push('3. Identifique conflitos entre rotina, restrições e objetivo — sugira ajustes');
+      lines.push('4. Seja direto e prático.');
+
+      var msg = lines.join('\n');
 
       var chatInput = document.getElementById('chatInput');
       if (chatInput) {
@@ -4370,12 +4581,49 @@
     let cardioSelectedType = 'corrida';
 
     // Weekly schedule: day of week (1=Mon) -> activity types
-    const WEEKLY_SCHEDULE = {
+    // Default fallback; overridden by getUserWeeklySchedule() from onboarding data
+    let WEEKLY_SCHEDULE = {
       1: ['tenis'],
       3: ['surf', 'fisio'],
       5: ['fisio'],
       6: ['surf']
     };
+
+    var goalProgressCache = null;
+    var dailyMessageCache = null;
+
+    // Maps onboarding activity names to calendar/schedule types
+    function mapActivityToCalendarType(nome) {
+      var map = {
+        'academia': null, // handled as upper/lower, not a schedule type
+        'surf': 'surf', 'tenis': 'tenis', 'fisio': 'fisio', 'fisioterapia': 'fisio',
+        'corrida': 'corrida', 'bike': 'bike', 'natacao': 'natacao',
+        'yoga': 'mobilidade', 'pilates': 'mobilidade'
+      };
+      return (map.hasOwnProperty(nome)) ? map[nome] : nome;
+    }
+
+    var diasToNum = { 'seg': 1, 'ter': 2, 'qua': 3, 'qui': 4, 'sex': 5, 'sab': 6, 'dom': 0 };
+
+    function getUserWeeklySchedule() {
+      if (!onbData.atividades_detalhes || onbData.atividades_detalhes.length === 0) {
+        return WEEKLY_SCHEDULE;
+      }
+      var schedule = {};
+      onbData.atividades_detalhes.forEach(function(d) {
+        var calType = mapActivityToCalendarType(d.nome);
+        if (!calType) return; // skip academia
+        if (d.dias && d.dias.length > 0) {
+          d.dias.forEach(function(dia) {
+            var dayNum = diasToNum[dia];
+            if (dayNum === undefined) return;
+            if (!schedule[dayNum]) schedule[dayNum] = [];
+            if (schedule[dayNum].indexOf(calType) === -1) schedule[dayNum].push(calType);
+          });
+        }
+      });
+      return Object.keys(schedule).length > 0 ? schedule : WEEKLY_SCHEDULE;
+    }
 
     const SIMPLE_ACTIVITY_TYPES = ['cardio', 'surf', 'tenis', 'fisio'];
     
@@ -4800,23 +5048,28 @@
       const now = getSaoPauloNow();
       const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon...
       const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'];
-      const scheduleEmojis = { tenis: '🎾', surf: '🏄', fisio: '🏥', upper: '💪', lower: '🦵', mobilidade: '🧘', cardio: '🏃' };
+      const scheduleEmojis = { tenis: '🎾', surf: '🏄', fisio: '🏥', upper: '💪', lower: '🦵', mobilidade: '🧘', cardio: '🏃', corrida: '🏃', bike: '🚴', natacao: '🏊' };
+
+      const effectiveSchedule = getUserWeeklySchedule();
 
       // Today banner
-      const todaySchedule = WEEKLY_SCHEDULE[dayOfWeek];
+      const todaySchedule = effectiveSchedule[dayOfWeek];
       const todayEl = document.getElementById('todaySchedule');
-      if (todaySchedule && todaySchedule.length > 0) {
-        const items = todaySchedule.map(t => (scheduleEmojis[t] || '') + ' ' + t.charAt(0).toUpperCase() + t.slice(1)).join(' + ');
-        todayEl.textContent = 'Hoje: ' + items;
-      } else {
-        todayEl.textContent = 'Hoje: livre (musculacao, mobilidade ou cardio)';
+      if (todayEl) {
+        if (todaySchedule && todaySchedule.length > 0) {
+          const items = todaySchedule.map(t => (scheduleEmojis[t] || '') + ' ' + t.charAt(0).toUpperCase() + t.slice(1)).join(' + ');
+          todayEl.textContent = 'Hoje: ' + items;
+        } else {
+          todayEl.textContent = 'Hoje: livre (musculacao, mobilidade ou cardio)';
+        }
       }
 
       // Week overview row
       const weekEl = document.getElementById('weekOverview');
+      if (!weekEl) return;
       let html = '';
       for (let d = 0; d < 7; d++) {
-        const sched = WEEKLY_SCHEDULE[d];
+        const sched = effectiveSchedule[d];
         const isToday = d === dayOfWeek;
         const emojis = sched ? sched.map(t => scheduleEmojis[t] || '').join('') : '🏋️';
         html += `<div class="schedule-day${isToday ? ' today' : ''}">
@@ -6258,14 +6511,34 @@
       var objetivoPrazo = onbData.objetivo_data || '';
       var objetivoResultado = onbData.objetivo_resultado || '';
 
+      var peso = onbData.peso || '';
+
+      // Build rich activity details for context
+      var atividadesRicas = '';
+      if (onbData.atividades_detalhes && onbData.atividades_detalhes.length > 0) {
+        atividadesRicas = onbData.atividades_detalhes.map(function(d) {
+          var parts = [d.nome + ' ' + d.frequencia + 'x/sem (' + d.intensidade + ')'];
+          if (d.dias && d.dias.length > 0) parts.push('dias: ' + d.dias.join(','));
+          if (d.horario) parts.push('às ' + d.horario);
+          if (d.divisao) parts.push('divisão: ' + d.divisao);
+          if (d.series_por_exercicio) parts.push(d.series_por_exercicio + 'séries/ex');
+          if (d.nivel_surf) parts.push('nível surf: ' + d.nivel_surf);
+          if (d.descricao_fisio) parts.push('fisio: ' + d.descricao_fisio);
+          if (d.contexto_tenis) parts.push('tênis: ' + d.contexto_tenis);
+          if (d.pace_atual) parts.push('pace: ' + d.pace_atual + '/km');
+          if (d.km_semanal) parts.push(d.km_semanal + 'km/sem');
+          return parts.join(' | ');
+        }).join('\n');
+      }
+
       return '## PERFIL\n' +
-        'Nome: ' + nome + ' | Idade: ' + idade + ' | Altura: ' + altura + 'cm | Sexo: ' + (selectedSexo || '?') + '\n' +
+        'Nome: ' + nome + ' | Idade: ' + idade + ' | Altura: ' + altura + 'cm' + (peso ? ' | Peso: ' + peso + 'kg' : '') + ' | Sexo: ' + (selectedSexo || '?') + '\n' +
         'Objetivo: ' + objetivo + '\n' +
         (objetivoTexto ? 'Objetivo detalhado: ' + objetivoTexto + '\n' : '') +
         (objetivoPrazo ? 'Prazo: ' + objetivoPrazo + '\n' : '') +
         (objetivoResultado ? 'Resultado esperado: ' + objetivoResultado + '\n' : '') +
         (nivelExp ? 'Nivel: ' + nivelExp + '\n' : '') +
-        (atividadesP ? 'Atividades: ' + atividadesP + '\n' : '') +
+        (atividadesRicas ? '## ATIVIDADES DETALHADAS\n' + atividadesRicas + '\n\n' : (atividadesP ? 'Atividades: ' + atividadesP + '\n' : '')) +
         (freqSemanal ? 'Frequencia semanal total: ' + freqSemanal + 'x\n' : '') +
         'Dores/Problemas: ' + dores + '\n' +
         'Estado hoje: ' + estado + '\n\n' +
@@ -8452,6 +8725,21 @@
             updateSaveStatus(true, new Date());
           }
 
+          // Backfill onbData.atividades_detalhes from profile if not already set
+          if ((!onbData.atividades_detalhes || onbData.atividades_detalhes.length === 0) &&
+              profile.atividades_praticadas && Array.isArray(profile.atividades_praticadas)) {
+            onbData.atividades_detalhes = profile.atividades_praticadas;
+            onbData.atividades = profile.atividades_praticadas.map(function(d) { return d.nome || d; });
+          }
+          // Backfill onbData from profile fields
+          if (!onbData.nome && profile.nome) onbData.nome = profile.nome;
+          if (!onbData.objetivo_texto && profile.objetivo_data && profile.objetivo_data.texto) {
+            onbData.objetivo_texto = profile.objetivo_data.texto;
+            onbData.objetivo_data = profile.objetivo_data.data_alvo || '';
+            onbData.objetivo_resultado = profile.objetivo_data.resultado_esperado || '';
+          }
+          if (!onbData.peso && profile.peso) onbData.peso = String(profile.peso);
+
           // Update chat profile summary
           updateChatProfileSummary();
           if (typeof renderDashboardCards === 'function') renderDashboardCards();
@@ -8565,6 +8853,9 @@
           '</div>' +
           '<div class="dash-card-arrow">›</div>' +
         '</div>';
+
+      // Goal progress card (only if cache available)
+      renderGoalProgressCard(container);
     }
 
     // ========== EXERCISE HISTORY + CHARTS ==========
@@ -8833,6 +9124,287 @@
       } catch(e) { console.error('migration error:', e); }
     }
 
+    // ========== DAILY COACH SYSTEM ==========
+
+    function calculateGoalProgress(profile) {
+      var objetivoData = profile.objetivo_data || {};
+      var dataAlvo = objetivoData.data_alvo || '';
+      var hoje = getSaoPauloNow();
+      var onboardingAt = profile.onboarding_at ? new Date(profile.onboarding_at) : null;
+
+      if (dataAlvo) {
+        var deadline = new Date(dataAlvo + 'T12:00:00');
+        var startDate = onboardingAt || new Date(hoje.getFullYear(), hoje.getMonth() - 1, hoje.getDate());
+        var totalDays = Math.max(1, Math.round((deadline - startDate) / 86400000));
+        var elapsedDays = Math.round((hoje - startDate) / 86400000);
+        var pct = Math.min(100, Math.max(0, Math.round(elapsedDays / totalDays * 100)));
+        var daysRemaining = Math.round((deadline - hoje) / 86400000);
+        var deadlineReached = daysRemaining <= 0;
+        return {
+          texto: objetivoData.texto || profile.objetivo || '',
+          pct: pct,
+          label: deadlineReached ? 'Prazo atingido!' : daysRemaining + ' dia' + (daysRemaining !== 1 ? 's' : '') + ' restantes',
+          daysSinceStart: elapsedDays,
+          daysRemaining: daysRemaining,
+          deadlineReached: deadlineReached
+        };
+      } else {
+        // Fallback: consistency-based
+        var last30 = Object.keys(activities).filter(function(d) {
+          var diff = (hoje - new Date(d)) / 86400000;
+          return diff >= 0 && diff <= 30;
+        });
+        var trainedDays = last30.filter(function(d) {
+          return activities[d] && activities[d].some(function(a) { return a.type !== 'descanso'; });
+        }).length;
+        var pctC = last30.length > 0 ? Math.round(trainedDays / last30.length * 100) : 0;
+        return {
+          texto: objetivoData.texto || profile.objetivo || '',
+          pct: pctC,
+          label: pctC + '% de consistência (30 dias)',
+          daysSinceStart: trainedDays,
+          daysRemaining: null,
+          deadlineReached: false
+        };
+      }
+    }
+
+    function detectMissedTrainingDay() {
+      var hoje = getSaoPauloNow();
+      var ontem = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - 1);
+      var ontemNum = ontem.getDay();
+      var schedule = getUserWeeklySchedule();
+      var scheduledYesterday = schedule[ontemNum];
+      if (!scheduledYesterday || scheduledYesterday.length === 0) return null;
+
+      var ontemStr = ontem.getFullYear() + '-' + String(ontem.getMonth()+1).padStart(2,'0') + '-' + String(ontem.getDate()).padStart(2,'0');
+      var yActs = activities[ontemStr] || [];
+      var hasActivity = yActs.some(function(a) { return a.type && a.type !== 'descanso'; });
+      if (hasActivity) return null;
+
+      return { date: ontemStr, scheduledActivities: scheduledYesterday };
+    }
+
+    function renderDailyCoachCard(message, animate) {
+      var el = document.getElementById('dailyCoachCard');
+      if (!el) return;
+      var preview = message.replace(/\*\*/g, '').replace(/\n/g, ' ');
+      if (preview.length > 120) preview = preview.substring(0, 120) + '...';
+      el.innerHTML = '<div class="daily-coach-card">' +
+        '<div class="daily-coach-card-header">🤖 Coach AI — Hoje</div>' +
+        '<div class="daily-coach-card-preview">' + preview + '</div>' +
+        '<button class="daily-coach-card-btn" onclick="startCoachChatWithDailyMessage()">Ver completo →</button>' +
+        '</div>';
+      el.style.display = 'block';
+      if (animate) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(-4px)';
+        el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        requestAnimationFrame(function() {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        });
+      }
+    }
+
+    var _dailyMessageFull = '';
+    function startCoachChatWithDailyMessage() {
+      if (!_dailyMessageFull) return startCoachChat();
+      chatActive = true;
+      document.getElementById('chatStartArea').style.display = 'none';
+      document.getElementById('chatArea').style.display = 'flex';
+      // Add to fresh chat (don't clear existing)
+      if (chatMessages.length === 0) {
+        document.getElementById('chatMessages').innerHTML = '';
+        addChatBubble(_dailyMessageFull, 'assistant');
+        chatMessages.push({ role: 'assistant', content: _dailyMessageFull });
+        saveChatToStorage();
+      }
+    }
+
+    function buildDailyMessageSystemPrompt() {
+      return 'Você é o Coach AI, um treinador pessoal inteligente. ' +
+        'Seja direto, motivador e personalizado. Máximo 3 parágrafos curtos. ' +
+        'Use o contexto do usuário para criar uma mensagem matinal relevante.';
+    }
+
+    async function checkAndShowDailyMessage() {
+      try {
+        var today = getTodayDateStr();
+        var res = await fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId() +
+          '&select=last_daily_message_date,daily_message_cache,onboarding_at,objetivo_data,atividades_praticadas,nome', {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        });
+        var data = await res.json();
+        var profile = data[0] || {};
+
+        // Update weekly schedule from atividades_praticadas if onbData is empty
+        if ((!onbData.atividades_detalhes || onbData.atividades_detalhes.length === 0) &&
+            profile.atividades_praticadas && Array.isArray(profile.atividades_praticadas)) {
+          onbData.atividades_detalhes = profile.atividades_praticadas;
+          onbData.atividades = profile.atividades_praticadas.map(function(d) { return d.nome; });
+        }
+
+        // Calculate goal progress
+        goalProgressCache = calculateGoalProgress(profile);
+        renderDashboardCards(); // re-render to show goal card
+
+        // Check for goal deadline celebration
+        if (goalProgressCache.deadlineReached && goalProgressCache.texto) {
+          var celebKey = 'goal-deadline-notified-' + getTodayDateStr();
+          if (!localStorage.getItem(celebKey)) {
+            localStorage.setItem(celebKey, '1');
+            showGoalCelebrationModal(goalProgressCache.texto);
+          }
+        }
+
+        // Check if already sent today with cache
+        if (profile.last_daily_message_date === today && profile.daily_message_cache && profile.daily_message_cache.message) {
+          _dailyMessageFull = profile.daily_message_cache.message;
+          renderDailyCoachCard(_dailyMessageFull, false);
+          return;
+        }
+
+        // Detect missed training
+        var missed = detectMissedTrainingDay();
+
+        // Build prompt
+        var nome = profile.nome || document.getElementById('profileNome')?.value?.trim() || '';
+        var now = getSaoPauloNow();
+        var isMonday = now.getDay() === 1;
+        var weekDayName = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][now.getDay()];
+        var lastReviewDate = profile.last_weekly_review_date;
+        var needsWeeklyReview = isMonday && lastReviewDate !== today;
+
+        var todaySchedule = getUserWeeklySchedule()[now.getDay()] || [];
+
+        var prompt = '';
+        if (needsWeeklyReview) {
+          prompt = 'Hoje é ' + weekDayName + ', ' + today + '. ';
+          if (nome) prompt += 'Nome: ' + nome + '. ';
+          if (goalProgressCache.texto) prompt += 'Objetivo: ' + goalProgressCache.texto + ' (' + goalProgressCache.label + '). ';
+          prompt += 'É segunda-feira — faça uma revisão semanal motivadora. Destaque o que foi bom na semana passada, o foco desta semana, e uma dica prática. Máximo 3 parágrafos.';
+        } else {
+          prompt = 'Hoje é ' + weekDayName + ', ' + today + '. ';
+          if (nome) prompt += 'Nome: ' + nome + '. ';
+          if (goalProgressCache.texto) prompt += 'Objetivo: ' + goalProgressCache.texto + ' (' + goalProgressCache.label + '). ';
+          if (todaySchedule.length > 0) prompt += 'Agenda de hoje: ' + todaySchedule.join(', ') + '. ';
+          if (missed) prompt += 'ATENÇÃO: ontem (' + missed.date + ') era dia de ' + missed.scheduledActivities.join('/') + ' mas não foi registrada atividade. ';
+          prompt += 'Escreva uma mensagem matinal de Coach para o usuário. ';
+          if (missed) prompt += 'Mencione sutilmente o treino perdido de ontem e encoraje retomar. ';
+          prompt += 'Se tiver agenda hoje, motive para o treino. Seja direto e pessoal. Máximo 2 parágrafos.';
+        }
+
+        // Use API directly with custom system prompt (no workout context bloat)
+        var apiRes = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            system: buildDailyMessageSystemPrompt(),
+            messages: [{ role: 'user', content: prompt }]
+          })
+        });
+        if (!apiRes.ok) return;
+        var apiData = await apiRes.json();
+        var response = apiData.content;
+        if (!response) return;
+
+        _dailyMessageFull = response;
+        renderDailyCoachCard(response, true);
+
+        // Save to Supabase (fire-and-forget)
+        var patch = {
+          last_daily_message_date: today,
+          daily_message_cache: { message: response, generated_at: new Date().toISOString() }
+        };
+        if (needsWeeklyReview) patch.last_weekly_review_date = today;
+
+        fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId(), {
+          method: 'PATCH',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify(patch)
+        }).catch(function() {});
+
+      } catch(e) { console.warn('checkAndShowDailyMessage error:', e); }
+    }
+
+    function showGoalCelebrationModal(objetivoText) {
+      var overlay = document.createElement('div');
+      overlay.className = 'goal-modal-overlay';
+      overlay.id = 'goalCelebrationModal';
+      var truncated = objetivoText.length > 80 ? objetivoText.substring(0, 80) + '...' : objetivoText;
+      overlay.innerHTML = '<div class="goal-modal-box">' +
+        '<div class="goal-modal-emoji">🎯</div>' +
+        '<div class="goal-modal-title">Parabéns!</div>' +
+        '<div class="goal-modal-desc">Você chegou ao prazo do seu objetivo: <strong>' + truncated + '</strong>. Como foi?</div>' +
+        '<div class="goal-modal-actions">' +
+        '<button class="goal-modal-btn goal-modal-btn-primary" onclick="startGoalCoachChat(\'celebracao\')">Compartilhar com Coach AI</button>' +
+        '<button class="goal-modal-btn goal-modal-btn-secondary" onclick="document.getElementById(\'goalCelebrationModal\').remove()">Fechar</button>' +
+        '</div></div>';
+      document.body.appendChild(overlay);
+    }
+
+    function startGoalCoachChat(context) {
+      var modal = document.getElementById('goalCelebrationModal');
+      if (modal) modal.remove();
+      showView('coach');
+      var seed = context === 'celebracao'
+        ? 'Cheguei ao prazo do meu objetivo! Quero compartilhar como foi e definir o próximo desafio.'
+        : 'Quero definir um novo objetivo. Me ajude a estruturar algo desafiador e realista.';
+      var chatInput = document.getElementById('chatInput');
+      if (chatInput) {
+        chatInput.value = seed;
+        if (typeof sendChatMessage === 'function') sendChatMessage();
+      }
+    }
+
+    // ========== GOAL PROGRESS CARD ==========
+
+    function renderGoalProgressCard(container) {
+      if (!goalProgressCache || !goalProgressCache.texto) return;
+      var pct = goalProgressCache.pct;
+      var barColor = pct >= 80 ? 'var(--success)' : (pct >= 40 ? 'var(--warning)' : 'var(--accent)');
+      var footer1 = goalProgressCache.daysSinceStart > 0 ? goalProgressCache.daysSinceStart + ' dias treinando' : 'Início recente';
+      var footer2 = goalProgressCache.label;
+      var truncText = goalProgressCache.texto.length > 60 ? goalProgressCache.texto.substring(0, 60) + '...' : goalProgressCache.texto;
+
+      container.innerHTML += '<div class="dash-card" onclick="showView(\'coach\')">' +
+        '<div class="dash-card-icon">🎯</div>' +
+        '<div class="dash-card-content" style="width:100%;">' +
+          '<div class="dash-card-title">Objetivo</div>' +
+          '<div class="dash-card-value" style="font-size:12px;margin-bottom:4px;">' + truncText + '</div>' +
+          '<div class="goal-progress-bar-track"><div class="goal-progress-bar-fill" style="width:' + pct + '%;background:' + barColor + ';"></div></div>' +
+          '<div class="goal-card-footer"><span>' + footer1 + '</span><span>' + footer2 + '</span></div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    // ========== EMPTY WORKOUT STATE ==========
+
+    function showEmptyWorkoutState() {
+      // Only clear the main strength/compound sections for new users
+      var containers = ['#braco', '#perna'];
+      containers.forEach(function(sel) {
+        var container = document.querySelector(sel);
+        if (!container) return;
+        // Remove hardcoded exercises (data-id not starting with 'c')
+        container.querySelectorAll('.exercise[data-id]').forEach(function(ex) {
+          var id = ex.dataset.id || '';
+          if (!id.startsWith('c')) ex.remove();
+        });
+        // If still has exercises (custom), skip empty state
+        if (container.querySelectorAll('.exercise[data-id]').length > 0) return;
+        // Add empty state
+        var emptyDiv = document.createElement('div');
+        emptyDiv.className = 'workout-empty-state';
+        emptyDiv.innerHTML = '<div class="workout-empty-icon">🤖</div>' +
+          '<div class="workout-empty-title">Treino não configurado</div>' +
+          '<div class="workout-empty-desc">O Coach AI vai montar seu treino personalizado com exercícios, séries e cargas iniciais.</div>' +
+          '<button class="workout-empty-cta" onclick="showView(\'coach\')">Falar com Coach AI</button>';
+        container.appendChild(emptyDiv);
+      });
+    }
+
     async function initApp() {
       // Phase 1: sequential dependencies
       await loadCustomExercises();
@@ -8874,6 +9446,15 @@
         sessionTimerInterval = setInterval(updateSessionTimerDisplay, 1000);
         updateSessionTimerDisplay();
       }
+
+      // Show empty workout state for new users
+      if (isNewUser) {
+        isNewUser = false;
+        showEmptyWorkoutState();
+      }
+
+      // Daily coach message (non-blocking, fires after app is ready)
+      checkAndShowDailyMessage();
     }
 
     document.addEventListener('DOMContentLoaded', async function() {
