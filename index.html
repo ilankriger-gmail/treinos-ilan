@@ -4264,7 +4264,8 @@
         reader.onload = async function(e) {
           var content = e.target.result;
           if (file.type.startsWith('image/')) content = await compressImage(content, 1200, 0.85);
-          var fileObj = { name: file.name, type: file.type, content: content };
+          var actualType = (file.type.startsWith('image/') && content.includes(';')) ? content.split(';')[0].split(':')[1] : file.type;
+          var fileObj = { name: file.name, type: actualType, content: content };
           // Save to Supabase
           try {
             var res = await fetch(SUPABASE_URL + '/rest/v1/user_files', {
@@ -4317,8 +4318,9 @@
           var messages = [];
           if (file.type.startsWith('image/')) {
             var b64 = content.includes(',') ? content.split(',')[1] : content;
+            var mediaType = content.includes(';') ? content.split(';')[0].split(':')[1] : file.type;
             messages = [{ role: 'user', content: [
-              { type: 'image', source: { type: 'base64', media_type: file.type, data: b64 } },
+              { type: 'image', source: { type: 'base64', media_type: mediaType, data: b64 } },
               { type: 'text', text: 'Extraia o treino desta imagem em formato texto estruturado. Liste os exercícios, séries, repetições e cargas exatamente como estão. Organize por dia/grupo muscular. Responda em português. Retorne apenas o texto do treino estruturado, sem explicações adicionais.' }
             ]}];
           } else {
@@ -8420,7 +8422,8 @@
 
           if (file.type.startsWith('image/')) {
             compressImage(result, 800, 0.7).then(function(compressed) {
-              saveFileToSupabase({ name: file.name, type: file.type, content: compressed });
+              var actualType = compressed.includes(';') ? compressed.split(';')[0].split(':')[1] : file.type;
+              saveFileToSupabase({ name: file.name, type: actualType, content: compressed });
             });
           } else {
             saveFileToSupabase({ name: file.name, type: file.type, content: result });
