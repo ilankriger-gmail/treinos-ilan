@@ -25,10 +25,10 @@
       --accent: #7f6df2;
       --accent-dim: rgba(127,109,242,0.08);
       --accent-glow: rgba(127,109,242,0.0);
-      --text-primary: #dcddde;
-      --text-secondary: #a7a9ab;
-      --text-muted: #6b6e73;
-      --border: rgba(255,255,255,0.08);
+      --text-primary: #e8e9ea;
+      --text-secondary: #b8babb;
+      --text-muted: #8a8d91;
+      --border: rgba(255,255,255,0.10);
       --success: #59a869;
       --warning: #e0a256;
       --error: #d95555;
@@ -6728,8 +6728,12 @@
         (freqSemanal ? 'Frequencia semanal total: ' + freqSemanal + 'x\n' : '') +
         'Dores/Problemas: ' + dores + '\n' +
         'Estado hoje: ' + estado + '\n' +
-        (onbData.exames_recentes ? 'Exames recentes: ' + onbData.exames_recentes + '\n' : '') +
-        '\n' +
+        (examAnalises.length > 0 ? '## EXAMES E LAUDOS (do mais recente para o mais antigo)\n' +
+          examAnalises.slice(0, 5).map(function(e) {
+            var d = new Date(e.data).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+            return '[' + d + '] ' + e.nome + ':\n' + e.analise;
+          }).join('\n\n') + '\n\n' :
+          (onbData.exames_recentes ? 'Exames recentes: ' + onbData.exames_recentes + '\n' : '')) +
         notasMedicasText +
         '## TREINO ATUAL\n' +
         buildDynamicWorkoutText() + '\n' +
@@ -8338,6 +8342,7 @@
             }
           }
           showToast('Arquivo analisado com sucesso');
+          saveExamAnalysisToProfile(savedFile.name, description); // fire-and-forget
         } else {
           showToast('Arquivo salvo (analise indisponivel)');
         }
@@ -8358,7 +8363,7 @@
           var mediaType = fileObj.type || 'image/jpeg';
           messages = [{ role: 'user', content: [
             { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64Data } },
-            { type: 'text', text: 'Descreva este arquivo/imagem de forma concisa para uso medico/fitness. Inclua todos os dados relevantes visiveis (valores, diagnosticos, datas, recomendacoes, medidas). Responda em portugues. Maximo 500 palavras.' }
+            { type: 'text', text: 'Você é um assistente médico especializado. Analise este exame/laudo e extraia um relatório estruturado em português com:\n1. Tipo de exame e data (se visível)\n2. Todos os valores com unidades e referência (normal/alterado)\n3. Diagnósticos ou achados relevantes\n4. Recomendações médicas mencionadas\n5. Implicações para treino físico (o que deve ou não fazer)\nSeja objetivo e inclua todos os dados numéricos visíveis. Máximo 600 palavras.' }
           ]}];
         } else {
           // Texto/PDF: envia primeiros 4000 chars
@@ -8500,6 +8505,7 @@
           console.error('Erro ao salvar descricao:', e);
         }
         showToast('Arquivo analisado com sucesso');
+        saveExamAnalysisToProfile(file.name, description); // fire-and-forget
       } else {
         showToast('Erro ao analisar arquivo', 'error');
       }
@@ -8722,30 +8728,91 @@
     }
     
     let historicoAnalises = [];
-    
+    var examAnalises = []; // análises de exames/laudos
+
+    async function saveExamAnalysisToProfile(fileName, analysis) {
+      try {
+        // Load current objetivo_data
+        var res = await fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId() + '&select=objetivo_data', {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        });
+        var rows = await res.json();
+        var objData = (rows[0] && rows[0].objetivo_data) ? rows[0].objetivo_data : {};
+        var examesArr = Array.isArray(objData.exames_analise) ? objData.exames_analise : [];
+
+        // Add new entry
+        var entry = { data: new Date().toISOString(), nome: fileName, analise: analysis };
+        examesArr.unshift(entry); // newest first
+        if (examesArr.length > 20) examesArr = examesArr.slice(0, 20); // keep last 20
+
+        objData.exames_analise = examesArr;
+
+        // Save back
+        await fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId(), {
+          method: 'PATCH',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ objetivo_data: objData, updated_at: new Date().toISOString() })
+        });
+
+        // Update in-memory globals
+        examAnalises = examesArr;
+        onbData.exames_recentes = examesArr.slice(0, 3).map(function(e) {
+          return '[' + new Date(e.data).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) + '] ' + e.nome + ': ' + e.analise.substring(0, 200);
+        }).join('\n\n');
+
+        renderAnalysisHistory();
+      } catch (e) {
+        console.error('Erro ao salvar análise do exame:', e);
+      }
+    }
+
     function renderAnalysisHistory() {
       const container = document.getElementById('analysisHistory');
       if (!container) return;
-      
-      if (historicoAnalises.length === 0) {
-        container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px;">Nenhuma análise ainda</p>';
+
+      var html = '';
+
+      // Exam analyses
+      if (examAnalises.length > 0) {
+        html += '<div style="font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:0.05em;margin-bottom:8px;">EXAMES E LAUDOS</div>';
+        html += examAnalises.slice(0, 10).map(function(a, i) {
+          var dateFmt = new Date(a.data).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+          var preview = a.analise.replace(/\n/g, ' ').substring(0, 90) + '…';
+          return '<div style="padding:10px 12px;background:var(--bg-tertiary);border-radius:8px;margin-bottom:6px;cursor:pointer;" onclick="showExamAnalysis(' + i + ')">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">' +
+              '<span style="font-size:12px;font-weight:600;color:var(--text-primary);">🧪 ' + a.nome + '</span>' +
+              '<span style="font-size:11px;color:var(--text-muted);">' + dateFmt + '</span>' +
+            '</div>' +
+            '<div style="font-size:12px;color:var(--text-secondary);line-height:1.4;">' + preview + '</div>' +
+          '</div>';
+        }).join('');
+      }
+
+      // Coach AI analyses
+      if (historicoAnalises.length > 0) {
+        html += '<div style="font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:0.05em;margin:12px 0 8px;">ANÁLISES DO COACH</div>';
+        html += historicoAnalises.slice(0, 3).map(function(a, i) {
+          var dateFmt = new Date(a.data).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+          return '<div style="padding:10px 12px;background:var(--bg-tertiary);border-radius:8px;margin-bottom:6px;cursor:pointer;" onclick="showAnalysis(' + i + ')">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">' +
+              '<span style="font-size:12px;font-weight:600;color:var(--text-primary);">📊 Análise ' + (historicoAnalises.length - i) + '</span>' +
+              '<span style="font-size:11px;color:var(--text-muted);">' + dateFmt + '</span>' +
+            '</div>' +
+            '<div style="font-size:12px;color:var(--text-secondary);line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + a.texto.substring(0, 90) + '…</div>' +
+          '</div>';
+        }).join('');
+      }
+
+      if (!html) {
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px;">Nenhuma análise ainda. Suba um exame acima para começar.</p>';
         return;
       }
-      
-      container.innerHTML = historicoAnalises.slice(0, 5).map((a, i) => `
-        <div style="padding: 12px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 8px; cursor: pointer;" onclick="showAnalysis(${i})">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 13px; font-weight: 500;">Análise ${historicoAnalises.length - i}</span>
-            <span style="font-size: 11px; color: var(--text-muted);">${new Date(a.data).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</span>
-          </div>
-          <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${a.texto.substring(0, 100)}...</div>
-        </div>
-      `).join('');
+
+      container.innerHTML = html;
     }
     
     function showAnalysis(index) {
       const analysis = historicoAnalises[index];
-      // Open chat and show the old analysis as a message
       chatMessages = [];
       chatActive = true;
       document.getElementById('chatStartArea').style.display = 'none';
@@ -8753,7 +8820,21 @@
       document.getElementById('chatMessages').innerHTML = '';
       renderAssistantMessage(analysis.texto);
     }
-    
+
+    function showExamAnalysis(index) {
+      var exam = examAnalises[index];
+      if (!exam) return;
+      chatMessages = [];
+      chatActive = true;
+      document.getElementById('chatStartArea').style.display = 'none';
+      document.getElementById('chatArea').style.display = 'flex';
+      showView('coach');
+      var dateFmt = new Date(exam.data).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+      var fullText = '**Exame: ' + exam.nome + '** (' + dateFmt + ')\n\n' + exam.analise;
+      document.getElementById('chatMessages').innerHTML = '';
+      renderAssistantMessage(fullText);
+    }
+
     var estadoEntries = [];
     var _cachedProfile = null;
 
@@ -8931,10 +9012,18 @@
             onbData.objetivo_resultado = profile.objetivo_data.resultado_esperado || '';
           }
           if (!onbData.peso && profile.peso) onbData.peso = String(profile.peso);
-          if (!onbData.exames_recentes && profile.objetivo_data && profile.objetivo_data.exames_recentes)
-            onbData.exames_recentes = profile.objetivo_data.exames_recentes;
           if (!onbData.treino_atual && profile.objetivo_data && profile.objetivo_data.treino_atual)
             onbData.treino_atual = profile.objetivo_data.treino_atual;
+          // Load exam analyses
+          if (profile.objetivo_data && Array.isArray(profile.objetivo_data.exames_analise) && profile.objetivo_data.exames_analise.length > 0) {
+            examAnalises = profile.objetivo_data.exames_analise;
+            onbData.exames_recentes = examAnalises.slice(0, 3).map(function(e) {
+              return '[' + new Date(e.data).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) + '] ' + e.nome + ': ' + e.analise.substring(0, 200);
+            }).join('\n\n');
+            renderAnalysisHistory();
+          } else if (!onbData.exames_recentes && profile.objetivo_data && profile.objetivo_data.exames_recentes) {
+            onbData.exames_recentes = profile.objetivo_data.exames_recentes;
+          }
 
           // Update chat profile summary
           updateChatProfileSummary();
