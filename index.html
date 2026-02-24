@@ -1295,6 +1295,7 @@
       border-bottom: 1px solid var(--border);
       cursor: pointer;
       transition: all 0.2s;
+      position: relative;
     }
 
     .chat-profile-header:hover {
@@ -1306,6 +1307,7 @@
       align-items: center;
       gap: 10px;
       font-size: 13px;
+      padding-right: 36px;
     }
 
     .chat-profile-summary .toggle-icon {
@@ -1860,6 +1862,23 @@
     /* Suggestion card */
     .suggestion-card {
       border-radius: 10px;
+    }
+
+    .suggestion-batch-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 8px;
+    }
+    .suggestion-accept-all {
+      padding: 10px 20px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
     }
 
     /* 6.1 Hover effects only on devices with hover */
@@ -3692,6 +3711,7 @@
     <div id="coachView" class="view">
       <!-- Profile collapsible header -->
       <div class="chat-profile-header" onclick="toggleChatProfile()">
+        <button onclick="event.stopPropagation(); showView('calendar')" aria-label="Fechar Coach" style="position:absolute; right:16px; top:50%; transform:translateY(-50%); background:transparent; border:none; color:var(--text-muted); font-size:20px; cursor:pointer; padding:4px 8px; line-height:1; z-index:1;">×</button>
         <div class="chat-profile-summary">
           <span>👤</span>
           <span id="chatProfileName" style="font-weight: 600;">Meu Perfil</span>
@@ -7620,6 +7640,15 @@
         container.appendChild(card);
       });
 
+      // Batch accept bar (when 2+ valid suggestions)
+      var validSuggestions = suggestions.filter(function(s) { return s; });
+      if (validSuggestions.length >= 2) {
+        var bar = document.createElement('div');
+        bar.className = 'suggestion-batch-bar';
+        bar.innerHTML = '<button class="suggestion-accept-all" onclick="acceptAllSuggestions(this)">✓ Aceitar todas (' + validSuggestions.length + ')</button>';
+        container.appendChild(bar);
+      }
+
       // Save analysis to history
       if (suggestions.length > 0 || cleanText.length > 100) {
         historicoAnalises.unshift({ texto: cleanText, data: new Date().toISOString() });
@@ -7652,7 +7681,8 @@
       const emojiMap = { remove: '🗑️', replace: '🔄', reorder: '↕️' };
       const badgeMap = { remove: 'Remover', replace: 'Substituir', reorder: 'Reordenar' };
       const emoji = s.activity_type ? (activityEmojis[s.activity_type] || '📋') : (emojiMap[action] || '💡');
-      const badge = s.type === 'atividade' ? 'Atividade' : (s.type === 'exercicio' ? (badgeMap[action] || 'Exercício') : 'Sugestão');
+      const actBadgeMap = { remove: 'Remover Atividade', replace: 'Substituir Atividade' };
+      const badge = s.type === 'atividade' ? (actBadgeMap[action] || 'Atividade') : (s.type === 'exercicio' ? (badgeMap[action] || 'Exercício') : 'Sugestão');
 
       var displayLabel = s.label;
       if (action === 'replace' && s.exercise_name && s.exercise_name !== s.label) {
@@ -8060,17 +8090,15 @@
       } catch(e) { console.error('loadCustomExercises:', e); }
     }
 
-    async function acceptSuggestion(idx, btn) {
-      const card = btn.closest('.suggestion-card');
-      const s = JSON.parse(card.dataset.suggestion);
-      card.classList.add('accepted');
+    async function _doAcceptSuggestion(s, cardEl) {
+      cardEl.classList.add('accepted');
 
       if (s.type === 'exercicio') {
         var exAction = (s.action || 'modify').toLowerCase();
         var exLabelMap = { remove: 'Exercício removido', replace: 'Exercício substituído', add: 'Exercício adicionado', reorder: 'Exercício reordenado' };
         var exLabel = exLabelMap[exAction] || 'Exercício atualizado';
         applyExerciseSuggestion(s);
-        card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">' + exLabel + '</span>';
+        cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">' + exLabel + '</span>';
         return;
       }
 
@@ -8078,34 +8106,95 @@
       const type = s.activity_type && validTypes.includes(s.activity_type) ? s.activity_type : null;
 
       if (type) {
-        // Use date from suggestion, fallback to today
+        var actAction = (s.action || 'add').toLowerCase();
         var targetDate = s.date && /^\d{4}-\d{2}-\d{2}$/.test(s.date) ? s.date : getTodayDateStr();
-        if (!activities[targetDate]) activities[targetDate] = [];
-        activities[targetDate].push({
-          type: type,
-          time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
-          duration: s.duration ? parseInt(s.duration) : null,
-          notes: s.detail || s.label,
-          effort: null
-        });
 
-        // Save to the correct date
-        const prevSelected = selectedDate;
-        var parts = targetDate.split('-');
-        selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-        await saveActivities();
-        selectedDate = prevSelected;
+        if (actAction === 'remove') {
+          if (activities[targetDate]) {
+            activities[targetDate] = activities[targetDate].filter(function(a) { return a.type !== type; });
+            if (activities[targetDate].length === 0) delete activities[targetDate];
+          }
+          const prevSelected = selectedDate;
+          var parts = targetDate.split('-');
+          selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+          await saveActivities();
+          selectedDate = prevSelected;
+          renderCalendar();
+          renderDayActivities();
+          var dateLabel = targetDate === getTodayDateStr() ? 'hoje' : targetDate;
+          cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Removido de ' + dateLabel + '</span>';
 
-        renderCalendar();
-        renderDayActivities();
+        } else if (actAction === 'replace') {
+          var oldType = s.old_activity_type || type;
+          if (activities[targetDate]) {
+            activities[targetDate] = activities[targetDate].filter(function(a) { return a.type !== oldType; });
+          }
+          if (!activities[targetDate]) activities[targetDate] = [];
+          activities[targetDate].push({
+            type: type,
+            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
+            duration: s.duration ? parseInt(s.duration) : null,
+            notes: s.detail || s.label,
+            effort: null
+          });
+          const prevSelected = selectedDate;
+          var parts = targetDate.split('-');
+          selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+          await saveActivities();
+          selectedDate = prevSelected;
+          renderCalendar();
+          renderDayActivities();
+          var dateLabel = targetDate === getTodayDateStr() ? 'hoje' : targetDate;
+          cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Substituído em ' + dateLabel + '</span>';
 
-        var dateLabel = targetDate === getTodayDateStr() ? 'hoje' : targetDate;
-        card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Adicionado em ' + dateLabel + '</span>';
-        showToast('Adicionado ao calendário (' + dateLabel + ')!');
+        } else {
+          // action: add (default)
+          if (!activities[targetDate]) activities[targetDate] = [];
+          activities[targetDate].push({
+            type: type,
+            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
+            duration: s.duration ? parseInt(s.duration) : null,
+            notes: s.detail || s.label,
+            effort: null
+          });
+          const prevSelected = selectedDate;
+          var parts = targetDate.split('-');
+          selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+          await saveActivities();
+          selectedDate = prevSelected;
+          renderCalendar();
+          renderDayActivities();
+          var dateLabel = targetDate === getTodayDateStr() ? 'hoje' : targetDate;
+          cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Adicionado em ' + dateLabel + '</span>';
+        }
       } else {
-        card.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Aceito</span>';
-        showToast('Sugestão aceita!');
+        cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Aceito</span>';
       }
+    }
+
+    async function acceptSuggestion(idx, btn) {
+      const card = btn.closest('.suggestion-card');
+      const s = JSON.parse(card.dataset.suggestion);
+      await _doAcceptSuggestion(s, card);
+      showToast('Sugestão aplicada!');
+    }
+
+    async function acceptAllSuggestions(barBtn) {
+      const cards = document.querySelectorAll('#chatMessages .suggestion-card:not(.accepted):not(.rejected)');
+      if (!cards.length) return;
+      barBtn.disabled = true;
+      barBtn.textContent = 'Aplicando...';
+      var count = 0;
+      for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        var s;
+        try { s = JSON.parse(card.dataset.suggestion); } catch(e) { continue; }
+        await _doAcceptSuggestion(s, card);
+        count++;
+      }
+      showToast(count + ' sugestões aplicadas!');
+      var bar = barBtn.closest('.suggestion-batch-bar');
+      if (bar) bar.innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">✓ Todas aplicadas</span>';
     }
 
     function modifySuggestion(idx) {
