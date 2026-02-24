@@ -2796,6 +2796,9 @@
         </button>
         <input type="file" id="onbExameFileInput" accept=".pdf,.png,.jpg,.jpeg,.webp" multiple style="display:none" onchange="handleOnbExameFiles(this.files)">
         <div class="onb-file-chips" id="onbExameChips"></div>
+        <div id="onbExameAnalyzeNote" style="display:none; font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.5;">
+          ⏳ A análise acontece em segundo plano — você pode continuar o cadastro normalmente.
+        </div>
         <div class="onb-label" style="margin-top: 16px;">Nível de experiência</div>
         <div class="onb-cards" style="grid-template-columns: 1fr;">
           <div class="onb-card" data-level="iniciante" onclick="selectOnbLevel('iniciante', this)">
@@ -4257,6 +4260,8 @@
     }
 
     async function handleOnbExameFiles(files) {
+      var note = document.getElementById('onbExameAnalyzeNote');
+      if (note) note.style.display = 'block';
       Array.from(files).forEach(function(file) {
         var chipId = 'chip-ex-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
         addOnbChip('onbExameChips', chipId, file.name);
@@ -4297,7 +4302,7 @@
             }
             updateOnbChip(chipId, 'done', '✓ Analisado');
           } else {
-            updateOnbChip(chipId, '', 'Erro ao analisar');
+            updateOnbChip(chipId, '', '⚠ Não foi possível ler — adicione os dados manualmente acima');
           }
         };
         reader.readAsDataURL(file);
@@ -4414,6 +4419,22 @@
       onbData.atividades = onbData.atividades.filter(function(a) { return a !== nome; });
       onbData.atividades_detalhes = onbData.atividades_detalhes.filter(function(d) { return d.nome !== nome; });
       if (el) el.remove();
+    }
+
+    function updateDayTime(actName, dk, value) {
+      var detail = onbData.atividades_detalhes.find(function(d) { return d.nome === actName; });
+      if (!detail) return;
+      if (!detail.horarios) detail.horarios = {};
+      detail.horarios[dk] = value;
+      // Propagate to other days that are still empty
+      if (value) {
+        (detail.dias || []).forEach(function(dia) {
+          if (dia !== dk && !detail.horarios[dia]) {
+            detail.horarios[dia] = value;
+          }
+        });
+      }
+      renderActivityDetails();
     }
 
     function updateActivityDetail(actName, field, value) {
@@ -4576,7 +4597,7 @@
             var horVal = (detail.horarios && detail.horarios[dk]) || '';
             html += '<div style="display:flex;align-items:center;gap:8px;">';
             html += '<span style="font-size:12px;color:var(--text-muted);width:28px;">' + (diasSemanaMap[dk] || dk) + '</span>';
-            html += '<input type="time" class="onb-input onb-time-input" style="margin:0;width:auto;flex:1;" value="' + horVal + '" onchange="if(!onbData.atividades_detalhes.find(d=>d.nome===\'' + act + '\').horarios)onbData.atividades_detalhes.find(d=>d.nome===\'' + act + '\').horarios={};onbData.atividades_detalhes.find(d=>d.nome===\'' + act + '\').horarios[\'' + dk + '\']=this.value">';
+            html += '<input type="time" class="onb-input onb-time-input" style="margin:0;width:auto;flex:1;" value="' + horVal + '" onchange="updateDayTime(\'' + act + '\',\'' + dk + '\',this.value)">';
             html += '</div>';
           });
           html += '</div>';
@@ -4883,7 +4904,7 @@
         lines.push('4. Seja direto e prático.');
       }
 
-      var msg = lines.join('\n');
+      var fullMsg = lines.join('\n');
 
       // Activate chat area directly (no user click needed)
       chatActive = true;
@@ -4892,11 +4913,44 @@
       if (chatStartArea) chatStartArea.style.display = 'none';
       if (chatArea) chatArea.style.display = 'flex';
 
-      var chatInput = document.getElementById('chatInput');
-      if (chatInput) {
-        chatInput.value = msg;
-        if (typeof sendChatMessage === 'function') sendChatMessage();
-      }
+      // Push full data to chatMessages (hidden context for AI)
+      // but show a clean friendly bubble to the user
+      chatMessages.push({ role: 'user', content: fullMsg });
+      addChatBubble('Pronto! Acabei de preencher tudo. Cria meu plano de treino personalizado 🚀', 'user');
+      addTypingIndicator();
+      scrollChatToBottom();
+
+      var sendBtn = document.getElementById('chatSendBtn');
+      if (sendBtn) sendBtn.disabled = true;
+
+      (async function() {
+        try {
+          removeTypingIndicator();
+          var renderer = createStreamRenderer();
+          var response = await callCoachAPIStreaming(chatMessages, renderer.appendDelta, null);
+          chatMessages.push({ role: 'assistant', content: response });
+          renderer.finalize(response);
+          saveChatToStorage();
+        } catch(e) {
+          removeTypingIndicator();
+          var streamBubble = document.querySelector('.chat-bubble.streaming');
+          if (streamBubble) streamBubble.remove();
+          try {
+            addTypingIndicator();
+            var fallback = await callCoachAPI(chatMessages);
+            chatMessages.push({ role: 'assistant', content: fallback });
+            removeTypingIndicator();
+            renderAssistantMessage(fallback);
+            saveChatToStorage();
+          } catch(e2) {
+            removeTypingIndicator();
+            addChatBubble('Não foi possível conectar com o Coach AI. Tente novamente.', 'assistant');
+          }
+        } finally {
+          if (sendBtn) sendBtn.disabled = false;
+          scrollChatToBottom();
+        }
+      })();
     }
 
     // ========== END AUTH ==========
