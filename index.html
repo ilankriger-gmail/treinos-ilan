@@ -7555,10 +7555,10 @@
           var openIdx = accumulated.lastIndexOf(sgOpen);
           var sgClose = '</' + 'suggestion>';
           var closeIdx = accumulated.lastIndexOf(sgClose);
+          var sgRegex = new RegExp(sgOpen + '[\\s\\S]*?' + sgClose, 'g');
           if (openIdx > -1 && (closeIdx === -1 || closeIdx < openIdx)) {
-            safeText = accumulated.substring(0, openIdx);
+            safeText = accumulated.substring(0, openIdx).replace(sgRegex, '');
           } else {
-            var sgRegex = new RegExp(sgOpen + '[\\s\\S]*?' + sgClose, 'g');
             safeText = accumulated.replace(sgRegex, '');
           }
           if (!pendingRaf) {
@@ -7587,7 +7587,7 @@
         bubble.innerHTML = '<div class="coach-name">🤖 Coach AI</div>' + formatAnalysis(text);
       }
       container.appendChild(bubble);
-      scrollChatToBottom();
+      scrollChatToBottom(true);
     }
 
     function renderAssistantMessage(text) {
@@ -8182,7 +8182,7 @@
       typing.id = 'chatTyping';
       typing.innerHTML = '<div class="coach-name">🤖 Coach AI</div><div style="display:flex;gap:4px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
       container.appendChild(typing);
-      scrollChatToBottom();
+      scrollChatToBottom(true);
     }
 
     function removeTypingIndicator() {
@@ -8190,9 +8190,11 @@
       if (el) el.remove();
     }
 
-    function scrollChatToBottom() {
+    function scrollChatToBottom(force) {
       const container = document.getElementById('chatMessages');
-      if (container) {
+      if (!container) return;
+      var dist = container.scrollHeight - container.scrollTop - container.clientHeight;
+      if (force || dist < 120) {
         setTimeout(function() { container.scrollTop = container.scrollHeight; }, 50);
       }
     }
