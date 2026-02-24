@@ -2593,6 +2593,27 @@
     }
     .onb-ai-teaser strong { color: var(--accent); }
 
+    /* Onboarding file upload */
+    .onb-upload-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px; background: var(--bg-tertiary);
+      border: 1px dashed var(--border); border-radius: 8px;
+      color: var(--text-secondary); font-size: 13px;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      width: 100%; margin-top: 8px; transition: border-color 0.2s;
+    }
+    .onb-upload-btn:hover { border-color: var(--accent); color: var(--text-primary); }
+    .onb-file-chips { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .onb-file-chip {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 10px; background: var(--bg-tertiary);
+      border-radius: 6px; font-size: 12px; color: var(--text-secondary);
+    }
+    .onb-file-chip-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .onb-file-chip-status { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+    .onb-file-chip-status.done { color: var(--success); }
+    .onb-file-chip-status.loading { color: var(--accent); }
+
     /* Workout empty state */
     .workout-empty-state { text-align:center; padding:40px 20px; color:var(--text-muted); }
     .workout-empty-icon { font-size:48px; margin-bottom:16px; }
@@ -2770,6 +2791,11 @@
         <div class="onb-label" style="margin-top: 16px;">📋 Exames recentes (opcional)</div>
         <div class="onb-hint" style="margin-bottom: 8px;">Resultados de exames de sangue, bioimpedância, VO2max, DEXA ou qualquer avaliação física recente. O Coach usa isso para calibrar o plano.</div>
         <textarea class="onb-input" id="onbExamesRecentes" placeholder="Ex: Hemoglobina 14g/dl, vitamina D baixa, gordura corporal 22%, VO2max 42ml/kg/min..." style="min-height: 70px;"></textarea>
+        <button type="button" class="onb-upload-btn" onclick="document.getElementById('onbExameFileInput').click()">
+          📎 Enviar imagem ou PDF do exame
+        </button>
+        <input type="file" id="onbExameFileInput" accept=".pdf,.png,.jpg,.jpeg,.webp" multiple style="display:none" onchange="handleOnbExameFiles(this.files)">
+        <div class="onb-file-chips" id="onbExameChips"></div>
         <div class="onb-label" style="margin-top: 16px;">Nível de experiência</div>
         <div class="onb-cards" style="grid-template-columns: 1fr;">
           <div class="onb-card" data-level="iniciante" onclick="selectOnbLevel('iniciante', this)">
@@ -2843,7 +2869,12 @@
         <div class="onb-label">Treino de musculação atual (se tiver)</div>
         <div class="onb-hint" style="margin-bottom: 8px;">Liste os exercícios, séries, repetições e cargas que você usa atualmente. Quanto mais detalhe, melhor o Coach calibra o ponto de partida.</div>
         <textarea class="onb-input" id="onbTreinoAtual" placeholder="Ex:&#10;Seg — Peito: Supino 3x12 60kg, Crucifixo 3x15 14kg&#10;Qua — Costas: Puxada 4x10 50kg, Remada 3x12 40kg&#10;Sex — Pernas: Agachamento 4x10 80kg, Leg 3x15 90kg&#10;(Deixe em branco se não tiver treino definido)" style="min-height: 160px;"></textarea>
-        <div class="onb-hint" style="margin-top: 12px;">Você também pode colar aqui o texto de uma planilha, notas ou foto convertida em texto.</div>
+        <button type="button" class="onb-upload-btn" onclick="document.getElementById('onbTreinoFileInput').click()">
+          📎 Enviar foto ou PDF da planilha de treino
+        </button>
+        <input type="file" id="onbTreinoFileInput" accept=".pdf,.png,.jpg,.jpeg,.webp" multiple style="display:none" onchange="handleOnbTreinoFiles(this.files)">
+        <div class="onb-file-chips" id="onbTreinoChips"></div>
+        <div class="onb-hint" style="margin-top: 8px;">A IA extrai o texto da imagem/PDF e preenche o campo acima automaticamente.</div>
       </div>
       <!-- Step 8: Tudo pronto! -->
       <div class="onb-step" data-step="8">
@@ -4204,6 +4235,126 @@
       onbData.como_se_sente = feeling;
       document.querySelectorAll('.onb-step[data-step="4"] .onb-card[data-feeling]').forEach(function(c) { c.classList.remove('selected'); });
       el.classList.add('selected');
+    }
+
+    function addOnbChip(containerId, chipId, fileName) {
+      var chips = document.getElementById(containerId);
+      if (!chips) return;
+      var chip = document.createElement('div');
+      chip.className = 'onb-file-chip';
+      chip.id = chipId;
+      chip.innerHTML = '<span>📄</span>' +
+        '<span class="onb-file-chip-name">' + fileName + '</span>' +
+        '<span class="onb-file-chip-status loading">Processando...</span>';
+      chips.appendChild(chip);
+    }
+
+    function updateOnbChip(chipId, status, text) {
+      var chip = document.getElementById(chipId);
+      if (!chip) return;
+      var s = chip.querySelector('.onb-file-chip-status');
+      if (s) { s.className = 'onb-file-chip-status ' + status; s.textContent = text; }
+    }
+
+    async function handleOnbExameFiles(files) {
+      Array.from(files).forEach(function(file) {
+        var chipId = 'chip-ex-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
+        addOnbChip('onbExameChips', chipId, file.name);
+        var reader = new FileReader();
+        reader.onload = async function(e) {
+          var content = e.target.result;
+          if (file.type.startsWith('image/')) content = await compressImage(content, 1200, 0.85);
+          var fileObj = { name: file.name, type: file.type, content: content };
+          // Save to Supabase
+          try {
+            var res = await fetch(SUPABASE_URL + '/rest/v1/user_files', {
+              method: 'POST',
+              headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+              body: JSON.stringify({ name: file.name, type: file.type, content: content, user_id: getCurrentUserId() })
+            });
+            var saved = await res.json();
+            if (saved[0]) fileObj.id = saved[0].id;
+          } catch(e) {}
+          // Analyze
+          updateOnbChip(chipId, 'loading', 'Analisando...');
+          var analysis = await generateFileDescription(fileObj);
+          if (analysis) {
+            await saveExamAnalysisToProfile(file.name, analysis);
+            // Update textarea with brief summary (first 300 chars)
+            var ta = document.getElementById('onbExamesRecentes');
+            if (ta) {
+              var summary = analysis.substring(0, 300).replace(/\n+/g, ' ');
+              ta.value = ta.value.trim() ? ta.value.trim() + '\n\n[' + file.name + ']: ' + summary : '[' + file.name + ']: ' + summary;
+              onbData.exames_recentes = ta.value;
+            }
+            // Save description to file
+            if (fileObj.id) {
+              fetch(SUPABASE_URL + '/rest/v1/user_files?id=eq.' + fileObj.id + '&user_id=eq.' + getCurrentUserId(), {
+                method: 'PATCH', headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description: analysis })
+              }).catch(function(){});
+            }
+            updateOnbChip(chipId, 'done', '✓ Analisado');
+          } else {
+            updateOnbChip(chipId, '', 'Erro ao analisar');
+          }
+        };
+        reader.readAsDataURL(file);
+      });
+      document.getElementById('onbExameFileInput').value = '';
+    }
+
+    async function handleOnbTreinoFiles(files) {
+      Array.from(files).forEach(function(file) {
+        var chipId = 'chip-tr-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
+        addOnbChip('onbTreinoChips', chipId, file.name);
+        var reader = new FileReader();
+        reader.onload = async function(e) {
+          var content = e.target.result;
+          if (file.type.startsWith('image/')) content = await compressImage(content, 1400, 0.9);
+          updateOnbChip(chipId, 'loading', 'Extraindo treino...');
+          // Build extraction message
+          var messages = [];
+          if (file.type.startsWith('image/')) {
+            var b64 = content.includes(',') ? content.split(',')[1] : content;
+            messages = [{ role: 'user', content: [
+              { type: 'image', source: { type: 'base64', media_type: file.type, data: b64 } },
+              { type: 'text', text: 'Extraia o treino desta imagem em formato texto estruturado. Liste os exercícios, séries, repetições e cargas exatamente como estão. Organize por dia/grupo muscular. Responda em português. Retorne apenas o texto do treino estruturado, sem explicações adicionais.' }
+            ]}];
+          } else {
+            var textContent = '';
+            try { textContent = atob(content.split(',')[1] || content).substring(0, 4000); } catch(err) { textContent = '[PDF: ' + file.name + ']'; }
+            messages = [{ role: 'user', content: 'Extraia o treino deste documento em formato texto estruturado. Liste exercícios, séries, repetições e cargas. Organize por dia/grupo muscular. Responda em português. Apenas o texto do treino, sem explicações.\n\n' + textContent }];
+          }
+          try {
+            var apiRes = await fetch('/api/analyze', {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ messages: messages })
+            });
+            var data = await apiRes.json();
+            var extracted = data.content || '';
+            if (extracted) {
+              var ta = document.getElementById('onbTreinoAtual');
+              if (ta) {
+                ta.value = ta.value.trim() ? ta.value.trim() + '\n\n' + extracted : extracted;
+                onbData.treino_atual = ta.value;
+              }
+              updateOnbChip(chipId, 'done', '✓ Texto extraído');
+            } else {
+              updateOnbChip(chipId, '', 'Erro ao extrair');
+            }
+          } catch(err) {
+            updateOnbChip(chipId, '', 'Erro');
+          }
+          // Save file to Supabase (fire-and-forget)
+          fetch(SUPABASE_URL + '/rest/v1/user_files', {
+            method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+            body: JSON.stringify({ name: file.name, type: file.type, content: content, user_id: getCurrentUserId() })
+          }).catch(function(){});
+        };
+        reader.readAsDataURL(file);
+      });
+      document.getElementById('onbTreinoFileInput').value = '';
     }
 
     function buildDefaultDetail(nome) {
