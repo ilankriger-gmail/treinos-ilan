@@ -2732,28 +2732,56 @@
       </div>
       <!-- Step 4: Experiencia e saude -->
       <div class="onb-step" data-step="4">
-        <div class="onb-title">Experiencia e saude</div>
-        <div class="onb-subtitle">Para calibrar intensidade e respeitar seus limites.</div>
-        <div class="onb-label">Nivel de experiencia</div>
+        <div class="onb-title">Saúde e como está agora</div>
+        <div class="onb-subtitle">Para calibrar intensidade, respeitar seus limites e personalizar o plano.</div>
+        <div class="onb-label">Como você está se sentindo atualmente?</div>
+        <div class="onb-cards" style="grid-template-columns: 1fr 1fr 1fr;">
+          <div class="onb-card" data-feeling="otimo" onclick="selectOnbFeeling('otimo', this)">
+            <div class="onb-card-icon">💪</div>
+            <div class="onb-card-label">Ótimo</div>
+          </div>
+          <div class="onb-card" data-feeling="bem" onclick="selectOnbFeeling('bem', this)">
+            <div class="onb-card-icon">😊</div>
+            <div class="onb-card-label">Bem</div>
+          </div>
+          <div class="onb-card" data-feeling="cansado" onclick="selectOnbFeeling('cansado', this)">
+            <div class="onb-card-icon">😴</div>
+            <div class="onb-card-label">Cansado</div>
+          </div>
+          <div class="onb-card" data-feeling="dores" onclick="selectOnbFeeling('dores', this)">
+            <div class="onb-card-icon">🤕</div>
+            <div class="onb-card-label">Com dores</div>
+          </div>
+          <div class="onb-card" data-feeling="lesionado" onclick="selectOnbFeeling('lesionado', this)">
+            <div class="onb-card-icon">🩹</div>
+            <div class="onb-card-label">Lesionado</div>
+          </div>
+          <div class="onb-card" data-feeling="voltando" onclick="selectOnbFeeling('voltando', this)">
+            <div class="onb-card-icon">🔄</div>
+            <div class="onb-card-label">Voltando</div>
+          </div>
+        </div>
+        <textarea class="onb-input" id="onbComoSeSente" placeholder="Detalhe como está se sentindo... (opcional)" style="margin-top: 8px; min-height: 60px;"></textarea>
+        <div class="onb-label" style="margin-top: 16px;">⚠️ Restrições, lesões ou dores</div>
+        <div class="onb-medical-why">
+          <strong>Essencial para sua segurança.</strong> O Coach vai evitar exercícios que agravem lesões, adaptar movimentos e sugerir alternativas. Seja específico — isso protege você.
+        </div>
+        <textarea class="onb-input" id="onbRestricoes" placeholder="Ex: Dor no ombro direito, hérnia de disco L4-L5, tendinite no joelho esquerdo... (deixe em branco se não tiver)"></textarea>
+        <div class="onb-label" style="margin-top: 16px;">Nível de experiência</div>
         <div class="onb-cards" style="grid-template-columns: 1fr;">
-          <div class="onb-card" onclick="selectOnbLevel('iniciante', this)">
+          <div class="onb-card" data-level="iniciante" onclick="selectOnbLevel('iniciante', this)">
             <div class="onb-card-label">Iniciante</div>
             <div class="onb-card-desc">Menos de 6 meses treinando</div>
           </div>
-          <div class="onb-card" onclick="selectOnbLevel('intermediario', this)">
-            <div class="onb-card-label">Intermediario</div>
+          <div class="onb-card" data-level="intermediario" onclick="selectOnbLevel('intermediario', this)">
+            <div class="onb-card-label">Intermediário</div>
             <div class="onb-card-desc">6 meses a 2 anos</div>
           </div>
-          <div class="onb-card" onclick="selectOnbLevel('avancado', this)">
-            <div class="onb-card-label">Avancado</div>
+          <div class="onb-card" data-level="avancado" onclick="selectOnbLevel('avancado', this)">
+            <div class="onb-card-label">Avançado</div>
             <div class="onb-card-desc">Mais de 2 anos consistentes</div>
           </div>
         </div>
-        <div class="onb-label">Restricoes, lesoes ou dores</div>
-        <div class="onb-medical-why">
-          <strong>Por que isso importa?</strong> O Coach usa essas informacoes para evitar exercicios que agravem lesoes, adaptar movimentos e sugerir alternativas seguras. Nada e compartilhado fora do app.
-        </div>
-        <textarea class="onb-input" id="onbRestricoes" placeholder="Ex: Dor no ombro direito, hernia de disco, tendinite no joelho... (opcional)"></textarea>
       </div>
       <!-- Step 5: O que voce pratica? -->
       <div class="onb-step" data-step="5">
@@ -2833,6 +2861,7 @@
             <span id="saveStatusText">Carregando...</span>
           </div>
           <span id="loggedUserName" style="font-size: 12px; color: var(--text-muted); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
+          <button onclick="resetOnboarding()" title="Refazer onboarding / Configurações" style="padding: 6px 10px; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: 8px; color: var(--text-muted); cursor: pointer; font-size: 14px; font-family: 'Inter', sans-serif;" aria-label="Configurações">⚙️</button>
           <button class="logout-btn" onclick="handleLogout()" title="Sair">Sair</button>
         </div>
       </div>
@@ -3974,6 +4003,7 @@
     var onbStep = 1;
     var onbTotalSteps = 7;
     var isNewUser = false;
+    var isReOnboarding = false;
 
     function buildDefaultOnbData() {
       return {
@@ -3982,6 +4012,7 @@
         objetivo_data: '',
         objetivo_resultado: '',
         nivel: '', restricoes: '',
+        como_se_sente: '',
         atividades: [],
         atividades_detalhes: []
       };
@@ -4046,10 +4077,15 @@
       }
       if (onbStep === 4) {
         onbData.restricoes = document.getElementById('onbRestricoes').value.trim();
+        var comoSeSenteEl = document.getElementById('onbComoSeSente');
+        if (comoSeSenteEl) onbData.como_se_sente = comoSeSenteEl.value.trim() || onbData.como_se_sente;
       }
 
       if (onbStep < onbTotalSteps) {
-        onbStep++;
+        // Skip step 2 (dados pessoais) when re-onboarding
+        var nextStep = onbStep + 1;
+        if (isReOnboarding && onbStep === 1) nextStep = 3;
+        onbStep = nextStep;
         renderOnboardingStep();
       } else {
         completeOnboarding();
@@ -4065,9 +4101,14 @@
       }
       if (onbStep === 4) {
         onbData.restricoes = document.getElementById('onbRestricoes').value.trim();
+        var comoSeSenteEl = document.getElementById('onbComoSeSente');
+        if (comoSeSenteEl) onbData.como_se_sente = comoSeSenteEl.value.trim() || onbData.como_se_sente;
       }
       if (onbStep > 1) {
-        onbStep--;
+        // Skip step 2 (dados pessoais) when re-onboarding
+        var prevStep = onbStep - 1;
+        if (isReOnboarding && onbStep === 3) prevStep = 1;
+        onbStep = prevStep;
         renderOnboardingStep();
         // Restore input values after render
         if (onbStep === 2) {
@@ -4085,11 +4126,21 @@
           if (onbData.restricoes) document.getElementById('onbRestricoes').value = onbData.restricoes;
           // Re-select nivel card
           if (onbData.nivel) {
-            document.querySelectorAll('.onb-step[data-step="4"] .onb-card').forEach(function(c) {
+            document.querySelectorAll('.onb-step[data-step="4"] .onb-card[data-level]').forEach(function(c) {
               c.classList.remove('selected');
-              if (c.textContent.toLowerCase().indexOf(onbData.nivel) > -1) c.classList.add('selected');
+              if (c.dataset.level === onbData.nivel) c.classList.add('selected');
             });
           }
+          // Re-select feeling card
+          if (onbData.como_se_sente) {
+            document.querySelectorAll('.onb-step[data-step="4"] .onb-card[data-feeling]').forEach(function(c) {
+              c.classList.remove('selected');
+              if (c.dataset.feeling === onbData.como_se_sente) c.classList.add('selected');
+            });
+          }
+          // Re-populate feeling textarea
+          var comoSeSenteEl = document.getElementById('onbComoSeSente');
+          if (comoSeSenteEl && onbData.como_se_sente) comoSeSenteEl.value = onbData.como_se_sente;
         }
         if (onbStep === 5) {
           // Re-select activity cards
@@ -4118,8 +4169,14 @@
       el.classList.add('selected');
     }
 
+    function selectOnbFeeling(feeling, el) {
+      onbData.como_se_sente = feeling;
+      document.querySelectorAll('.onb-step[data-step="4"] .onb-card[data-feeling]').forEach(function(c) { c.classList.remove('selected'); });
+      el.classList.add('selected');
+    }
+
     function buildDefaultDetail(nome) {
-      var base = { nome: nome, frequencia: 3, intensidade: 'moderada', dias: [], horario: '' };
+      var base = { nome: nome, frequencia: 3, intensidade: 'moderada', dias: [], horario: '', horarios: {} };
       if (nome === 'academia') {
         base.tem_planilha = false; base.planilha_file_id = null;
         base.divisao = ''; base.series_por_exercicio = 3;
@@ -4200,10 +4257,14 @@
       if (idx > -1) {
         detail.dias.splice(idx, 1);
         el.classList.remove('selected');
+        // Remove stale horario for this day
+        if (detail.horarios) delete detail.horarios[dia];
       } else {
         detail.dias.push(dia);
         el.classList.add('selected');
       }
+      // Re-render to update per-day time inputs
+      setTimeout(renderActivityDetails, 0);
     }
 
     function renderSportSpecificFields(act, detail) {
@@ -4322,9 +4383,23 @@
         });
         html += '</div>';
 
-        // Horario
-        html += '<div class="onb-control-label" style="margin-top: 8px;">Horario</div>';
-        html += '<input type="time" class="onb-input onb-time-input" style="margin: 0; width: auto;" value="' + (detail.horario || '') + '" onchange="updateActivityDetail(\'' + act + '\',\'horario\',this.value)">';
+        // Horario — per-day when multiple days selected
+        if (detail.dias && detail.dias.length > 1) {
+          html += '<div class="onb-control-label" style="margin-top: 8px;">Horário por dia</div>';
+          html += '<div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">';
+          var diasSemanaMap = { seg:'Seg',ter:'Ter',qua:'Qua',qui:'Qui',sex:'Sex',sab:'Sáb',dom:'Dom' };
+          detail.dias.forEach(function(dk) {
+            var horVal = (detail.horarios && detail.horarios[dk]) || '';
+            html += '<div style="display:flex;align-items:center;gap:8px;">';
+            html += '<span style="font-size:12px;color:var(--text-muted);width:28px;">' + (diasSemanaMap[dk] || dk) + '</span>';
+            html += '<input type="time" class="onb-input onb-time-input" style="margin:0;width:auto;flex:1;" value="' + horVal + '" onchange="if(!onbData.atividades_detalhes.find(d=>d.nome===\'' + act + '\').horarios)onbData.atividades_detalhes.find(d=>d.nome===\'' + act + '\').horarios={};onbData.atividades_detalhes.find(d=>d.nome===\'' + act + '\').horarios[\'' + dk + '\']=this.value">';
+            html += '</div>';
+          });
+          html += '</div>';
+        } else {
+          html += '<div class="onb-control-label" style="margin-top: 8px;">Horário</div>';
+          html += '<input type="time" class="onb-input onb-time-input" style="margin: 0; width: auto;" value="' + (detail.horario || '') + '" onchange="updateActivityDetail(\'' + act + '\',\'horario\',this.value)">';
+        }
 
         // Sport-specific fields
         html += renderSportSpecificFields(act, detail);
@@ -4352,6 +4427,10 @@
       if (onbData.objetivo_resultado) items.push({ label: 'Resultado esperado', value: onbData.objetivo_resultado });
       if (onbData.nivel) items.push({ label: 'Nivel', value: onbData.nivel.charAt(0).toUpperCase() + onbData.nivel.slice(1) });
       if (onbData.restricoes) items.push({ label: 'Restricoes', value: onbData.restricoes });
+      if (onbData.como_se_sente) {
+        var feelingLabels = { otimo:'Ótimo', bem:'Bem', cansado:'Cansado', dores:'Com dores', lesionado:'Lesionado', voltando:'Voltando de lesão' };
+        items.push({ label: 'Estado atual', value: feelingLabels[onbData.como_se_sente] || onbData.como_se_sente });
+      }
 
       // Atividades com detalhes
       if (onbData.atividades_detalhes.length > 0) {
@@ -4359,7 +4438,13 @@
           var label = d.nome.charAt(0).toUpperCase() + d.nome.slice(1);
           var detailVal = d.frequencia + 'x/sem — ' + d.intensidade;
           if (d.dias && d.dias.length > 0) detailVal += ' — ' + d.dias.join('/');
-          if (d.horario) detailVal += ' às ' + d.horario;
+          // Per-day horarios
+          if (d.horarios && Object.keys(d.horarios).length > 0) {
+            var horParts = d.dias.filter(function(dk) { return d.horarios[dk]; }).map(function(dk) { return dk + ':' + d.horarios[dk]; });
+            if (horParts.length > 0) detailVal += ' (' + horParts.join(', ') + ')';
+          } else if (d.horario) {
+            detailVal += ' às ' + d.horario;
+          }
           items.push({ label: label, value: detailVal });
         });
       }
@@ -4376,6 +4461,7 @@
     }
 
     async function completeOnboarding() {
+      isReOnboarding = false;
       localStorage.setItem('onboarding-completed', 'true');
 
       // Build objetivo text for legacy field
@@ -4424,6 +4510,7 @@
             frequencia_semanal: totalFreq || null,
             restricoes: onbData.restricoes || null,
             dores: onbData.restricoes || null,
+            estado_hoje: onbData.como_se_sente || null,
             // Reset daily message so Coach generates fresh message
             last_daily_message_date: null,
             last_weekly_review_date: null,
@@ -4456,7 +4543,7 @@
     }
 
     function resetOnboarding() {
-      if (!confirm('Refazer onboarding vai atualizar seus dados e objetivo. Continuar?')) return;
+      if (!confirm('Atualizar seus dados e objetivo. Continuar?')) return;
       // Reset flags
       localStorage.removeItem('onboarding-completed');
       try {
@@ -4466,9 +4553,28 @@
           body: JSON.stringify({ onboarding_completed: false, onboarding_at: null })
         });
       } catch(e) {}
-      // Reset onbData
+      // Preserve current activities/details before reset
+      var savedDetails = (onbData.atividades_detalhes || []).slice();
+      // Reset onbData but preserve personal data from profile inputs
       onbData = buildDefaultOnbData();
+      // Restore activities so step 5 shows them pre-selected
+      if (savedDetails.length > 0) {
+        onbData.atividades_detalhes = savedDetails;
+        onbData.atividades = savedDetails.map(function(d) { return d.nome; });
+      }
+      var nomeInput = document.getElementById('profileNome');
+      var idadeInput = document.getElementById('profileIdade');
+      var alturaInput = document.getElementById('profileAltura');
+      if (nomeInput && nomeInput.value) onbData.nome = nomeInput.value;
+      if (idadeInput && idadeInput.value) onbData.idade = idadeInput.value;
+      if (alturaInput && alturaInput.value) onbData.altura = alturaInput.value;
+      // Get peso from cached profile
+      if (_cachedProfile && _cachedProfile.peso) onbData.peso = String(_cachedProfile.peso);
+      // Get sexo from profile
+      if (typeof selectedSexo !== 'undefined' && selectedSexo) onbData.sexo = selectedSexo;
+      else if (_cachedProfile && _cachedProfile.sexo) onbData.sexo = _cachedProfile.sexo;
       isNewUser = false; // preserve existing exercises
+      isReOnboarding = true; // skip step 2 (personal data)
       // Show onboarding
       document.getElementById('onboardingScreen').classList.add('visible');
       document.getElementById('appContainer').style.display = 'none';
@@ -4512,6 +4618,12 @@
       // Nível
       if (onbData.nivel) lines.push('**Nível:** ' + onbData.nivel.charAt(0).toUpperCase() + onbData.nivel.slice(1));
 
+      // Estado atual
+      if (onbData.como_se_sente) {
+        var feelingMap = { otimo:'Ótimo', bem:'Bem', cansado:'Cansado/fatigado', dores:'Com dores', lesionado:'Lesionado', voltando:'Voltando de lesão' };
+        lines.push('**Estado atual:** ' + (feelingMap[onbData.como_se_sente] || onbData.como_se_sente));
+      }
+
       // Restrições
       if (onbData.restricoes) lines.push('**Restrições/lesões:** ' + onbData.restricoes);
 
@@ -4522,7 +4634,12 @@
           var parts = [];
           var label = d.nome.charAt(0).toUpperCase() + d.nome.slice(1);
           if (d.dias && d.dias.length > 0) parts.push('dias: ' + d.dias.join('/'));
-          if (d.horario) parts.push(d.horario);
+          if (d.horarios && Object.keys(d.horarios).length > 0) {
+            var horParts = d.dias.filter(function(dk) { return d.horarios[dk]; }).map(function(dk) { return dk + ':' + d.horarios[dk]; });
+            if (horParts.length > 0) parts.push('horários: ' + horParts.join(', '));
+          } else if (d.horario) {
+            parts.push(d.horario);
+          }
           parts.push(d.frequencia + 'x/semana');
           parts.push('intensidade ' + d.intensidade);
           // Sport-specific
@@ -4557,6 +4674,13 @@
       lines.push('4. Seja direto e prático.');
 
       var msg = lines.join('\n');
+
+      // Activate chat area directly (no user click needed)
+      chatActive = true;
+      var chatStartArea = document.getElementById('chatStartArea');
+      var chatArea = document.getElementById('chatArea');
+      if (chatStartArea) chatStartArea.style.display = 'none';
+      if (chatArea) chatArea.style.display = 'flex';
 
       var chatInput = document.getElementById('chatInput');
       if (chatInput) {
@@ -8565,6 +8689,7 @@
     }
     
     var estadoEntries = [];
+    var _cachedProfile = null;
 
     async function saveEstado() {
       var input = document.getElementById('estadoHojeMain');
@@ -8657,6 +8782,7 @@
 
         if (data.length > 0) {
           const profile = data[0];
+          _cachedProfile = profile;
 
           // Campos de perfil
           const nomeInput = document.getElementById('profileNome');
