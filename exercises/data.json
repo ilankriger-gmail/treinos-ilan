@@ -18,6 +18,14 @@
       "Pause for a moment at the top, then slowly lower the barbell back to the starting position.",
       "Repeat for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Fique de pé com os pés na largura dos ombros e joelhos levemente flexionados.",
+      "Incline o tronco para frente a partir do quadril mantendo as costas retas e o peito elevado.",
+      "Segure a barra com pegada pronada, mãos um pouco mais abertas que a largura dos ombros.",
+      "Puxe a barra em direção ao peito inferior retraindo as escápulas e contraindo os músculos das costas.",
+      "Faça uma pausa no topo do movimento, depois abaixe lentamente a barra até a posição inicial.",
+      "Repita pelo número desejado de repetições."
+    ],
     "gifFile": "b1.gif",
     "source": "exercisedb"
   },
@@ -38,6 +46,14 @@
       "Lower the dumbbells out to the sides in a wide arc until you feel a stretch in your chest.",
       "Pause for a moment, then squeeze your chest muscles to bring the dumbbells back up to the starting position.",
       "Repeat for the desired number of repetitions."
+    ],
+    "ptInstructions": [
+      "Ajuste o banco inclinado em 45 graus.",
+      "Sente-se no banco com um halter em cada mão, palmas voltadas uma para a outra.",
+      "Deite-se no banco e pressione os halteres para cima até a posição inicial, diretamente acima do peito.",
+      "Abaixe os halteres para os lados em arco amplo até sentir o alongamento no peito.",
+      "Faça uma pausa, depois contraia os músculos do peito para trazer os halteres de volta ao topo.",
+      "Repita pelo número desejado de repetições."
     ],
     "gifFile": "b2.gif",
     "source": "exercisedb"
@@ -60,6 +76,13 @@
       "Pause for a moment at the peak of the movement, then slowly release the handles back to the starting position.",
       "Repeat for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Sente-se na máquina de remada sentada com os pés apoiados nas plataformas e joelhos levemente flexionados.",
+      "Segure os cabos com pegada neutra, mantendo as costas retas e ombros relaxados.",
+      "Puxe os cabos em direção ao corpo, aproximando as escápulas.",
+      "Faça uma pausa no pico do movimento, depois solte lentamente até a posição inicial.",
+      "Repita pelo número desejado de repetições."
+    ],
     "gifFile": "b3.gif",
     "source": "exercisedb"
   },
@@ -81,6 +104,14 @@
       "Keeping a slight bend in your elbows, raise your arms out to the sides until they are parallel to the ground.",
       "Pause for a moment at the top, then slowly lower your arms back down to the starting position.",
       "Repeat for the desired number of repetitions."
+    ],
+    "ptInstructions": [
+      "Deite-se de bruços no banco inclinado ou sente-se voltado para o encosto.",
+      "Segure um halter em cada mão com os braços estendidos abaixo de você.",
+      "Com os cotovelos levemente flexionados, levante os halteres para os lados até a altura dos ombros.",
+      "Contraia os músculos do meio das costas no topo do movimento.",
+      "Abaixe lentamente os halteres até a posição inicial.",
+      "Repita pelo número desejado de repetições."
     ],
     "gifFile": "b4.gif",
     "source": "exercisedb"
@@ -106,6 +137,14 @@
       "Pause for a moment at the peak of the movement, then slowly return to the starting position.",
       "Repeat for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Ajuste a polia na altura da cabeça ou acima e conecte a corda dupla.",
+      "Segure a corda com os dois polegares voltados para você.",
+      "Puxe a corda em direção ao rosto, separando as mãos e direcionando os cotovelos para fora e para cima.",
+      "Contraia os músculos do ombro e do manguito rotador no pico do movimento.",
+      "Retorne lentamente à posição inicial com controle.",
+      "Repita pelo número desejado de repetições."
+    ],
     "gifFile": "b5.gif",
     "source": "exercisedb"
   },
@@ -128,6 +167,14 @@
       "Pause for a moment, then inhale and slowly return the bar to the starting position.",
       "Repeat for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Fixe a corda no gancho da polia alta.",
+      "Segure a corda com as duas mãos e posicione os cotovelos junto ao corpo.",
+      "Estenda os braços para baixo puxando as extremidades da corda levemente para fora.",
+      "Contraia o tríceps no ponto de extensão completa.",
+      "Retorne lentamente à posição inicial mantendo os cotovelos fixos.",
+      "Repita pelo número desejado de repetições."
+    ],
     "gifFile": "b6.gif",
     "source": "exercisedb"
   },
@@ -149,6 +196,14 @@
       "Pause for a moment, then push the dumbbells back up to the starting position, fully extending your arms.",
       "Repeat for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Deite-se em um banco plano segurando um halter em cada mão acima do peito.",
+      "Os halteres devem estar na altura dos mamilos com os cotovelos formando 90 graus.",
+      "Pressione os halteres para cima até os braços ficarem quase completamente estendidos.",
+      "Contraia o peito no topo e abaixe os halteres lentamente até sentir alongamento.",
+      "Mantenha os pés apoiados no chão e a parte inferior das costas no banco.",
+      "Repita pelo número desejado de repetições."
+    ],
     "gifFile": "b7.gif",
     "source": "exercisedb"
   },
@@ -168,6 +223,14 @@
       "Exhale as you curl the barbell up towards your shoulders, contracting your biceps.",
       "Pause for a moment at the top, then inhale as you slowly lower the barbell back down to the starting position.",
       "Repeat for the desired number of repetitions."
+    ],
+    "ptInstructions": [
+      "Fique de pé segurando a barra W com pegada supinada na largura dos ombros.",
+      "Mantenha os cotovelos junto ao corpo e o tronco ereto.",
+      "Flexione os braços levantando a barra em direção aos ombros.",
+      "Contraia o bíceps no topo sem mover os cotovelos para frente.",
+      "Abaixe a barra lentamente até a posição inicial com controle total.",
+      "Repita pelo número desejado de repetições."
     ],
     "gifFile": "b8.gif",
     "source": "exercisedb"
@@ -189,6 +252,13 @@
       "Pause for a moment at the top, then slowly lower your leg back down to the starting position.",
       "Repeat on the other side.",
       "Continue alternating sides for the desired number of repetitions."
+    ],
+    "ptInstructions": [
+      "Fique de pé ao lado de uma parede com o braço afastado do corpo.",
+      "Pressione o dorso da mão contra a parede como se fosse empurrar o braço para fora.",
+      "Mantenha a contração isométrica por 30 a 60 segundos sem mover o braço.",
+      "Respire normalmente durante a contração.",
+      "Relaxe e repita no outro lado se necessário."
     ],
     "gifFile": "p1.gif",
     "source": "exercisedb"
@@ -212,6 +282,13 @@
       "Slowly lower your hips back down to the starting position.",
       "Repeat for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Deite-se de costas com os joelhos flexionados e pés apoiados no chão.",
+      "Contraia o abdômen e eleve o quadril até o corpo formar uma linha reta dos ombros aos joelhos.",
+      "Contraia os glúteos no topo e segure por 2 a 3 segundos.",
+      "Abaixe o quadril lentamente até quase tocar o chão.",
+      "Repita pelo número desejado de repetições."
+    ],
     "gifFile": "p2.gif",
     "source": "exercisedb"
   },
@@ -233,6 +310,13 @@
       "As you come up from the squat, extend your arms overhead, reaching towards the ceiling.",
       "Return to the starting position by lowering your arms and bending your knees to squat down again.",
       "Repeat for the desired number of repetitions."
+    ],
+    "ptInstructions": [
+      "Fique de pé com a faixa elástica presa na altura dos joelhos em ponto fixo.",
+      "Incline levemente o tronco para frente e afaste os joelhos para fora em direção à faixa.",
+      "Desça em agachamento mantendo os joelhos pressionados contra a faixa e o peito elevado.",
+      "Suba de volta à posição inicial empurrando o chão com os pés.",
+      "Repita pelo número desejado de repetições."
     ],
     "gifFile": "p3.gif",
     "source": "exercisedb"
@@ -257,6 +341,13 @@
       "Repeat with your left leg.",
       "Alternate legs for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Fique de pé com os pés juntos segurando um halter ou sem carga.",
+      "Dê um passo largo para frente e desça o joelho de trás em direção ao chão.",
+      "Incline o tronco sobre a perna da frente enquanto afunda.",
+      "Suba de volta à posição inicial empurrando com o calcanhar da frente.",
+      "Repita alternando os lados pelo número desejado de repetições."
+    ],
     "gifFile": "p4.gif",
     "source": "exercisedb"
   },
@@ -279,6 +370,14 @@
       "Inhale and slowly lower the lever back to the starting position.",
       "Repeat for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Sente-se na máquina e ajuste o cilindro para apoiar os tornozelos logo acima dos calcanhares.",
+      "Segure os apoios laterais para estabilizar o corpo.",
+      "Flexione os joelhos puxando o cilindro em direção à parte de trás das coxas.",
+      "Contraia os isquiotibiais no pico do movimento e faça uma pausa.",
+      "Retorne lentamente à posição inicial com controle.",
+      "Repita pelo número desejado de repetições."
+    ],
     "gifFile": "p5.gif",
     "source": "exercisedb"
   },
@@ -300,6 +399,14 @@
       "Pause for a moment at the top, then slowly lower your heels back down to the starting position.",
       "Repeat for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Fique em pé na borda de um step com os calcanhares fora da plataforma.",
+      "Abaixe os calcanhares abaixo do nível do step para alongar a panturrilha.",
+      "Eleve-se nas pontas dos pés o mais alto possível.",
+      "Contraia a panturrilha no topo e segure por um momento.",
+      "Abaixe lentamente até a posição de alongamento.",
+      "Repita pelo número desejado de repetições."
+    ],
     "gifFile": "p6.gif",
     "source": "exercisedb"
   },
@@ -319,6 +426,13 @@
       "Lower your heels as far as possible, feeling a stretch in your calves.",
       "Raise your heels as high as possible, contracting your calves.",
       "Repeat for the desired number of repetitions."
+    ],
+    "ptInstructions": [
+      "Sente-se na máquina de panturrilha sentado com os joelhos flexionados a 90 graus.",
+      "Posicione os metatarsos nas plataformas e o coxim sobre as coxas.",
+      "Eleve os calcanhares o mais alto possível contraindo o sóleo.",
+      "Faça uma pausa no topo, depois abaixe os calcanhares lentamente.",
+      "Repita pelo número desejado de repetições."
     ],
     "gifFile": "p7.gif",
     "source": "exercisedb"
@@ -340,6 +454,13 @@
       "Slowly raise your arms overhead, keeping them straight and parallel to each other.",
       "As you raise your arms, squeeze your shoulder blades together.",
       "Hold the stretch for 15-30 seconds, then release and repeat."
+    ],
+    "ptInstructions": [
+      "Posicione-se de quatro apoios com as mãos sob os ombros e joelhos sob os quadris.",
+      "Ao inspirar, abaixe o abdômen, levante o cóccix e olhe para cima (vaca).",
+      "Ao expirar, arqueie as costas para cima, tucke o cóccix e abaixe a cabeça (gato).",
+      "Alterne entre as duas posições em um movimento fluido acompanhando a respiração.",
+      "Repita por 10 a 15 ciclos."
     ],
     "gifFile": "m1-1.gif",
     "source": "exercisedb"
@@ -364,6 +485,13 @@
       "Repeat on the other side, stepping forward with your left foot and twisting your torso to the left.",
       "Continue alternating sides for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Dê um passo largo à frente e coloque o pé externo ao lado da mão do mesmo lado.",
+      "Abaixe o quadril de trás em direção ao chão.",
+      "Gire o tronco para o lado da perna da frente levantando o braço em direção ao teto.",
+      "Retorne a mão ao chão e repita no mesmo lado antes de trocar.",
+      "Execute 5 a 8 repetições por lado."
+    ],
     "gifFile": "m1-2.gif",
     "source": "exercisedb"
   },
@@ -384,6 +512,13 @@
       "Slowly rotate your knees outwards, away from each other, while keeping your feet together.",
       "Pause for a moment at the end of the rotation, then slowly return to the starting position.",
       "Repeat for the desired number of repetitions."
+    ],
+    "ptInstructions": [
+      "Sente-se no chão com as pernas formando ângulos de 90 graus na frente e atrás.",
+      "Mantenha o tronco ereto e as coxas apoiadas no chão.",
+      "Gire as pernas para o outro lado sem usar as mãos como apoio principal.",
+      "Controle o movimento usando os músculos do quadril.",
+      "Repita alternando os lados por 10 repetições."
     ],
     "gifFile": "m1-3.gif",
     "source": "exercisedb"
@@ -407,6 +542,13 @@
       "Return to the center and repeat the rotation to the other side.",
       "Lower your upper body back down to the starting position and repeat for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Posicione-se de quatro apoios com a coluna neutra.",
+      "Coloque uma mão atrás da cabeça.",
+      "Gire o cotovelo em direção ao braço de apoio, depois abra para o teto.",
+      "Acompanhe o movimento com os olhos e respire durante a rotação.",
+      "Repita por 8 a 10 vezes por lado."
+    ],
     "gifFile": "m1-4.gif",
     "source": "exercisedb"
   },
@@ -429,6 +571,13 @@
       "Hold the stretch for 20-30 seconds, then slowly lower your leg back down.",
       "Repeat on the other side."
     ],
+    "ptInstructions": [
+      "Deite-se de lado no chão com os quadris e joelhos flexionados a 90 graus.",
+      "Segure o tornozelo da perna de cima com a mão de baixo, levando o joelho ao chão atrás.",
+      "Estenda o braço de cima para o lado oposto girando o tronco e abrindo o peito.",
+      "Mantenha a posição por 30 a 60 segundos respirando profundamente.",
+      "Repita no outro lado."
+    ],
     "gifFile": "m1-5.gif",
     "source": "exercisedb"
   },
@@ -449,6 +598,13 @@
       "Rotate your wrists in a circular motion, keeping your arms still.",
       "Continue the wrist circles for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Fique de pé ou sente-se com a coluna ereta.",
+      "Levante lentamente o braço para frente com controle.",
+      "Continue o movimento para cima, para fora e para trás descrevendo um círculo completo.",
+      "Mantenha o movimento lento e controlado em toda a amplitude de movimento.",
+      "Execute 3 a 5 círculos em cada direção por ombro."
+    ],
     "gifFile": "m2-1.gif",
     "source": "exercisedb"
   },
@@ -468,6 +624,13 @@
       "Bend your knees slightly and lift your heels off the ground, balancing on the balls of your feet.",
       "Keeping your knees bent, rotate your knees in a circular motion, first clockwise and then counterclockwise.",
       "Perform the movement for the desired number of repetitions."
+    ],
+    "ptInstructions": [
+      "Fique de pé apoiado em uma superfície estável com uma mão.",
+      "Eleve o joelho oposto até a altura do quadril.",
+      "Descreva um círculo amplo com o quadril, levando o joelho para fora, para trás e de volta à frente.",
+      "Mantenha o tronco estável e o movimento controlado em toda a amplitude.",
+      "Execute 3 a 5 círculos em cada direção por quadril."
     ],
     "gifFile": "m2-2.gif",
     "source": "exercisedb"
@@ -494,6 +657,13 @@
       "Repeat the rotation with the other leg.",
       "Continue alternating legs for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Deite-se de bruços com os braços estendidos para os lados.",
+      "Dobre um joelho e deixe o pé cair para o lado oposto do corpo.",
+      "Tente tocar o chão com o pé enquanto gira o quadril e a coluna.",
+      "Mantenha os ombros no chão o máximo possível.",
+      "Segure por 30 segundos, depois troque de lado."
+    ],
     "gifFile": "m2-3.gif",
     "source": "exercisedb"
   },
@@ -515,6 +685,13 @@
       "As you come up from the squat, extend your arms overhead, reaching towards the ceiling.",
       "Return to the starting position by lowering your arms and bending your knees to squat down again.",
       "Repeat for the desired number of repetitions."
+    ],
+    "ptInstructions": [
+      "Fique de pé com os pés na largura dos ombros ou um pouco mais abertos, dedos levemente para fora.",
+      "Desça em agachamento profundo o mais baixo possível mantendo os calcanhares no chão.",
+      "Segure a posição com os cotovelos pressionando os joelhos para fora.",
+      "Mantenha o tronco ereto e respire profundamente durante o hold.",
+      "Segure por 30 a 60 segundos e suba lentamente."
     ],
     "gifFile": "m2-4.gif",
     "source": "exercisedb"
@@ -538,6 +715,13 @@
       "Hold the stretch for 20-30 seconds.",
       "Return to the starting position and repeat on the other side."
     ],
+    "ptInstructions": [
+      "Comece de quatro apoios e leve um joelho para frente posicionando a perna em diagonal.",
+      "Estenda a perna de trás e abaixe o quadril em direção ao chão.",
+      "Incline o tronco para frente sobre a perna dobrada para intensificar o alongamento.",
+      "Mantenha a posição por 60 a 90 segundos respirando profundamente.",
+      "Suba e troque de lado."
+    ],
     "gifFile": "m2-5.gif",
     "source": "exercisedb"
   },
@@ -560,6 +744,13 @@
       "Once your hands reach your feet, stand back up to the starting position.",
       "Repeat for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Fique de pé com os pés juntos.",
+      "Incline-se para frente e toque o chão com as mãos.",
+      "Caminhe com as mãos para frente até chegar à posição de prancha.",
+      "Faça uma flexão opcional, depois caminhe com os pés em direção às mãos.",
+      "Suba de volta à posição inicial e repita."
+    ],
     "gifFile": "m3-1.gif",
     "source": "exercisedb"
   },
@@ -581,6 +772,13 @@
       "As you come up from the squat, raise your arms overhead and twist your torso to one side.",
       "Return to the starting position and repeat the squat, this time twisting your torso to the opposite side.",
       "Continue alternating sides with each squat repetition."
+    ],
+    "ptInstructions": [
+      "Comece em posição de prancha alta.",
+      "Dê um passo com o pé direito para fora da mão direita.",
+      "Gire o tronco levantando o braço direito em direção ao teto.",
+      "Retorne à prancha e repita do outro lado.",
+      "Execute 5 a 8 repetições por lado."
     ],
     "gifFile": "m3-2.gif",
     "source": "exercisedb"
@@ -605,6 +803,13 @@
       "Push through the heel of the bent leg to return to the starting position.",
       "Repeat on the other side, alternating between legs."
     ],
+    "ptInstructions": [
+      "Fique de pé com os pés bem afastados e braços estendidos à frente.",
+      "Deslize lateralmente para um lado flexionando o joelho enquanto o outro perna fica estendida.",
+      "Mantenha o pé da perna estendida no chão e o tronco ereto.",
+      "Empurre o chão para retornar ao centro e repita para o outro lado.",
+      "Execute 8 a 10 repetições por lado."
+    ],
     "gifFile": "m3-3.gif",
     "source": "exercisedb"
   },
@@ -627,6 +832,13 @@
       "Push back up to the starting position, straightening your arms.",
       "Repeat for the desired number of repetitions."
     ],
+    "ptInstructions": [
+      "Fique de pé com as costas e cotovelos encostados na parede.",
+      "Mantenha os cotovelos e punhos em contato com a parede durante todo o movimento.",
+      "Deslize os braços para cima ao longo da parede como se fosse fazer um gol de basquete.",
+      "Suba o máximo possível sem perder o contato da parede com os cotovelos.",
+      "Abaixe os braços lentamente e repita por 10 a 15 repetições."
+    ],
     "gifFile": "m3-4.gif",
     "source": "exercisedb"
   },
@@ -647,6 +859,13 @@
       "Slowly raise your arms overhead, keeping them straight and parallel to each other.",
       "As you raise your arms, squeeze your shoulder blades together.",
       "Hold the stretch for 15-30 seconds, then release and repeat."
+    ],
+    "ptInstructions": [
+      "Ajoelhe-se e sente nos calcanhares, estendendo os braços para frente no chão.",
+      "Deslize os braços para um lado para aumentar o alongamento lateral.",
+      "Coloque uma mão atrás da cabeça e gire o cotovelo em direção ao teto.",
+      "Acompanhe o movimento com os olhos e respire profundamente.",
+      "Repita 5 a 8 vezes por lado."
     ],
     "gifFile": "m3-5.gif",
     "source": "exercisedb"

@@ -2563,6 +2563,11 @@
     }
     .onb-intensity-btn:hover { border-color: var(--text-muted); }
     .onb-intensity-btn.selected { border-color: var(--accent); background: var(--accent); color: white; }
+    .onb-dias-btns { display: flex; gap: 4px; flex-wrap: wrap; }
+    .onb-dia-btn { padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-secondary); color: var(--text-secondary); font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .onb-dia-btn:hover { border-color: var(--text-muted); }
+    .onb-dia-btn.selected { background: var(--accent); color: white; border-color: var(--accent); }
+    .onb-time-input { padding: 8px 10px !important; }
 
     /* Onboarding — freq mini buttons (inside activity row) */
     .onb-freq-mini { display: flex; gap: 4px; }
@@ -2663,7 +2668,7 @@
         <input class="onb-input" type="number" id="onbIdade" placeholder="Ex: 30" inputmode="numeric">
         <div class="onb-label">Altura (cm)</div>
         <input class="onb-input" type="number" id="onbAltura" placeholder="Ex: 175" inputmode="numeric">
-        <div class="onb-label">Sexo</div>
+        <div class="onb-label">Sexo <span style="font-weight:400; color: var(--text-muted); font-size: 12px;">(opcional)</span></div>
         <div class="onb-sexo-cards">
           <div class="onb-sexo-card" onclick="selectOnbSexo('M', this)">
             <div class="onb-card-icon">♂️</div>
@@ -2674,6 +2679,7 @@
             <div class="onb-card-label">Feminino</div>
           </div>
         </div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Clique novamente para desmarcar.</div>
       </div>
       <!-- Step 3: Qual seu objetivo? -->
       <div class="onb-step" data-step="3">
@@ -2756,11 +2762,16 @@
             <div class="onb-card-label">Yoga</div>
           </div>
         </div>
+        <div id="onbOutroContainer" style="display: flex; gap: 8px; margin-top: 10px; align-items: center;">
+          <input id="onbOutroInput" class="onb-input" type="text" placeholder="Outro esporte... (ex: pilates, crossfit)" style="margin: 0; flex: 1;" onkeydown="if(event.key==='Enter'){event.preventDefault();addOnbCustomActivity();}">
+          <button onclick="addOnbCustomActivity()" style="padding: 10px 16px; background: var(--accent); border: none; border-radius: 8px; color: white; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; white-space: nowrap;">Adicionar</button>
+        </div>
+        <div id="onbCustomActivities" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;"></div>
       </div>
       <!-- Step 6: Frequencia e intensidade -->
       <div class="onb-step" data-step="6">
-        <div class="onb-title">Frequencia e intensidade</div>
-        <div class="onb-subtitle">Para cada atividade, defina quantas vezes por semana e a intensidade.</div>
+        <div class="onb-title">Frequencia, intensidade e horario</div>
+        <div class="onb-subtitle">Para cada atividade, defina quantas vezes por semana, intensidade, dias preferidos e horario.</div>
         <div id="onbActivityDetails"></div>
       </div>
       <!-- Step 7: Tudo pronto! -->
@@ -2790,6 +2801,7 @@
             <span id="saveStatusDot" style="width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted);"></span>
             <span id="saveStatusText">Carregando...</span>
           </div>
+          <span id="loggedUserName" style="font-size: 12px; color: var(--text-muted); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
           <button class="logout-btn" onclick="handleLogout()" title="Sair">Sair</button>
         </div>
       </div>
@@ -3917,6 +3929,10 @@
       document.getElementById('authScreen').classList.add('hidden');
       document.getElementById('onboardingScreen').classList.remove('visible');
       document.getElementById('appContainer').style.display = '';
+      var userDisplayEl = document.getElementById('loggedUserName');
+      if (userDisplayEl && currentUser) {
+        userDisplayEl.textContent = (currentUser.nome || currentUser.email || '').split('@')[0];
+      }
     }
 
     // ========== ONBOARDING ==========
@@ -4045,9 +4061,14 @@
     }
 
     function selectOnbSexo(sexo, el) {
-      onbData.sexo = sexo;
-      document.querySelectorAll('.onb-sexo-card').forEach(function(c) { c.classList.remove('selected'); });
-      el.classList.add('selected');
+      if (onbData.sexo === sexo) {
+        onbData.sexo = '';
+        el.classList.remove('selected');
+      } else {
+        onbData.sexo = sexo;
+        document.querySelectorAll('.onb-sexo-card').forEach(function(c) { c.classList.remove('selected'); });
+        el.classList.add('selected');
+      }
     }
 
     function selectOnbLevel(level, el) {
@@ -4067,8 +4088,31 @@
         onbData.atividades.push(activity);
         el.classList.add('selected');
         // Add to detalhes with defaults
-        onbData.atividades_detalhes.push({ nome: activity, frequencia: 3, intensidade: 'moderada' });
+        onbData.atividades_detalhes.push({ nome: activity, frequencia: 3, intensidade: 'moderada', dias: [], horario: '' });
       }
+    }
+
+    function addOnbCustomActivity() {
+      var input = document.getElementById('onbOutroInput');
+      var nome = (input.value || '').trim().toLowerCase();
+      if (!nome) return;
+      if (onbData.atividades.indexOf(nome) > -1) { input.value = ''; return; }
+      onbData.atividades.push(nome);
+      onbData.atividades_detalhes.push({ nome: nome, frequencia: 3, intensidade: 'moderada', dias: [], horario: '' });
+      var container = document.getElementById('onbCustomActivities');
+      var tag = document.createElement('div');
+      tag.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--accent-dim);border:1px solid var(--accent);border-radius:20px;font-size:13px;color:var(--text-primary);';
+      tag.innerHTML = '<span>' + nome.charAt(0).toUpperCase() + nome.slice(1) + '</span>' +
+        '<button onclick="removeOnbCustomActivity(\'' + nome + '\',this.parentElement)" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:0;line-height:1;">×</button>';
+      container.appendChild(tag);
+      if (!onbActivityIcons[nome]) onbActivityIcons[nome] = '🏃';
+      input.value = '';
+    }
+
+    function removeOnbCustomActivity(nome, el) {
+      onbData.atividades = onbData.atividades.filter(function(a) { return a !== nome; });
+      onbData.atividades_detalhes = onbData.atividades_detalhes.filter(function(d) { return d.nome !== nome; });
+      if (el) el.remove();
     }
 
     function updateActivityDetail(actName, field, value) {
@@ -4086,6 +4130,20 @@
       updateActivityDetail(actName, 'intensidade', intens);
       el.closest('.onb-intensity-btns').querySelectorAll('.onb-intensity-btn').forEach(function(b) { b.classList.remove('selected'); });
       el.classList.add('selected');
+    }
+
+    function toggleActivityDia(actName, dia, el) {
+      var detail = onbData.atividades_detalhes.find(function(d) { return d.nome === actName; });
+      if (!detail) return;
+      if (!detail.dias) detail.dias = [];
+      var idx = detail.dias.indexOf(dia);
+      if (idx > -1) {
+        detail.dias.splice(idx, 1);
+        el.classList.remove('selected');
+      } else {
+        detail.dias.push(dia);
+        el.classList.add('selected');
+      }
     }
 
     function renderActivityDetails() {
@@ -4130,6 +4188,21 @@
         });
         html += '</div>';
 
+        // Dias da semana
+        var diasSemana = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+        var diasKeys = ['seg','ter','qua','qui','sex','sab','dom'];
+        html += '<div class="onb-control-label" style="margin-top: 8px;">Dias preferidos</div>';
+        html += '<div class="onb-dias-btns">';
+        diasKeys.forEach(function(dk, di) {
+          var selClass = (detail.dias && detail.dias.indexOf(dk) > -1) ? ' selected' : '';
+          html += '<button class="onb-dia-btn' + selClass + '" onclick="toggleActivityDia(\'' + act + '\',\'' + dk + '\',this)">' + diasSemana[di] + '</button>';
+        });
+        html += '</div>';
+
+        // Horario
+        html += '<div class="onb-control-label" style="margin-top: 8px;">Horario</div>';
+        html += '<input type="time" class="onb-input onb-time-input" style="margin: 0; width: auto;" value="' + (detail.horario || '') + '" onchange="updateActivityDetail(\'' + act + '\',\'horario\',this.value)">';
+
         html += '</div></div>';
       });
       container.innerHTML = html;
@@ -4157,7 +4230,10 @@
       if (onbData.atividades_detalhes.length > 0) {
         onbData.atividades_detalhes.forEach(function(d) {
           var label = d.nome.charAt(0).toUpperCase() + d.nome.slice(1);
-          items.push({ label: label, value: d.frequencia + 'x/sem — ' + d.intensidade });
+          var detailVal = d.frequencia + 'x/sem — ' + d.intensidade;
+          if (d.dias && d.dias.length > 0) detailVal += ' — ' + d.dias.join('/');
+          if (d.horario) detailVal += ' às ' + d.horario;
+          items.push({ label: label, value: detailVal });
         });
       }
 
@@ -4259,12 +4335,15 @@
       if (onbData.nivel) parts.push('Nivel: ' + onbData.nivel + '.');
       if (onbData.atividades_detalhes.length > 0) {
         var actParts = onbData.atividades_detalhes.map(function(d) {
-          return d.nome + ' ' + d.frequencia + 'x/sem (' + d.intensidade + ')';
+          var part = d.nome + ' ' + d.frequencia + 'x/sem (' + d.intensidade + ')';
+          if (d.dias && d.dias.length > 0) part += ' dias: ' + d.dias.join(',');
+          if (d.horario) part += ' as ' + d.horario;
+          return part;
         });
         parts.push('Atividades: ' + actParts.join(', ') + '.');
       }
       if (onbData.restricoes) parts.push('Restricoes medicas: ' + onbData.restricoes + '.');
-      parts.push('Monta um plano de treino pra mim!');
+      parts.push('Com base nessas informacoes, cria um plano de treino personalizado pra mim do zero. Sugira exercicios, series, repeticoes e cargas iniciais para cada grupo muscular relevante. Use as acoes de sugestao para adicionar os exercicios diretamente no app.');
 
       var msg = parts.join(' ');
 
@@ -6159,7 +6238,10 @@
       var atividadesP = '';
       if (onbData.atividades_detalhes && onbData.atividades_detalhes.length > 0) {
         atividadesP = onbData.atividades_detalhes.map(function(d) {
-          return d.nome + ' ' + d.frequencia + 'x/sem (' + d.intensidade + ')';
+          var part = d.nome + ' ' + d.frequencia + 'x/sem (' + d.intensidade + ')';
+          if (d.dias && d.dias.length > 0) part += ' dias: ' + d.dias.join(',');
+          if (d.horario) part += ' as ' + d.horario;
+          return part;
         }).join(', ');
       } else if (onbData.atividades.length > 0) {
         atividadesP = onbData.atividades.join(', ');
@@ -7538,11 +7620,12 @@
       if (exercise.equipment) metaHtml += '<span>' + exercise.equipment + '</span>';
       metaHtml += '</div>';
 
-      // Build instructions HTML
+      // Build instructions HTML - prefer Portuguese
       var instructionsHtml = '';
-      if (exercise.instructions && exercise.instructions.length > 0) {
+      var instructionSteps = exercise.ptInstructions || exercise.instructions;
+      if (instructionSteps && instructionSteps.length > 0) {
         instructionsHtml = '<div class="exercise-modal-instructions"><h4>Instruções</h4>';
-        exercise.instructions.forEach(function(step, i) {
+        instructionSteps.forEach(function(step, i) {
           instructionsHtml += '<div class="exercise-modal-step">' +
             '<span class="exercise-modal-step-num">' + (i + 1) + '</span>' +
             '<span>' + step + '</span></div>';
