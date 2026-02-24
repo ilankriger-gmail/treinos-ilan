@@ -2767,6 +2767,9 @@
           <strong>Essencial para sua segurança.</strong> O Coach vai evitar exercícios que agravem lesões, adaptar movimentos e sugerir alternativas. Seja específico — isso protege você.
         </div>
         <textarea class="onb-input" id="onbRestricoes" placeholder="Ex: Dor no ombro direito, hérnia de disco L4-L5, tendinite no joelho esquerdo... (deixe em branco se não tiver)"></textarea>
+        <div class="onb-label" style="margin-top: 16px;">📋 Exames recentes (opcional)</div>
+        <div class="onb-hint" style="margin-bottom: 8px;">Resultados de exames de sangue, bioimpedância, VO2max, DEXA ou qualquer avaliação física recente. O Coach usa isso para calibrar o plano.</div>
+        <textarea class="onb-input" id="onbExamesRecentes" placeholder="Ex: Hemoglobina 14g/dl, vitamina D baixa, gordura corporal 22%, VO2max 42ml/kg/min..." style="min-height: 70px;"></textarea>
         <div class="onb-label" style="margin-top: 16px;">Nível de experiência</div>
         <div class="onb-cards" style="grid-template-columns: 1fr;">
           <div class="onb-card" data-level="iniciante" onclick="selectOnbLevel('iniciante', this)">
@@ -2833,8 +2836,17 @@
         <div class="onb-subtitle">Para cada atividade, defina quantas vezes por semana, intensidade, dias preferidos e horario.</div>
         <div id="onbActivityDetails"></div>
       </div>
-      <!-- Step 7: Tudo pronto! -->
+      <!-- Step 7: Treino atual -->
       <div class="onb-step" data-step="7">
+        <div class="onb-title">Seu treino atual</div>
+        <div class="onb-subtitle">Descreva o treino que você faz hoje. Se não tiver treino definido, o Coach AI cria um do zero.</div>
+        <div class="onb-label">Treino de musculação atual (se tiver)</div>
+        <div class="onb-hint" style="margin-bottom: 8px;">Liste os exercícios, séries, repetições e cargas que você usa atualmente. Quanto mais detalhe, melhor o Coach calibra o ponto de partida.</div>
+        <textarea class="onb-input" id="onbTreinoAtual" placeholder="Ex:&#10;Seg — Peito: Supino 3x12 60kg, Crucifixo 3x15 14kg&#10;Qua — Costas: Puxada 4x10 50kg, Remada 3x12 40kg&#10;Sex — Pernas: Agachamento 4x10 80kg, Leg 3x15 90kg&#10;(Deixe em branco se não tiver treino definido)" style="min-height: 160px;"></textarea>
+        <div class="onb-hint" style="margin-top: 12px;">Você também pode colar aqui o texto de uma planilha, notas ou foto convertida em texto.</div>
+      </div>
+      <!-- Step 8: Tudo pronto! -->
+      <div class="onb-step" data-step="8">
         <div class="onb-title">Tudo pronto!</div>
         <div class="onb-subtitle">Confira seus dados antes de comecar.</div>
         <div id="onbSummary" class="onb-summary"></div>
@@ -4001,7 +4013,7 @@
     // ========== ONBOARDING ==========
 
     var onbStep = 1;
-    var onbTotalSteps = 7;
+    var onbTotalSteps = 8;
     var isNewUser = false;
     var isReOnboarding = false;
 
@@ -4013,6 +4025,8 @@
         objetivo_resultado: '',
         nivel: '', restricoes: '',
         como_se_sente: '',
+        exames_recentes: '',
+        treino_atual: '',
         atividades: [],
         atividades_detalhes: []
       };
@@ -4044,9 +4058,9 @@
       var stepEl = document.querySelector('.onb-step[data-step="' + onbStep + '"]');
       if (stepEl) stepEl.classList.add('active');
 
-      // Render dynamic content for steps 6 and 7
+      // Render dynamic content for steps 6 and 8
       if (onbStep === 6) renderActivityDetails();
-      if (onbStep === 7) renderOnbSummary();
+      if (onbStep === 8) renderOnbSummary();
 
       // Update nav buttons
       var backBtn = document.getElementById('onbBackBtn');
@@ -4079,6 +4093,12 @@
         onbData.restricoes = document.getElementById('onbRestricoes').value.trim();
         var comoSeSenteEl = document.getElementById('onbComoSeSente');
         if (comoSeSenteEl) onbData.como_se_sente = comoSeSenteEl.value.trim() || onbData.como_se_sente;
+        var examesEl = document.getElementById('onbExamesRecentes');
+        if (examesEl) onbData.exames_recentes = examesEl.value.trim();
+      }
+      if (onbStep === 7) {
+        var treinoEl = document.getElementById('onbTreinoAtual');
+        if (treinoEl) onbData.treino_atual = treinoEl.value.trim();
       }
 
       if (onbStep < onbTotalSteps) {
@@ -4103,6 +4123,12 @@
         onbData.restricoes = document.getElementById('onbRestricoes').value.trim();
         var comoSeSenteEl = document.getElementById('onbComoSeSente');
         if (comoSeSenteEl) onbData.como_se_sente = comoSeSenteEl.value.trim() || onbData.como_se_sente;
+        var examesEl = document.getElementById('onbExamesRecentes');
+        if (examesEl) onbData.exames_recentes = examesEl.value.trim();
+      }
+      if (onbStep === 7) {
+        var treinoEl = document.getElementById('onbTreinoAtual');
+        if (treinoEl) onbData.treino_atual = treinoEl.value.trim();
       }
       if (onbStep > 1) {
         // Skip step 2 (dados pessoais) when re-onboarding
@@ -4124,6 +4150,7 @@
         }
         if (onbStep === 4) {
           if (onbData.restricoes) document.getElementById('onbRestricoes').value = onbData.restricoes;
+          if (onbData.exames_recentes) document.getElementById('onbExamesRecentes').value = onbData.exames_recentes;
           // Re-select nivel card
           if (onbData.nivel) {
             document.querySelectorAll('.onb-step[data-step="4"] .onb-card[data-level]').forEach(function(c) {
@@ -4139,8 +4166,8 @@
             });
           }
           // Re-populate feeling textarea
-          var comoSeSenteEl = document.getElementById('onbComoSeSente');
-          if (comoSeSenteEl && onbData.como_se_sente) comoSeSenteEl.value = onbData.como_se_sente;
+          var comoSeSenteEl2 = document.getElementById('onbComoSeSente');
+          if (comoSeSenteEl2 && onbData.como_se_sente) comoSeSenteEl2.value = onbData.como_se_sente;
         }
         if (onbStep === 5) {
           // Re-select activity cards
@@ -4148,6 +4175,10 @@
             var card = document.querySelector('.onb-card[data-activity="' + act + '"]');
             if (card) card.classList.add('selected');
           });
+        }
+        if (onbStep === 7) {
+          var treinoRestoreEl = document.getElementById('onbTreinoAtual');
+          if (treinoRestoreEl && onbData.treino_atual) treinoRestoreEl.value = onbData.treino_atual;
         }
       }
     }
@@ -4427,6 +4458,7 @@
       if (onbData.objetivo_resultado) items.push({ label: 'Resultado esperado', value: onbData.objetivo_resultado });
       if (onbData.nivel) items.push({ label: 'Nivel', value: onbData.nivel.charAt(0).toUpperCase() + onbData.nivel.slice(1) });
       if (onbData.restricoes) items.push({ label: 'Restricoes', value: onbData.restricoes });
+      if (onbData.exames_recentes) items.push({ label: 'Exames', value: onbData.exames_recentes.substring(0, 80) + (onbData.exames_recentes.length > 80 ? '…' : '') });
       if (onbData.como_se_sente) {
         var feelingLabels = { otimo:'Ótimo', bem:'Bem', cansado:'Cansado', dores:'Com dores', lesionado:'Lesionado', voltando:'Voltando de lesão' };
         items.push({ label: 'Estado atual', value: feelingLabels[onbData.como_se_sente] || onbData.como_se_sente });
@@ -4452,6 +4484,7 @@
       // Total frequencia
       var totalFreq = onbData.atividades_detalhes.reduce(function(sum, d) { return sum + d.frequencia; }, 0);
       if (totalFreq > 0) items.push({ label: 'Total semanal', value: totalFreq + ' sessoes' });
+      if (onbData.treino_atual) items.push({ label: 'Treino atual', value: onbData.treino_atual.substring(0, 100) + (onbData.treino_atual.length > 100 ? '…' : '') });
 
       var html = '';
       items.forEach(function(item) {
@@ -4503,7 +4536,9 @@
             objetivo_data: {
               texto: onbData.objetivo_texto,
               data_alvo: onbData.objetivo_data,
-              resultado_esperado: onbData.objetivo_resultado
+              resultado_esperado: onbData.objetivo_resultado,
+              exames_recentes: onbData.exames_recentes || null,
+              treino_atual: onbData.treino_atual || null
             },
             nivel_experiencia: onbData.nivel || null,
             atividades_praticadas: atividadesFormatted,
@@ -4664,14 +4699,36 @@
         });
       }
 
+      // Exames recentes
+      if (onbData.exames_recentes) {
+        lines.push('**Exames e avaliações recentes:** ' + onbData.exames_recentes);
+      }
+
+      // Treino atual
+      if (onbData.treino_atual) {
+        lines.push('**Treino que faço atualmente:**');
+        lines.push(onbData.treino_atual);
+      } else {
+        lines.push('**Treino atual:** Não tenho treino definido — o Coach AI vai criar do zero.');
+      }
+
       lines.push('');
       lines.push('Com base nessas informações:');
       lines.push('1. Crie meu planejamento semanal (use blocos de sugestão para atividades no calendário)');
       if (onbData.atividades.indexOf('academia') > -1) {
-        lines.push('2. Monte meu treino de musculação do zero com exercícios, séries e cargas iniciais — use as ações de sugestão para adicionar os exercícios direto no app');
+        if (onbData.treino_atual) {
+          lines.push('2. Avalie meu treino atual e sugira ajustes (séries, cargas, exercícios) — use as ações de sugestão para modificar os exercícios direto no app');
+        } else {
+          lines.push('2. Monte meu treino de musculação do zero com exercícios, séries e cargas iniciais — use as ações de sugestão para adicionar os exercícios direto no app');
+        }
       }
       lines.push('3. Identifique conflitos entre rotina, restrições e objetivo — sugira ajustes');
-      lines.push('4. Seja direto e prático.');
+      if (onbData.exames_recentes) {
+        lines.push('4. Analise os resultados dos meus exames e ajuste o plano se necessário');
+        lines.push('5. Seja direto e prático.');
+      } else {
+        lines.push('4. Seja direto e prático.');
+      }
 
       var msg = lines.join('\n');
 
@@ -6643,7 +6700,12 @@
         atividadesRicas = onbData.atividades_detalhes.map(function(d) {
           var parts = [d.nome + ' ' + d.frequencia + 'x/sem (' + d.intensidade + ')'];
           if (d.dias && d.dias.length > 0) parts.push('dias: ' + d.dias.join(','));
-          if (d.horario) parts.push('às ' + d.horario);
+          if (d.horarios && Object.keys(d.horarios).length > 0) {
+            var hParts = d.dias.filter(function(dk) { return d.horarios[dk]; }).map(function(dk) { return dk + ':' + d.horarios[dk]; });
+            if (hParts.length > 0) parts.push('horários: ' + hParts.join(', '));
+          } else if (d.horario) {
+            parts.push('às ' + d.horario);
+          }
           if (d.divisao) parts.push('divisão: ' + d.divisao);
           if (d.series_por_exercicio) parts.push(d.series_por_exercicio + 'séries/ex');
           if (d.nivel_surf) parts.push('nível surf: ' + d.nivel_surf);
@@ -6665,10 +6727,14 @@
         (atividadesRicas ? '## ATIVIDADES DETALHADAS\n' + atividadesRicas + '\n\n' : (atividadesP ? 'Atividades: ' + atividadesP + '\n' : '')) +
         (freqSemanal ? 'Frequencia semanal total: ' + freqSemanal + 'x\n' : '') +
         'Dores/Problemas: ' + dores + '\n' +
-        'Estado hoje: ' + estado + '\n\n' +
+        'Estado hoje: ' + estado + '\n' +
+        (onbData.exames_recentes ? 'Exames recentes: ' + onbData.exames_recentes + '\n' : '') +
+        '\n' +
         notasMedicasText +
         '## TREINO ATUAL\n' +
-        buildDynamicWorkoutText() + '\n\n' +
+        buildDynamicWorkoutText() + '\n' +
+        (onbData.treino_atual ? '\n## TREINO ANTERIOR (referencia do onboarding)\n' + onbData.treino_atual + '\n' : '') +
+        '\n' +
         progressText + '\n' +
         analiseText +
         '## HISTORICO RECENTE\n' +
@@ -8865,6 +8931,10 @@
             onbData.objetivo_resultado = profile.objetivo_data.resultado_esperado || '';
           }
           if (!onbData.peso && profile.peso) onbData.peso = String(profile.peso);
+          if (!onbData.exames_recentes && profile.objetivo_data && profile.objetivo_data.exames_recentes)
+            onbData.exames_recentes = profile.objetivo_data.exames_recentes;
+          if (!onbData.treino_atual && profile.objetivo_data && profile.objetivo_data.treino_atual)
+            onbData.treino_atual = profile.objetivo_data.treino_atual;
 
           // Update chat profile summary
           updateChatProfileSummary();
