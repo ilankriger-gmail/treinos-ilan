@@ -4345,6 +4345,95 @@
       renderOnboardingStep();
     }
 
+    function restoreStepValues(step) {
+      if (step === 2) {
+        if (onbData.nome) { var e = document.getElementById('onbNome'); if(e) e.value = onbData.nome; }
+        if (onbData.idade) { var e = document.getElementById('onbIdade'); if(e) e.value = onbData.idade; }
+        if (onbData.altura) { var e = document.getElementById('onbAltura'); if(e) e.value = onbData.altura; }
+        if (onbData.peso) { var e = document.getElementById('onbPeso'); if(e) e.value = onbData.peso; }
+      }
+      if (step === 3) {
+        if (onbData.objetivo_texto) { var e = document.getElementById('onbObjetivoTexto'); if(e) e.value = onbData.objetivo_texto; }
+        if (onbData.objetivo_data) { var e = document.getElementById('onbObjetivoData'); if(e) e.value = onbData.objetivo_data; }
+        if (onbData.objetivo_resultado) { var e = document.getElementById('onbObjetivoResultado'); if(e) e.value = onbData.objetivo_resultado; }
+        if (onbData.objetivo_categoria) {
+          document.querySelectorAll('.onb-obj-cat-card').forEach(function(c) { c.classList.remove('selected'); });
+          var catEl = document.querySelector('.onb-obj-cat-card[onclick*="' + onbData.objetivo_categoria + '"]');
+          if (catEl) catEl.classList.add('selected');
+        }
+      }
+      if (step === 4) {
+        if (onbData.restricoes) { var e = document.getElementById('onbRestricoes'); if(e) e.value = onbData.restricoes; }
+        if (onbData.exames_recentes) { var e = document.getElementById('onbExamesRecentes'); if(e) e.value = onbData.exames_recentes; }
+        if (onbData.nivel) {
+          document.querySelectorAll('.onb-step[data-step="4"] .onb-card[data-level]').forEach(function(c) {
+            c.classList.remove('selected');
+            if (c.dataset.level === onbData.nivel) c.classList.add('selected');
+          });
+        }
+        if (onbData.como_se_sente) {
+          document.querySelectorAll('.onb-step[data-step="4"] .onb-card[data-feeling]').forEach(function(c) {
+            c.classList.remove('selected');
+            if (c.dataset.feeling === onbData.como_se_sente) c.classList.add('selected');
+          });
+          var csEl = document.getElementById('onbComoSeSente'); if(csEl) csEl.value = onbData.como_se_sente;
+        }
+        if (onbData.lesoes_ativas && onbData.lesoes_ativas.length > 0) {
+          document.querySelectorAll('.onb-lesao-chip').forEach(function(chip) {
+            var reg = chip.getAttribute('onclick') && chip.getAttribute('onclick').match(/toggleLesao\('([^']+)'/);
+            if (reg && onbData.lesoes_ativas.indexOf(reg[1]) > -1) chip.classList.add('selected');
+          });
+        }
+        if (onbData.medicamentos) { var e = document.getElementById('onbMedicamentos'); if(e) e.value = onbData.medicamentos; }
+        if (onbData.parq && Object.keys(onbData.parq).length > 0) {
+          var hasPos = Object.values(onbData.parq).some(function(v) { return v === true; });
+          var warn = document.getElementById('parqWarning'); if(warn && hasPos) warn.style.display = 'block';
+        }
+      }
+      if (step === 5 && onbData.atividades_detalhes && onbData.atividades_detalhes.length > 0) {
+        onbData.atividades_detalhes.forEach(function(detail) {
+          var act = detail.nome;
+          var card = document.querySelector('.onb-card[data-activity="' + act + '"]');
+          if (!card) return;
+          card.classList.add('selected');
+          var existingPicker = card.parentElement && card.parentElement.querySelector('.onb-cat-picker[data-for="' + act + '"]');
+          if (!existingPicker) {
+            var picker = document.createElement('div');
+            picker.className = 'onb-cat-picker';
+            picker.dataset.for = act;
+            var cat = detail.categoria || 'fixa';
+            picker.innerHTML =
+              '<button class="onb-cat-btn' + (cat === 'fixa' ? ' selected' : '') + '" data-cat="fixa" onclick="setActivityCategoria(\'' + act + '\',\'fixa\',this)">🔒 Toda semana</button>' +
+              '<button class="onb-cat-btn' + (cat === 'esporadica' ? ' selected' : '') + '" data-cat="esporadica" onclick="setActivityCategoria(\'' + act + '\',\'esporadica\',this)">🌊 Às vezes</button>' +
+              '<button class="onb-cat-btn' + (cat === 'quer_comecar' ? ' selected' : '') + '" data-cat="quer_comecar" onclick="setActivityCategoria(\'' + act + '\',\'quer_comecar\',this)">✨ Quero começar</button>';
+            card.insertAdjacentElement('afterend', picker);
+          }
+        });
+      }
+      if (step === 7) {
+        if (onbData.treino_atual) { var e = document.getElementById('onbTreinoAtual'); if(e) e.value = onbData.treino_atual; }
+      }
+      if (step === 8) {
+        if (onbData.sono_horas) { var e = document.getElementById('onbSonoHoras'); if(e) { e.value = onbData.sono_horas; updateOnbSonoVal(onbData.sono_horas); } }
+        if (onbData.estresse_nivel) { var e = document.getElementById('onbEstresse'); if(e) { e.value = onbData.estresse_nivel; updateOnbEstresseVal(onbData.estresse_nivel); } }
+        if (onbData.nivel_confianca) { var e = document.getElementById('onbConfianca'); if(e) { e.value = onbData.nivel_confianca; updateOnbConfiancaVal(onbData.nivel_confianca); } }
+        if (onbData.motivacao_intrinseca) { var e = document.getElementById('onbMotivacaoIntrinseca'); if(e) e.value = onbData.motivacao_intrinseca; }
+        if (onbData.tentativa_anterior) {
+          document.querySelectorAll('[data-tent]').forEach(function(b) { b.classList.toggle('selected', b.dataset.tent === onbData.tentativa_anterior); });
+          if (onbData.tentativa_anterior === 'sim') {
+            var dw = document.getElementById('onbTentativaDetalheWrap'); if(dw) dw.style.display = 'block';
+            if (onbData.tentativa_anterior_detalhe) { var e = document.getElementById('onbTentativaDetalhe'); if(e) e.value = onbData.tentativa_anterior_detalhe; }
+          }
+        }
+        if (onbData.suporte_social !== null) {
+          document.querySelectorAll('[data-sup]').forEach(function(b) { b.classList.toggle('selected', (b.dataset.sup === 'sim') === onbData.suporte_social); });
+        }
+        if (onbData.sono_qualidade) {
+          document.querySelectorAll('[data-sono-qual]').forEach(function(b) { b.classList.toggle('selected', b.dataset.sonoQual === onbData.sono_qualidade); });
+        }
+      }
+    }
+
     function renderOnboardingStep() {
       // Update progress dots
       var progressHtml = '';
@@ -4361,6 +4450,9 @@
       // Render dynamic content for steps 6 and 9
       if (onbStep === 6) renderActivityDetails();
       if (onbStep === 9) renderOnbSummary();
+
+      // Pre-fill saved values (for re-onboarding and back navigation)
+      restoreStepValues(onbStep);
 
       // Update nav buttons
       var backBtn = document.getElementById('onbBackBtn');
@@ -4481,119 +4573,6 @@
         if (isReOnboarding && onbStep === 3) prevStep = 1;
         onbStep = prevStep;
         renderOnboardingStep();
-        // Restore input values after render
-        if (onbStep === 2) {
-          if (onbData.nome) document.getElementById('onbNome').value = onbData.nome;
-          if (onbData.idade) document.getElementById('onbIdade').value = onbData.idade;
-          if (onbData.altura) document.getElementById('onbAltura').value = onbData.altura;
-          if (onbData.peso) document.getElementById('onbPeso').value = onbData.peso;
-        }
-        if (onbStep === 3) {
-          if (onbData.objetivo_texto) document.getElementById('onbObjetivoTexto').value = onbData.objetivo_texto;
-          if (onbData.objetivo_data) document.getElementById('onbObjetivoData').value = onbData.objetivo_data;
-          if (onbData.objetivo_resultado) document.getElementById('onbObjetivoResultado').value = onbData.objetivo_resultado;
-          if (onbData.objetivo_categoria) {
-            document.querySelectorAll('.onb-obj-cat-card').forEach(function(c) { c.classList.remove('selected'); });
-            var catEl = document.querySelector('.onb-obj-cat-card[onclick*="' + onbData.objetivo_categoria + '"]');
-            if (catEl) catEl.classList.add('selected');
-          }
-        }
-        if (onbStep === 4) {
-          if (onbData.restricoes) document.getElementById('onbRestricoes').value = onbData.restricoes;
-          if (onbData.exames_recentes) document.getElementById('onbExamesRecentes').value = onbData.exames_recentes;
-          // Re-select nivel card
-          if (onbData.nivel) {
-            document.querySelectorAll('.onb-step[data-step="4"] .onb-card[data-level]').forEach(function(c) {
-              c.classList.remove('selected');
-              if (c.dataset.level === onbData.nivel) c.classList.add('selected');
-            });
-          }
-          // Re-select feeling card
-          if (onbData.como_se_sente) {
-            document.querySelectorAll('.onb-step[data-step="4"] .onb-card[data-feeling]').forEach(function(c) {
-              c.classList.remove('selected');
-              if (c.dataset.feeling === onbData.como_se_sente) c.classList.add('selected');
-            });
-          }
-          // Re-populate feeling textarea
-          var comoSeSenteEl2 = document.getElementById('onbComoSeSente');
-          if (comoSeSenteEl2 && onbData.como_se_sente) comoSeSenteEl2.value = onbData.como_se_sente;
-          // Re-select lesão chips
-          if (onbData.lesoes_ativas && onbData.lesoes_ativas.length > 0) {
-            document.querySelectorAll('.onb-lesao-chip').forEach(function(chip) {
-              var reg = chip.getAttribute('onclick').match(/toggleLesao\('([^']+)'/);
-              if (reg && onbData.lesoes_ativas.indexOf(reg[1]) > -1) chip.classList.add('selected');
-            });
-          }
-          if (onbData.medicamentos) {
-            var medRestEl = document.getElementById('onbMedicamentos');
-            if (medRestEl) medRestEl.value = onbData.medicamentos;
-          }
-          // Restore PAR-Q
-          if (onbData.parq && Object.keys(onbData.parq).length > 0) {
-            var hasPos = Object.values(onbData.parq).some(function(v) { return v === true; });
-            var parqWarn = document.getElementById('parqWarning');
-            if (parqWarn && hasPos) parqWarn.style.display = 'block';
-          }
-        }
-        if (onbStep === 5) {
-          // Re-select activity cards and show category pickers
-          onbData.atividades_detalhes.forEach(function(detail) {
-            var act = detail.nome;
-            var card = document.querySelector('.onb-card[data-activity="' + act + '"]');
-            if (card) {
-              card.classList.add('selected');
-              // Re-inject picker if not already there
-              var existingPicker = card.parentElement && card.parentElement.querySelector('.onb-cat-picker[data-for="' + act + '"]');
-              if (!existingPicker) {
-                var picker = document.createElement('div');
-                picker.className = 'onb-cat-picker';
-                picker.dataset.for = act;
-                var cat = detail.categoria || 'fixa';
-                picker.innerHTML =
-                  '<button class="onb-cat-btn' + (cat === 'fixa' ? ' selected' : '') + '" data-cat="fixa" onclick="setActivityCategoria(\'' + act + '\',\'fixa\',this)">🔒 Toda semana</button>' +
-                  '<button class="onb-cat-btn' + (cat === 'esporadica' ? ' selected' : '') + '" data-cat="esporadica" onclick="setActivityCategoria(\'' + act + '\',\'esporadica\',this)">🌊 Às vezes</button>' +
-                  '<button class="onb-cat-btn' + (cat === 'quer_comecar' ? ' selected' : '') + '" data-cat="quer_comecar" onclick="setActivityCategoria(\'' + act + '\',\'quer_comecar\',this)">✨ Quero começar</button>';
-                card.insertAdjacentElement('afterend', picker);
-              }
-            }
-          });
-        }
-        if (onbStep === 7) {
-          var treinoRestoreEl = document.getElementById('onbTreinoAtual');
-          if (treinoRestoreEl && onbData.treino_atual) treinoRestoreEl.value = onbData.treino_atual;
-        }
-        if (onbStep === 8) {
-          var sonoHorasRestEl = document.getElementById('onbSonoHoras');
-          if (sonoHorasRestEl && onbData.sono_horas) { sonoHorasRestEl.value = onbData.sono_horas; updateOnbSonoVal(onbData.sono_horas); }
-          var estresseRestEl = document.getElementById('onbEstresse');
-          if (estresseRestEl && onbData.estresse_nivel) { estresseRestEl.value = onbData.estresse_nivel; updateOnbEstresseVal(onbData.estresse_nivel); }
-          var motivacaoRestEl = document.getElementById('onbMotivacaoIntrinseca');
-          if (motivacaoRestEl && onbData.motivacao_intrinseca) motivacaoRestEl.value = onbData.motivacao_intrinseca;
-          var confiancaRestEl = document.getElementById('onbConfianca');
-          if (confiancaRestEl && onbData.nivel_confianca) { confiancaRestEl.value = onbData.nivel_confianca; updateOnbConfiancaVal(onbData.nivel_confianca); }
-          if (onbData.tentativa_anterior) {
-            document.querySelectorAll('[data-tent]').forEach(function(b) {
-              b.classList.toggle('selected', b.dataset.tent === onbData.tentativa_anterior);
-            });
-            if (onbData.tentativa_anterior === 'sim') {
-              var detEl = document.getElementById('onbTentativaDetalheWrap');
-              if (detEl) detEl.style.display = 'block';
-              var tentDetRestEl = document.getElementById('onbTentativaDetalhe');
-              if (tentDetRestEl && onbData.tentativa_anterior_detalhe) tentDetRestEl.value = onbData.tentativa_anterior_detalhe;
-            }
-          }
-          if (onbData.suporte_social !== null) {
-            document.querySelectorAll('[data-sup]').forEach(function(b) {
-              b.classList.toggle('selected', (b.dataset.sup === 'sim') === onbData.suporte_social);
-            });
-          }
-          if (onbData.sono_qualidade) {
-            document.querySelectorAll('[data-sono-qual]').forEach(function(b) {
-              b.classList.toggle('selected', b.dataset.sonoQual === onbData.sono_qualidade);
-            });
-          }
-        }
       }
     }
 
@@ -5325,6 +5304,8 @@
 
     function resetOnboarding() {
       if (!confirm('Atualizar seus dados e objetivo. Continuar?')) return;
+      // Save all current data before reset so fields come pre-filled
+      var saved = Object.assign({}, onbData);
       // Reset flags
       localStorage.removeItem('onboarding-completed');
       try {
@@ -5334,22 +5315,44 @@
           body: JSON.stringify({ onboarding_completed: false, onboarding_at: null })
         });
       } catch(e) {}
-      // Reset onbData but preserve personal data from profile inputs
       onbData = buildDefaultOnbData();
+      // Restore personal data
       var nomeInput = document.getElementById('profileNome');
       var idadeInput = document.getElementById('profileIdade');
       var alturaInput = document.getElementById('profileAltura');
-      if (nomeInput && nomeInput.value) onbData.nome = nomeInput.value;
-      if (idadeInput && idadeInput.value) onbData.idade = idadeInput.value;
-      if (alturaInput && alturaInput.value) onbData.altura = alturaInput.value;
-      // Get peso from cached profile
-      if (_cachedProfile && _cachedProfile.peso) onbData.peso = String(_cachedProfile.peso);
-      // Get sexo from profile
-      if (typeof selectedSexo !== 'undefined' && selectedSexo) onbData.sexo = selectedSexo;
-      else if (_cachedProfile && _cachedProfile.sexo) onbData.sexo = _cachedProfile.sexo;
-      isNewUser = false; // preserve existing exercises
-      isReOnboarding = true; // skip step 2 (personal data)
-      // Show onboarding
+      onbData.nome = saved.nome || (nomeInput && nomeInput.value) || '';
+      onbData.idade = saved.idade || (idadeInput && idadeInput.value) || '';
+      onbData.altura = saved.altura || (alturaInput && alturaInput.value) || '';
+      onbData.peso = saved.peso || (_cachedProfile && _cachedProfile.peso ? String(_cachedProfile.peso) : '');
+      onbData.sexo = saved.sexo || (typeof selectedSexo !== 'undefined' ? selectedSexo : '') || (_cachedProfile && _cachedProfile.sexo) || '';
+      // Restore objective
+      onbData.objetivo_texto = saved.objetivo_texto || '';
+      onbData.objetivo_data = saved.objetivo_data || '';
+      onbData.objetivo_resultado = saved.objetivo_resultado || '';
+      onbData.objetivo_categoria = saved.objetivo_categoria || '';
+      // Restore level & restrictions
+      onbData.nivel = saved.nivel || '';
+      onbData.restricoes = saved.restricoes || '';
+      // Restore activities (pre-selected in step 5)
+      onbData.atividades = (saved.atividades || []).slice();
+      onbData.atividades_detalhes = (saved.atividades_detalhes || []).slice();
+      // Restore health/anamnese
+      onbData.parq = saved.parq ? Object.assign({}, saved.parq) : {};
+      onbData.lesoes_ativas = (saved.lesoes_ativas || []).slice();
+      onbData.medicamentos = saved.medicamentos || '';
+      // Restore habits
+      onbData.sono_horas = saved.sono_horas || '';
+      onbData.sono_qualidade = saved.sono_qualidade || '';
+      onbData.estresse_nivel = saved.estresse_nivel || '';
+      onbData.motivacao_intrinseca = saved.motivacao_intrinseca || '';
+      onbData.tentativa_anterior = saved.tentativa_anterior || '';
+      onbData.tentativa_anterior_detalhe = saved.tentativa_anterior_detalhe || '';
+      onbData.nivel_confianca = saved.nivel_confianca || '';
+      onbData.suporte_social = saved.suporte_social !== undefined ? saved.suporte_social : null;
+      // skipped_steps resets for new run
+      onbData.skipped_steps = [];
+      isNewUser = false;
+      isReOnboarding = true;
       document.getElementById('onboardingScreen').classList.add('visible');
       document.getElementById('appContainer').style.display = 'none';
       onbStep = 1;
