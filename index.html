@@ -389,6 +389,54 @@
       font-size: 14px;
     }
     
+    /* Activity status styles */
+    .activity-item.activity-planned {
+      border: 1px dashed var(--border);
+      background: var(--bg-primary);
+      opacity: 0.9;
+    }
+    .activity-item.activity-skipped {
+      opacity: 0.5;
+    }
+    .activity-item.activity-skipped .activity-item-name {
+      text-decoration: line-through;
+    }
+    .act-status-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      flex-shrink: 0;
+    }
+    .act-done-btn {
+      background: rgba(80, 200, 120, 0.15);
+      color: var(--success);
+    }
+    .act-skip-btn {
+      background: var(--error-dim);
+      color: var(--error);
+    }
+    .act-undo-btn {
+      background: var(--bg-tertiary);
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+    /* Calendar planned indicator */
+    .calendar-day.has-planned::after {
+      content: '';
+      position: absolute;
+      bottom: 3px;
+      right: 3px;
+      width: 4px;
+      height: 4px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      background: transparent;
+    }
+
     .no-activities {
       text-align: center;
       color: var(--text-muted);
@@ -5761,8 +5809,9 @@
         const isToday = today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
         const isSelected = selectedDate.getDate() === day && selectedDate.getMonth() === month && selectedDate.getFullYear() === year;
         const dayActs = activities[dateStr] || [];
-        // Count non-rest activities for heatmap
-        var activeCount = dayActs.filter(function(a) { return a.type !== 'descanso'; }).length;
+        // Count done (not planned/skipped) activities for heatmap
+        var activeCount = dayActs.filter(function(a) { return a.type !== 'descanso' && (a.status || 'done') === 'done'; }).length;
+        var hasPlan = dayActs.some(function(a) { return (a.status || 'done') === 'planned'; });
 
         let classes = 'calendar-day';
         if (isToday) classes += ' today';
@@ -5771,6 +5820,7 @@
         else if (activeCount === 3) classes += ' heat-3';
         else if (activeCount === 2) classes += ' heat-2';
         else if (activeCount >= 1) classes += ' heat-1';
+        if (hasPlan) classes += ' has-planned';
 
         html += `<div class="${classes}" onclick="selectDate(${year}, ${month}, ${day})">${day}</div>`;
       }
@@ -5831,23 +5881,32 @@
         return;
       }
       
-      document.getElementById('dayActivities').innerHTML = dayActivities.map((a, i) => `
-        <div class="activity-item" style="flex-wrap: wrap;">
+      document.getElementById('dayActivities').innerHTML = dayActivities.map((a, i) => {
+        var status = a.status || 'done';
+        var statusClass = status === 'planned' ? ' activity-planned' : (status === 'skipped' ? ' activity-skipped' : '');
+        var namePrefix = status === 'done' ? '✅ ' : (status === 'skipped' ? '❌ ' : '📅 ');
+        var timeLabel = status === 'planned'
+          ? 'Planejado' + (a.time ? ' · ' + a.time : '')
+          : (status === 'skipped' ? 'Não realizado'
+          : [(a.time || ''), (a.duration ? a.duration + 'min' : ''), (a.effort != null ? 'esforço ' + a.effort + '/10' : (a.intensity || ''))].filter(Boolean).join(' • '));
+        var actionBtns = status === 'planned'
+          ? `<button class="act-status-btn act-done-btn" onclick="setActivityStatus('${dateStr}',${i},'done')" title="Marcar como feito">✓</button>
+             <button class="act-status-btn act-skip-btn" onclick="setActivityStatus('${dateStr}',${i},'skipped')" title="Marcar como pulado">✗</button>`
+          : (status === 'skipped'
+          ? `<button class="act-status-btn act-undo-btn" onclick="setActivityStatus('${dateStr}',${i},'planned')" title="Desfazer">↩</button>`
+          : `<button onclick="editActivity('${dateStr}', ${i})" style="width:28px;height:28px;border:none;border-radius:6px;background:var(--bg-tertiary);color:var(--text-secondary);cursor:pointer;font-size:14px;flex-shrink:0;">✎</button>`);
+        return `<div class="activity-item${statusClass}" style="flex-wrap: wrap;">
           <span class="emoji">${activityEmojis[a.type] || '🏋️'}</span>
           <div class="activity-item-info">
-            <div class="activity-item-name">${activityNames[a.type] || a.type}</div>
-            <div class="activity-item-time">
-              ${a.time || ''}
-              ${a.duration ? ' • ' + a.duration + 'min' : ''}
-              ${a.effort != null ? ' • esforço ' + a.effort + '/10' : (a.intensity ? ' • ' + a.intensity : '')}
-            </div>
+            <div class="activity-item-name">${namePrefix}${activityNames[a.type] || a.type}</div>
+            <div class="activity-item-time">${timeLabel}</div>
           </div>
-          <button onclick="editActivity('${dateStr}', ${i})" style="width: 28px; height: 28px; border: none; border-radius: 6px; background: var(--bg-tertiary); color: var(--text-secondary); cursor: pointer; font-size: 14px;">✎</button>
+          ${actionBtns}
           <button class="activity-delete" onclick="deleteActivity('${dateStr}', ${i})">✕</button>
-          ${a.notes ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: var(--bg-tertiary); border-radius: 6px; font-size: 12px; color: var(--text-secondary); margin-left: 36px;">💬 ' + escapeHtml(a.notes) + '</div>' : ''}
-          ${a.fisioTreino ? '<div style="width: 100%; margin-top: 8px; padding: 8px 10px; background: var(--bg-tertiary); border-radius: 6px; font-size: 12px; color: var(--text-secondary); margin-left: 36px; border-left: 2px solid var(--text-muted);">📋 ' + escapeHtml(a.fisioTreino) + '</div>' : ''}
-        </div>
-      `).join('');
+          ${a.notes ? '<div style="width:100%;margin-top:8px;padding:8px 10px;background:var(--bg-tertiary);border-radius:6px;font-size:12px;color:var(--text-secondary);margin-left:36px;">💬 ' + escapeHtml(a.notes) + '</div>' : ''}
+          ${a.fisioTreino ? '<div style="width:100%;margin-top:8px;padding:8px 10px;background:var(--bg-tertiary);border-radius:6px;font-size:12px;color:var(--text-secondary);margin-left:36px;border-left:2px solid var(--text-muted);">📋 ' + escapeHtml(a.fisioTreino) + '</div>' : ''}
+        </div>`;
+      }).join('');
     }
     
     // ========== ACTIVITIES ==========
@@ -5888,6 +5947,26 @@
       } catch (e) { console.error(e); }
     }
     
+    async function setActivityStatus(dateStr, index, status) {
+      if (!activities[dateStr] || !activities[dateStr][index]) return;
+      activities[dateStr][index].status = status;
+      if (status === 'done') {
+        // Add completion time if missing
+        if (!activities[dateStr][index].time) {
+          activities[dateStr][index].time = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
+        }
+      }
+      const prevSelected = selectedDate;
+      var parts = dateStr.split('-');
+      selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+      await saveActivities();
+      selectedDate = prevSelected;
+      renderCalendar();
+      renderDayActivities();
+      var labels = { done: '✅ Marcado como feito!', skipped: '❌ Marcado como não realizado', planned: 'Voltou para planejado' };
+      showToast(labels[status] || 'Atualizado');
+    }
+
     async function saveActivities() {
       showSync('Salvando...');
       try {
@@ -6165,12 +6244,21 @@
           showToast('Salvo!');
           showSync('Salvo!', 'success');
 
-          // Add to calendar
+          // Add to calendar — upgrade planned→done if exists, else add new
           if (!activities[today]) activities[today] = [];
-          activities[today].push({
-            type: workoutType,
-            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })
-          });
+          var calType = workoutType === 'fisioterapia' ? 'fisio' : workoutType;
+          var existingSimpleIdx = activities[today].findIndex(function(a) { return (a.type === workoutType || a.type === calType) && (a.status || 'done') === 'planned'; });
+          if (existingSimpleIdx >= 0) {
+            activities[today][existingSimpleIdx].status = 'done';
+            activities[today][existingSimpleIdx].time = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
+            if (durationMin) activities[today][existingSimpleIdx].duration = durationMin;
+          } else {
+            activities[today].push({
+              type: workoutType,
+              time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
+              status: 'done'
+            });
+          }
           saveActivities();
 
           // Clear form
@@ -6383,13 +6471,21 @@
           // Refresh exercise history & sparklines
           loadExerciseHistory().then(renderExerciseSparklines);
 
-          // Add to calendar
+          // Add to calendar — upgrade planned→done if exists, else add new
           const dateStr = today;
           if (!activities[dateStr]) activities[dateStr] = [];
-          activities[dateStr].push({
-            type: workoutType,
-            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })
-          });
+          var existingIdx = activities[dateStr].findIndex(function(a) { return a.type === workoutType && (a.status || 'done') === 'planned'; });
+          if (existingIdx >= 0) {
+            activities[dateStr][existingIdx].status = 'done';
+            activities[dateStr][existingIdx].time = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
+            if (durationMin) activities[dateStr][existingIdx].duration = durationMin;
+          } else {
+            activities[dateStr].push({
+              type: workoutType,
+              time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
+              status: 'done'
+            });
+          }
           saveActivities();
 
           // Reset exercises
@@ -7266,7 +7362,7 @@
       var active = 0;
       calendarData.forEach(function(d) {
         var acts = d.activities || [];
-        if (Array.isArray(acts) && acts.some(function(a) { return a.type !== 'descanso'; })) active++;
+        if (Array.isArray(acts) && acts.some(function(a) { return a.type !== 'descanso' && (a.status || 'done') === 'done'; })) active++;
       });
       var pct = ((active / calendarData.length) * 100).toFixed(0);
       return pct + '% dos dias (' + active + '/' + calendarData.length + ')';
@@ -7380,7 +7476,8 @@
           var acts = Array.isArray(d.activities) ? d.activities : [];
           if (acts.length === 0) return d.date + ': descanso';
           var labels = acts.map(function(a) {
-            var lbl = a.type || '?';
+            var st = a.status || 'done';
+            var lbl = (st === 'planned' ? '[planejado]' : st === 'skipped' ? '[nao feito]' : '[feito]') + ' ' + (a.type || '?');
             if (a.esforco) lbl += '(esforco:' + a.esforco + '/10)';
             return lbl;
           });
@@ -8700,7 +8797,8 @@
             time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
             duration: s.duration ? parseInt(s.duration) : null,
             notes: s.detail || s.label,
-            effort: null
+            effort: null,
+            status: 'planned'
           });
           const prevSelected = selectedDate;
           var parts = targetDate.split('-');
@@ -8723,7 +8821,8 @@
               time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
               duration: s.duration ? parseInt(s.duration) : null,
               notes: s.detail || s.label,
-              effort: null
+              effort: null,
+              status: 'planned'
             });
             const prevSelected = selectedDate;
             var parts = targetDate.split('-');
@@ -10215,7 +10314,7 @@
       for (var i = 0; i < 365; i++) {
         var ds = checkDate.getFullYear() + '-' + String(checkDate.getMonth() + 1).padStart(2, '0') + '-' + String(checkDate.getDate()).padStart(2, '0');
         var dayActs = activities[ds] || [];
-        var hasReal = dayActs.some(function(a) { return a.type !== 'descanso'; });
+        var hasReal = dayActs.some(function(a) { return a.type !== 'descanso' && (a.status || 'done') === 'done'; });
         if (hasReal) {
           streak++;
           if (streak > longest) longest = streak;
@@ -10330,7 +10429,7 @@
           return diff >= 0 && diff <= 30;
         });
         var trainedDays = last30.filter(function(d) {
-          return activities[d] && activities[d].some(function(a) { return a.type !== 'descanso'; });
+          return activities[d] && activities[d].some(function(a) { return a.type !== 'descanso' && (a.status || 'done') === 'done'; });
         }).length;
         var pctC = last30.length > 0 ? Math.round(trainedDays / last30.length * 100) : 0;
         return {
@@ -10354,7 +10453,7 @@
 
       var ontemStr = ontem.getFullYear() + '-' + String(ontem.getMonth()+1).padStart(2,'0') + '-' + String(ontem.getDate()).padStart(2,'0');
       var yActs = activities[ontemStr] || [];
-      var hasActivity = yActs.some(function(a) { return a.type && a.type !== 'descanso'; });
+      var hasActivity = yActs.some(function(a) { return a.type && a.type !== 'descanso' && (a.status || 'done') === 'done'; });
       if (hasActivity) return null;
 
       return { date: ontemStr, scheduledActivities: scheduledYesterday };
