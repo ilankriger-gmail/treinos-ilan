@@ -5944,6 +5944,42 @@
         data.forEach(row => {
           activities[row.date] = row.activities;
         });
+
+        // Deduplicate: remove duplicate activity types per date, save back if needed
+        var datesWithDups = [];
+        Object.keys(activities).forEach(function(date) {
+          var arr = activities[date];
+          if (!Array.isArray(arr)) return;
+          var seen = {};
+          var deduped = arr.filter(function(a) {
+            var key = a.type;
+            if (seen[key]) return false;
+            seen[key] = true;
+            return true;
+          });
+          if (deduped.length !== arr.length) {
+            activities[date] = deduped;
+            datesWithDups.push(date);
+          }
+        });
+        if (datesWithDups.length > 0) {
+          datesWithDups.forEach(function(date) {
+            var dayActs = activities[date] || [];
+            var uid = getCurrentUserId();
+            fetch(`${SUPABASE_URL}/rest/v1/calendar_activities?user_id=eq.${uid}&date=eq.${date}`, {
+              method: 'DELETE',
+              headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+            }).then(function() {
+              if (dayActs.length > 0) {
+                fetch(`${SUPABASE_URL}/rest/v1/calendar_activities`, {
+                  method: 'POST',
+                  headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ date: date, activities: dayActs, user_id: uid })
+                });
+              }
+            });
+          });
+        }
       } catch (e) {
         // Fallback to localStorage
         activities = JSON.parse(localStorage.getItem('calendar-activities') || '{}');
@@ -8689,24 +8725,29 @@
           cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Substituído em ' + dateLabel + '</span>';
 
         } else {
-          // action: add (default)
+          // action: add (default) — skip if same type already exists for this date
           if (!activities[targetDate]) activities[targetDate] = [];
-          activities[targetDate].push({
-            type: type,
-            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
-            duration: s.duration ? parseInt(s.duration) : null,
-            notes: s.detail || s.label,
-            effort: null
-          });
-          const prevSelected = selectedDate;
-          var parts = targetDate.split('-');
-          selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-          await saveActivities();
-          selectedDate = prevSelected;
-          renderCalendar();
-          renderDayActivities();
+          var alreadyExists = activities[targetDate].some(function(a) { return a.type === type; });
           var dateLabel = targetDate === getTodayDateStr() ? 'hoje' : targetDate;
-          cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Adicionado em ' + dateLabel + '</span>';
+          if (!alreadyExists) {
+            activities[targetDate].push({
+              type: type,
+              time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
+              duration: s.duration ? parseInt(s.duration) : null,
+              notes: s.detail || s.label,
+              effort: null
+            });
+            const prevSelected = selectedDate;
+            var parts = targetDate.split('-');
+            selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            await saveActivities();
+            selectedDate = prevSelected;
+            renderCalendar();
+            renderDayActivities();
+            cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Adicionado em ' + dateLabel + '</span>';
+          } else {
+            cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--text-muted); font-size: 12px;">Já existe em ' + dateLabel + '</span>';
+          }
         }
       } else {
         cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Aceito</span>';
