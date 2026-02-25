@@ -5471,7 +5471,7 @@
       }
 
       lines.push('');
-      lines.push('Analise meus dados e faça até 3 perguntas curtas e objetivas para entender melhor o que preciso — horários disponíveis, preferências, restrições não mencionadas, etc. — antes de montar meu plano. Após minha resposta, crie o planejamento completo (calendário semanal + treino de musculação se aplicável).');
+      lines.push('Analise meus dados e faça até 3 perguntas curtas e objetivas para entender melhor o que preciso — horários disponíveis, preferências, restrições não mencionadas, etc. — antes de montar meu plano. Após minha resposta, crie o planejamento semanal usando APENAS blocos type:atividade (máx. 2 por dia). Para upper/lower, coloque os exercícios no campo "detail" do card — NÃO crie cards type:exercicio separados.');
 
       var fullMsg = lines.join('\n');
 
@@ -7277,29 +7277,31 @@
         '7. Se existirem NOTAS MEDICAS no contexto, SEMPRE respeite como restricoes. NUNCA sugira exercicios que conflitem com lesoes, condicoes ou restricoes medicas do aluno. Adapte todas as sugestoes.\n\n' +
         'DATA DE HOJE: ' + getTodayDateStr() + ' (' + ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][getSaoPauloNow().getDay()] + ')\n' +
         'PROXIMOS 7 DIAS: ' + getNext7Days() + '\n\n' +
-        'FORMATO DE SUGESTAO:\n' +
-        'ATENCAO: Ha dois tipos de sugestao completamente diferentes:\n' +
-        '- TYPE: atividade → agenda no CALENDARIO (aba Calendario). Serve para dizer EM QUAL DIA o aluno vai fazer uma atividade.\n' +
-        '- TYPE: exercicio → modifica o PLANO DE TREINO (aba Treinos). Serve para adicionar/modificar/remover exercicios do Upper e Lower.\n' +
-        'NAO use type:atividade para adicionar exercicios ao plano de treino. Use type:exercicio para isso.\n\n' +
-        'Para agendar atividade no CALENDARIO:\n' +
+        'FORMATO DE SUGESTAO — REGRA FUNDAMENTAL:\n' +
+        'Existem DOIS contextos completamente diferentes. NUNCA misture os dois na mesma resposta:\n\n' +
+        'CONTEXTO 1 — PLANO SEMANAL (calendario):\n' +
+        'Use APENAS type:atividade. PROIBIDO usar type:exercicio ao mesmo tempo.\n' +
+        'Cada atividade = 1 bloco. Se a atividade e upper/lower, coloque TODOS os exercicios no campo "detail" (ex: "Remada 3x12, Crucifixo 3x10, Face Pull 3x15...").\n' +
+        'NAO crie blocos separados de type:exercicio para listar os exercicios do treino — tudo vai no "detail" do card de atividade.\n\n' +
+        'CONTEXTO 2 — MODIFICAR PLANO DE TREINO (aba Treinos):\n' +
+        'Use APENAS type:exercicio quando o aluno PEDIR para ajustar os exercicios do plano.\n' +
+        'Nao use type:exercicio durante a criacao de um plano semanal.\n\n' +
+        'Para agendar atividade no CALENDARIO (contexto 1):\n' +
         '<' + sg + '>\n' +
-        'type: atividade\naction: add\nlabel: Nome da atividade sugerida\n' +
-        'activity_type: corrida|surf|tenis|bike|fisio|upper|lower\n' +
+        'type: atividade\naction: add\nlabel: Nome da atividade\n' +
+        'activity_type: corrida|surf|tenis|bike|fisio|upper|lower|caminhada|mobilidade|descanso\n' +
         'date: YYYY-MM-DD\n' +
-        'duration: 30\ndetail: Descricao breve da sugestao\n' +
+        'duration: 45\ndetail: Resumo do que fazer. Se upper/lower: liste os exercicios aqui (ex: Remada 3x12, Crucifixo 3x10).\n' +
         '</' + sg + '>\n\n' +
         'REGRA OBRIGATORIA PARA ROTINAS SEMANAIS:\n' +
-        'Quando sugerir uma rotina semanal ou plano de varios dias, voce DEVE criar um bloco <' + sg + '> SEPARADO para CADA atividade de CADA dia.\n' +
-        'Cada bloco DEVE ter o campo "date" com a data exata no formato YYYY-MM-DD (use as datas dos proximos 7 dias acima).\n' +
-        'SEMPRE inclua HOJE no plano se houver atividades fixas para o dia da semana de hoje. Nao pule o dia atual.\n' +
-        'NUNCA sugira rotina apenas como texto - SEMPRE use blocos <' + sg + '> para que o aluno possa aceitar e adicionar ao calendario.\n\n' +
+        'Crie um bloco <' + sg + '> SEPARADO para CADA atividade de CADA dia.\n' +
+        'Cada bloco DEVE ter o campo "date" com a data exata YYYY-MM-DD.\n' +
+        'SEMPRE inclua HOJE se houver atividades fixas para o dia de hoje.\n' +
+        'NUNCA sugira rotina apenas como texto — SEMPRE use blocos <' + sg + '>.\n\n' +
         'LIMITE ABSOLUTO DE ATIVIDADES POR DIA:\n' +
-        'MAXIMO 2 blocos de sugestao por dia. Ponto final. Nunca 3, nunca 4, nunca 5.\n' +
-        'Exemplos validos: [surf] ou [fisio + upper] ou [corrida + mobilidade].\n' +
-        'Exemplos PROIBIDOS: [fisio + upper + mobilidade] ou [surf + corrida + lower + caminhada].\n' +
-        'Se o dia ja tem uma atividade fixa intensa (surf, tenis, fisio), o segundo slot e opcional e so para algo leve (mobilidade) OU vazio (dia de descanso).\n' +
-        'Caminhada, mobilidade e descanso NAO substituem o limite — continuam contando como 1 atividade.\n\n' +
+        'MAXIMO 2 blocos por dia. Nunca 3, 4 ou 5.\n' +
+        'Exemplos validos: [surf] ou [fisio + upper] ou [corrida].\n' +
+        'Se o dia tem atividade fixa intensa (surf, tenis, fisio), o segundo slot so para algo leve OU vazio.\n\n' +
         '<' + sg + '>\n' +
         'type: exercicio\naction: modify\nlabel: Nome do exercicio\n' +
         'exercise_name: Nome EXATO do exercicio (da lista abaixo)\ndetail: O que mudar no exercicio\n' +
