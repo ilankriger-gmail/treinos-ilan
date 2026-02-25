@@ -5471,22 +5471,7 @@
       }
 
       lines.push('');
-      lines.push('Com base nessas informações:');
-      lines.push('1. Crie meu planejamento semanal completo para os PRÓXIMOS 7 DIAS (incluindo HOJE) — para cada dia com atividades, crie um bloco de sugestão separado por atividade (datas exatas do campo PROXIMOS 7 DIAS). SEMPRE inclua hoje se houver atividades fixas nesse dia da semana.');
-      if (onbData.atividades.indexOf('academia') > -1) {
-        if (onbData.treino_atual) {
-          lines.push('2. Avalie meu treino atual e sugira ajustes — use TYPE: exercicio com ACTION: modify/add/remove para cada mudança no plano de treino (aba Treinos). NÃO use type:atividade para isso.');
-        } else {
-          lines.push('2. Monte meu treino de musculação do zero — para cada exercício do Upper e do Lower use um bloco de sugestão separado com TYPE: exercicio ACTION: add, incluindo séries, reps e carga inicial. NÃO use type:atividade para adicionar exercícios ao plano.');
-        }
-      }
-      lines.push('3. Identifique conflitos entre rotina, restrições e objetivo — sugira ajustes');
-      if (onbData.exames_recentes) {
-        lines.push('4. Analise os resultados dos meus exames e ajuste o plano se necessário');
-        lines.push('5. Seja direto e prático.');
-      } else {
-        lines.push('4. Seja direto e prático.');
-      }
+      lines.push('Analise meus dados e faça até 3 perguntas curtas e objetivas para entender melhor o que preciso — horários disponíveis, preferências, restrições não mencionadas, etc. — antes de montar meu plano. Após minha resposta, crie o planejamento completo (calendário semanal + treino de musculação se aplicável).');
 
       var fullMsg = lines.join('\n');
 
@@ -5500,7 +5485,7 @@
       // Push full data to chatMessages (hidden context for AI)
       // but show a clean friendly bubble to the user
       chatMessages.push({ role: 'user', content: fullMsg });
-      addChatBubble('Pronto! Acabei de preencher tudo. Cria meu plano de treino personalizado 🚀', 'user');
+      addChatBubble('Pronto! Acabei de preencher meus dados. Pode começar! 📋', 'user');
       addTypingIndicator();
       scrollChatToBottom();
 
