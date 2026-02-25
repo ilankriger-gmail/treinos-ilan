@@ -5460,9 +5460,9 @@
       lines.push('1. Crie meu planejamento semanal (use blocos de sugestão para atividades no calendário)');
       if (onbData.atividades.indexOf('academia') > -1) {
         if (onbData.treino_atual) {
-          lines.push('2. Avalie meu treino atual e sugira ajustes (séries, cargas, exercícios) — use as ações de sugestão para modificar os exercícios direto no app');
+          lines.push('2. Avalie meu treino atual e sugira ajustes — use TYPE: exercicio com ACTION: modify/add/remove para cada mudança no plano de treino (aba Treinos). NÃO use type:atividade para isso.');
         } else {
-          lines.push('2. Monte meu treino de musculação do zero com exercícios, séries e cargas iniciais — use as ações de sugestão para adicionar os exercícios direto no app');
+          lines.push('2. Monte meu treino de musculação do zero — para cada exercício do Upper e do Lower use um bloco de sugestão separado com TYPE: exercicio ACTION: add, incluindo séries, reps e carga inicial. NÃO use type:atividade para adicionar exercícios ao plano.');
         }
       }
       lines.push('3. Identifique conflitos entre rotina, restrições e objetivo — sugira ajustes');
@@ -7258,14 +7258,19 @@
         'REGRAS:\n' +
         '1. Na PRIMEIRA mensagem, faca 2-3 perguntas sobre como o aluno esta hoje, o que quer treinar, e como se sente.\n' +
         '2. Depois das respostas, de sugestoes praticas e personalizadas ALINHADAS ao objetivo.\n' +
-        '3. Use blocos <' + sg + '> para sugestoes acionaveis que o aluno pode aceitar e adicionar ao calendario.\n' +
+        '3. Use blocos <' + sg + '> para sugestoes acionaveis. IMPORTANTE: type:atividade agenda no CALENDARIO (quando treinar); type:exercicio modifica o PLANO DE TREINO na aba Treinos (o que treinar). Sao coisas diferentes — use o tipo correto.\n' +
         '4. Seja breve nas respostas (maximo 3-4 paragrafos).\n' +
         '5. Nao repita informacoes que ja foram dadas no contexto.\n' +
         '6. Conecte SEMPRE suas recomendacoes ao objetivo — explique COMO cada sugestao ajuda a chegar la.\n' +
         '7. Se existirem NOTAS MEDICAS no contexto, SEMPRE respeite como restricoes. NUNCA sugira exercicios que conflitem com lesoes, condicoes ou restricoes medicas do aluno. Adapte todas as sugestoes.\n\n' +
         'DATA DE HOJE: ' + getTodayDateStr() + ' (' + ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][getSaoPauloNow().getDay()] + ')\n' +
         'PROXIMOS 7 DIAS: ' + getNext7Days() + '\n\n' +
-        'FORMATO DE SUGESTAO (quando aplicavel):\n' +
+        'FORMATO DE SUGESTAO:\n' +
+        'ATENCAO: Ha dois tipos de sugestao completamente diferentes:\n' +
+        '- TYPE: atividade → agenda no CALENDARIO (aba Calendario). Serve para dizer EM QUAL DIA o aluno vai fazer uma atividade.\n' +
+        '- TYPE: exercicio → modifica o PLANO DE TREINO (aba Treinos). Serve para adicionar/modificar/remover exercicios do Upper e Lower.\n' +
+        'NAO use type:atividade para adicionar exercicios ao plano de treino. Use type:exercicio para isso.\n\n' +
+        'Para agendar atividade no CALENDARIO:\n' +
         '<' + sg + '>\n' +
         'type: atividade\naction: add\nlabel: Nome da atividade sugerida\n' +
         'activity_type: corrida|surf|tenis|bike|fisio|upper|lower\n' +
