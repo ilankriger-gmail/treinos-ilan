@@ -4065,11 +4065,12 @@
   <div class="toast" id="toast">✅ Salvo!</div>
   
   <!-- Activity Modal -->
-  <div class="timer-modal" id="activityModal" onclick="if(event.target.id==='activityModal')closeActivityModal()">
-    <div style="background: var(--bg-secondary); border-radius: 8px; width: 90%; max-width: 400px; padding: 20px; border: 1px solid var(--border);">
+  <div class="timer-modal" id="activityModal" style="overflow-y: auto; align-items: flex-start; padding: 20px 0;" onclick="if(event.target.id==='activityModal')closeActivityModal()">
+    <div style="background: var(--bg-secondary); border-radius: 8px; width: 90%; max-width: 400px; padding: 20px; border: 1px solid var(--border); margin: auto; max-height: 90dvh; overflow-y: auto;">
       <h3 style="font-size: 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
         <span id="activityModalEmoji">🏃</span>
         <span id="activityModalTitle">Corrida</span>
+        <button onclick="closeActivityModal()" style="margin-left: auto; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 20px; line-height: 1; padding: 0 4px;">✕</button>
       </h3>
       
       <input type="hidden" id="activityModalType">
@@ -10729,12 +10730,6 @@
         btn.classList.add('running');
         sessionTimerInterval = setInterval(updateSessionTimerDisplay, 1000);
         updateSessionTimerDisplay();
-      }
-
-      // Show empty workout state for new users
-      if (isNewUser) {
-        isNewUser = false;
-        showEmptyWorkoutState();
       }
 
       // Daily coach message (non-blocking, fires after app is ready)
