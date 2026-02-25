@@ -8628,10 +8628,18 @@
 
       if (s.type === 'exercicio') {
         var exAction = (s.action || 'modify').toLowerCase();
-        var exLabelMap = { remove: 'Exercício removido', replace: 'Exercício substituído', add: 'Exercício adicionado', reorder: 'Exercício reordenado' };
-        var exLabel = exLabelMap[exAction] || 'Exercício atualizado';
+        var exLabelMap = { remove: 'removido do treino', replace: 'substituído no treino', add: 'adicionado ao treino', reorder: 'reordenado no treino', modify: 'atualizado no treino' };
+        var exLabel = exLabelMap[exAction] || 'atualizado no treino';
+        var exName = s.exercise_name || s.label || 'Exercício';
         applyExerciseSuggestion(s);
-        cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">' + exLabel + '</span>';
+        // Collapse card to compact confirmed state
+        cardEl.innerHTML =
+          '<div style="display:flex;align-items:center;gap:10px;">' +
+          '<span style="font-size:22px;line-height:1;">✅</span>' +
+          '<div>' +
+          '<div style="font-size:13px;font-weight:600;color:var(--text-primary);">' + exName + '</div>' +
+          '<div style="font-size:11px;color:var(--success);margin-top:2px;">' + exLabel + '</div>' +
+          '</div></div>';
         return;
       }
 
@@ -8709,7 +8717,13 @@
       const card = btn.closest('.suggestion-card');
       const s = JSON.parse(card.dataset.suggestion);
       await _doAcceptSuggestion(s, card);
-      showToast('Sugestão aplicada!');
+      if (s.type === 'exercicio') {
+        var exAction = (s.action || 'modify').toLowerCase();
+        var toastLabels = { add: 'adicionado', remove: 'removido', replace: 'substituído', reorder: 'reordenado', modify: 'atualizado' };
+        showToast('✅ ' + (s.exercise_name || s.label) + ' ' + (toastLabels[exAction] || 'aplicado') + '!');
+      } else {
+        showToast('Sugestão aplicada!');
+      }
     }
 
     async function acceptAllSuggestions(barBtn) {
