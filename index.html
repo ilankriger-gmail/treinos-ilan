@@ -5286,15 +5286,8 @@
           body: JSON.stringify({ onboarding_completed: false, onboarding_at: null })
         });
       } catch(e) {}
-      // Preserve current activities/details before reset
-      var savedDetails = (onbData.atividades_detalhes || []).slice();
       // Reset onbData but preserve personal data from profile inputs
       onbData = buildDefaultOnbData();
-      // Restore activities so step 5 shows them pre-selected
-      if (savedDetails.length > 0) {
-        onbData.atividades_detalhes = savedDetails;
-        onbData.atividades = savedDetails.map(function(d) { return d.nome; });
-      }
       var nomeInput = document.getElementById('profileNome');
       var idadeInput = document.getElementById('profileIdade');
       var alturaInput = document.getElementById('profileAltura');
@@ -5494,12 +5487,7 @@
 
     // Weekly schedule: day of week (1=Mon) -> activity types
     // Default fallback; overridden by getUserWeeklySchedule() from onboarding data
-    let WEEKLY_SCHEDULE = {
-      1: ['tenis'],
-      3: ['surf', 'fisio'],
-      5: ['fisio'],
-      6: ['surf']
-    };
+    let WEEKLY_SCHEDULE = {}; // populated from onboarding; no hardcoded fallback
 
     var goalProgressCache = null;
     var dailyMessageCache = null;
@@ -10445,8 +10433,15 @@
           }
         }
 
-        // Check if already sent today with cache
-        if (profile.last_daily_message_date === today && profile.daily_message_cache && profile.daily_message_cache.message) {
+        // Check if already sent today with cache (invalidate if onboarding happened after cache was generated)
+        var cacheValid = profile.last_daily_message_date === today &&
+          profile.daily_message_cache && profile.daily_message_cache.message;
+        if (cacheValid && profile.onboarding_at && profile.daily_message_cache.generated_at) {
+          if (new Date(profile.onboarding_at) > new Date(profile.daily_message_cache.generated_at)) {
+            cacheValid = false; // onboarding happened after cache — regenerate
+          }
+        }
+        if (cacheValid) {
           _dailyMessageFull = profile.daily_message_cache.message;
           renderDailyCoachCard(_dailyMessageFull, false);
           return;
