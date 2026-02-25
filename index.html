@@ -1867,7 +1867,7 @@
     .suggestion-batch-bar {
       display: flex;
       justify-content: flex-end;
-      margin-top: 8px;
+      margin-bottom: 8px;
     }
     .suggestion-accept-all {
       padding: 10px 20px;
@@ -5256,12 +5256,22 @@
       if (doresInput && onbData.restricoes) doresInput.value = onbData.restricoes;
       if (onbData.sexo) selectSexo(onbData.sexo);
 
-      // Show app and init
+      // Show app immediately on Coach view so user doesn't see calendar
       showApp();
-      await initApp();
-
-      // Navigate to Coach and send onboarding message
       showView('coach');
+
+      // Activate chat area right away with a loading state
+      chatActive = true;
+      var _chatStartArea = document.getElementById('chatStartArea');
+      var _chatArea = document.getElementById('chatArea');
+      if (_chatStartArea) _chatStartArea.style.display = 'none';
+      if (_chatArea) _chatArea.style.display = 'flex';
+      addTypingIndicator();
+      scrollChatToBottom();
+
+      // Load app data in background, then start the coaching conversation
+      await initApp();
+      removeTypingIndicator();
       startCoachChatOnboarding();
     }
 
@@ -8156,14 +8166,7 @@
         container.appendChild(bubble);
       }
 
-      // Render suggestion cards
-      suggestions.forEach((s, i) => {
-        if (!s) return;
-        const card = createSuggestionCard(s, i);
-        container.appendChild(card);
-      });
-
-      // Batch accept bar (when 2+ valid suggestions)
+      // Batch accept bar (when 2+ valid suggestions) — shown ABOVE cards
       var validSuggestions = suggestions.filter(function(s) { return s; });
       if (validSuggestions.length >= 2) {
         var bar = document.createElement('div');
@@ -8171,6 +8174,13 @@
         bar.innerHTML = '<button class="suggestion-accept-all" onclick="acceptAllSuggestions(this)">✓ Aceitar todas (' + validSuggestions.length + ')</button>';
         container.appendChild(bar);
       }
+
+      // Render suggestion cards
+      suggestions.forEach((s, i) => {
+        if (!s) return;
+        const card = createSuggestionCard(s, i);
+        container.appendChild(card);
+      });
 
       // Save analysis to history
       if (suggestions.length > 0 || cleanText.length > 100) {
