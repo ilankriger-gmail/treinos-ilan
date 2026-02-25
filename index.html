@@ -5472,7 +5472,7 @@
 
       lines.push('');
       lines.push('Com base nessas informações:');
-      lines.push('1. Crie meu planejamento semanal (use blocos de sugestão para atividades no calendário)');
+      lines.push('1. Crie meu planejamento semanal completo para os PRÓXIMOS 7 DIAS (incluindo HOJE) — para cada dia com atividades, crie um bloco de sugestão separado por atividade (datas exatas do campo PROXIMOS 7 DIAS). SEMPRE inclua hoje se houver atividades fixas nesse dia da semana.');
       if (onbData.atividades.indexOf('academia') > -1) {
         if (onbData.treino_atual) {
           lines.push('2. Avalie meu treino atual e sugira ajustes — use TYPE: exercicio com ACTION: modify/add/remove para cada mudança no plano de treino (aba Treinos). NÃO use type:atividade para isso.');
@@ -7297,7 +7297,8 @@
         'REGRA OBRIGATORIA PARA ROTINAS SEMANAIS:\n' +
         'Quando sugerir uma rotina semanal ou plano de varios dias, voce DEVE criar um bloco <' + sg + '> SEPARADO para CADA atividade de CADA dia.\n' +
         'Cada bloco DEVE ter o campo "date" com a data exata no formato YYYY-MM-DD (use as datas dos proximos 7 dias acima).\n' +
-        'Se um dia tem 2 atividades (ex: tenis + upper), crie 2 blocos separados com a mesma data.\n' +
+        'Se um dia tem 2 atividades (ex: surf + fisio), crie 2 blocos separados com a mesma data.\n' +
+        'SEMPRE inclua HOJE no plano se houver atividades fixas para o dia da semana de hoje. Nao pule o dia atual.\n' +
         'NUNCA sugira rotina apenas como texto - SEMPRE use blocos <' + sg + '> para que o aluno possa aceitar e adicionar ao calendario.\n\n' +
         '<' + sg + '>\n' +
         'type: exercicio\naction: modify\nlabel: Nome do exercicio\n' +
@@ -8854,19 +8855,36 @@
           cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Substituído em ' + dateLabel + '</span>';
 
         } else {
-          // action: add (default) — skip if same type already exists for this date
+          // action: add (default)
           if (!activities[targetDate]) activities[targetDate] = [];
-          var alreadyExists = activities[targetDate].some(function(a) { return a.type === type; });
+          var existingIdx = activities[targetDate].findIndex(function(a) { return a.type === type; });
+          var existingStatus = existingIdx >= 0 ? (activities[targetDate][existingIdx].status || 'done') : null;
           var dateLabel = targetDate === getTodayDateStr() ? 'hoje' : targetDate;
-          if (!alreadyExists) {
-            activities[targetDate].push({
-              type: type,
-              time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
-              duration: s.duration ? parseInt(s.duration) : null,
-              notes: s.detail || s.label,
-              effort: null,
-              status: 'planned'
-            });
+          var newEntry = {
+            type: type,
+            time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
+            duration: s.duration ? parseInt(s.duration) : null,
+            notes: s.detail || s.label,
+            effort: null,
+            status: 'planned'
+          };
+          if (existingStatus === 'done' || existingStatus === 'skipped') {
+            // Already completed or explicitly skipped — don't overwrite
+            cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--text-muted); font-size: 12px;">Já ' + (existingStatus === 'done' ? 'realizado' : 'ignorado') + ' em ' + dateLabel + '</span>';
+          } else if (existingStatus === 'planned') {
+            // Replace existing planned entry (coach update)
+            activities[targetDate][existingIdx] = newEntry;
+            const prevSelected = selectedDate;
+            var parts = targetDate.split('-');
+            selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            await saveActivities();
+            selectedDate = prevSelected;
+            renderCalendar();
+            renderDayActivities();
+            cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Atualizado em ' + dateLabel + '</span>';
+          } else {
+            // New entry
+            activities[targetDate].push(newEntry);
             const prevSelected = selectedDate;
             var parts = targetDate.split('-');
             selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
@@ -8875,8 +8893,6 @@
             renderCalendar();
             renderDayActivities();
             cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Adicionado em ' + dateLabel + '</span>';
-          } else {
-            cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--text-muted); font-size: 12px;">Já existe em ' + dateLabel + '</span>';
           }
         }
       } else {
