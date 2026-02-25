@@ -2604,6 +2604,100 @@
     .onb-summary-label { color: var(--text-muted); }
     .onb-summary-value { color: var(--text-primary); font-weight: 600; text-align: right; max-width: 60%; }
 
+    /* Onboarding — Skip button */
+    .onb-skip-btn {
+      background: transparent; border: none; color: var(--text-muted);
+      font-size: 12px; cursor: pointer; padding: 8px;
+      font-family: 'Inter', sans-serif; text-decoration: underline;
+      text-align: center; margin-top: 6px; width: 100%;
+    }
+    .onb-skip-btn:hover { color: var(--text-secondary); }
+
+    /* Onboarding — Objective category grid */
+    .onb-obj-cat-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;
+    }
+    .onb-obj-cat-card {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 12px; background: var(--bg-tertiary);
+      border: 1px solid var(--border); border-radius: 8px;
+      cursor: pointer; font-size: 13px; color: var(--text-secondary);
+      transition: border-color 0.15s;
+    }
+    .onb-obj-cat-card.selected {
+      border-color: var(--accent); background: var(--accent-dim); color: var(--text-primary);
+    }
+    .onb-obj-cat-card:hover { border-color: var(--border-hover); }
+
+    /* Onboarding — Activity category picker */
+    .onb-cat-picker {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      padding: 8px 10px; background: var(--bg-secondary);
+      border: 1px solid var(--border); border-radius: 0 0 8px 8px;
+      margin-top: -2px;
+    }
+    .onb-cat-btn {
+      padding: 5px 10px; border: 1px solid var(--border); border-radius: 20px;
+      background: var(--bg-tertiary); color: var(--text-muted);
+      font-size: 11px; cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: all 0.15s;
+    }
+    .onb-cat-btn.selected {
+      background: var(--accent); color: white; border-color: var(--accent);
+    }
+
+    /* Onboarding — Category section headers */
+    .onb-cat-section-header {
+      font-size: 11px; font-weight: 600; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.05em;
+      padding: 10px 0 6px; border-top: 1px solid var(--border); margin-top: 10px;
+    }
+    .onb-cat-section-header:first-child { border-top: none; margin-top: 0; }
+
+    /* Onboarding — Lesões chips */
+    .onb-lesoes-grid {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;
+    }
+    .onb-lesao-chip {
+      padding: 7px 14px; background: var(--bg-tertiary);
+      border: 1px solid var(--border); border-radius: 20px;
+      font-size: 13px; color: var(--text-secondary); cursor: pointer;
+      transition: all 0.15s;
+    }
+    .onb-lesao-chip.selected {
+      background: #7f1d1d; border-color: #ef4444; color: #fca5a5;
+    }
+
+    /* Onboarding — PAR-Q accordion */
+    .onb-parq-accordion {
+      margin-top: 14px; background: var(--bg-secondary);
+      border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+    }
+    .onb-parq-accordion summary {
+      padding: 12px 14px; font-size: 13px; font-weight: 600;
+      color: var(--text-secondary); cursor: pointer;
+      list-style: none; user-select: none;
+    }
+    .onb-parq-accordion summary::-webkit-details-marker { display: none; }
+    .onb-parq-accordion[open] summary { border-bottom: 1px solid var(--border); }
+    .onb-parq-grid {
+      padding: 10px 14px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .onb-parq-item {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px; font-size: 12px; color: var(--text-secondary); line-height: 1.4;
+    }
+    .onb-yn-btns { display: flex; gap: 6px; flex-shrink: 0; }
+    .onb-yn-btn {
+      padding: 5px 12px; border: 1px solid var(--border); border-radius: 6px;
+      background: var(--bg-tertiary); color: var(--text-muted);
+      font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: all 0.15s;
+    }
+    .onb-yn-btn.selected {
+      background: var(--accent); color: white; border-color: var(--accent);
+    }
+
     /* Onboarding — AI teaser box */
     .onb-ai-teaser {
       padding: 16px; background: var(--bg-secondary);
@@ -2756,7 +2850,17 @@
       <div class="onb-step" data-step="3">
         <div class="onb-title">Qual seu objetivo?</div>
         <div class="onb-subtitle">Descreva com suas palavras o que voce quer alcançar.</div>
-        <div class="onb-label">Meu objetivo</div>
+        <div class="onb-label">Foco principal</div>
+        <div class="onb-obj-cat-grid">
+          <div class="onb-obj-cat-card" onclick="selectObjetivoCategoria('emagrecimento', this)"><span>⚖️</span><span>Emagrecer</span></div>
+          <div class="onb-obj-cat-card" onclick="selectObjetivoCategoria('hipertrofia', this)"><span>💪</span><span>Ganhar músculo</span></div>
+          <div class="onb-obj-cat-card" onclick="selectObjetivoCategoria('condicionamento', this)"><span>❤️</span><span>Condicionamento</span></div>
+          <div class="onb-obj-cat-card" onclick="selectObjetivoCategoria('saude_geral', this)"><span>🌿</span><span>Saúde geral</span></div>
+          <div class="onb-obj-cat-card" onclick="selectObjetivoCategoria('reabilitacao', this)"><span>🩹</span><span>Reabilitação</span></div>
+          <div class="onb-obj-cat-card" onclick="selectObjetivoCategoria('performance', this)"><span>🏆</span><span>Performance</span></div>
+          <div class="onb-obj-cat-card" onclick="selectObjetivoCategoria('bem_estar', this)"><span>🧘</span><span>Bem-estar</span></div>
+        </div>
+        <div class="onb-label" style="margin-top:14px;">Descreva seu objetivo</div>
         <textarea class="onb-input" id="onbObjetivoTexto" placeholder="Ex: Ganhar 5kg de massa muscular, correr 10km sem parar, voltar a treinar apos lesao..."></textarea>
         <div class="onb-grid-2">
           <div>
@@ -2802,11 +2906,37 @@
           </div>
         </div>
         <textarea class="onb-input" id="onbComoSeSente" placeholder="Detalhe como está se sentindo... (opcional)" style="margin-top: 8px; min-height: 60px;"></textarea>
-        <div class="onb-label" style="margin-top: 16px;">⚠️ Restrições, lesões ou dores</div>
+        <div class="onb-label" style="margin-top: 16px;">🩹 Regiões com dor ou lesão ativa</div>
+        <div class="onb-lesoes-grid">
+          <div class="onb-lesao-chip" onclick="toggleLesao('joelho', this)">Joelho</div>
+          <div class="onb-lesao-chip" onclick="toggleLesao('lombar', this)">Lombar</div>
+          <div class="onb-lesao-chip" onclick="toggleLesao('ombro', this)">Ombro</div>
+          <div class="onb-lesao-chip" onclick="toggleLesao('quadril', this)">Quadril</div>
+          <div class="onb-lesao-chip" onclick="toggleLesao('tornozelo', this)">Tornozelo</div>
+          <div class="onb-lesao-chip" onclick="toggleLesao('pescoco', this)">Pescoço</div>
+          <div class="onb-lesao-chip" onclick="toggleLesao('cotovelo', this)">Cotovelo</div>
+          <div class="onb-lesao-chip" onclick="toggleLesao('punho', this)">Punho</div>
+        </div>
+        <div class="onb-label" style="margin-top: 12px;">⚠️ Detalhes de restrições, lesões ou dores</div>
         <div class="onb-medical-why">
           <strong>Essencial para sua segurança.</strong> O Coach vai evitar exercícios que agravem lesões, adaptar movimentos e sugerir alternativas. Seja específico — isso protege você.
         </div>
         <textarea class="onb-input" id="onbRestricoes" placeholder="Ex: Dor no ombro direito, hérnia de disco L4-L5, tendinite no joelho esquerdo... (deixe em branco se não tiver)"></textarea>
+        <details class="onb-parq-accordion">
+          <summary>🩺 Triagem de saúde — PAR-Q (opcional)</summary>
+          <div id="parqWarning" style="display:none;background:#7f1d1d;color:#fca5a5;padding:10px 12px;border-radius:6px;font-size:12px;margin-bottom:10px;">⚠️ Consulte seu médico antes de iniciar ou intensificar treinos.</div>
+          <div class="onb-parq-grid">
+            <div class="onb-parq-item"><span>Tem doença cardíaca ou pressão alta?</span><div class="onb-yn-btns"><button class="onb-yn-btn selected" onclick="setParq('q1',false,this)">Não</button><button class="onb-yn-btn" onclick="setParq('q1',true,this)">Sim</button></div></div>
+            <div class="onb-parq-item"><span>Sente dor no peito ao se exercitar?</span><div class="onb-yn-btns"><button class="onb-yn-btn selected" onclick="setParq('q2',false,this)">Não</button><button class="onb-yn-btn" onclick="setParq('q2',true,this)">Sim</button></div></div>
+            <div class="onb-parq-item"><span>Já desmaiou ou ficou tonto ao se exercitar?</span><div class="onb-yn-btns"><button class="onb-yn-btn selected" onclick="setParq('q3',false,this)">Não</button><button class="onb-yn-btn" onclick="setParq('q3',true,this)">Sim</button></div></div>
+            <div class="onb-parq-item"><span>Tem algum problema ósseo ou articular?</span><div class="onb-yn-btns"><button class="onb-yn-btn selected" onclick="setParq('q4',false,this)">Não</button><button class="onb-yn-btn" onclick="setParq('q4',true,this)">Sim</button></div></div>
+            <div class="onb-parq-item"><span>Toma remédio para pressão ou coração?</span><div class="onb-yn-btns"><button class="onb-yn-btn selected" onclick="setParq('q5',false,this)">Não</button><button class="onb-yn-btn" onclick="setParq('q5',true,this)">Sim</button></div></div>
+            <div class="onb-parq-item"><span>Tem diabetes, asma ou outra condição crônica?</span><div class="onb-yn-btns"><button class="onb-yn-btn selected" onclick="setParq('q6',false,this)">Não</button><button class="onb-yn-btn" onclick="setParq('q6',true,this)">Sim</button></div></div>
+            <div class="onb-parq-item"><span>Tem alguma razão não mencionada para evitar exercício?</span><div class="onb-yn-btns"><button class="onb-yn-btn selected" onclick="setParq('q7',false,this)">Não</button><button class="onb-yn-btn" onclick="setParq('q7',true,this)">Sim</button></div></div>
+          </div>
+          <div class="onb-label" style="margin-top:10px;">Medicamentos em uso (opcional)</div>
+          <input class="onb-input" type="text" id="onbMedicamentos" placeholder="Ex: losartana, metformina... (ou deixe vazio)">
+        </details>
         <div class="onb-label" style="margin-top: 16px;">📋 Exames recentes (opcional)</div>
         <div class="onb-hint" style="margin-bottom: 8px;">Resultados de exames de sangue, bioimpedância, VO2max, DEXA ou qualquer avaliação física recente. O Coach usa isso para calibrar o plano.</div>
         <textarea class="onb-input" id="onbExamesRecentes" placeholder="Ex: Hemoglobina 14g/dl, vitamina D baixa, gordura corporal 22%, VO2max 42ml/kg/min..." style="min-height: 70px;"></textarea>
@@ -2837,7 +2967,7 @@
       <!-- Step 5: O que voce pratica? -->
       <div class="onb-step" data-step="5">
         <div class="onb-title">O que voce pratica?</div>
-        <div class="onb-subtitle">Selecione todas as atividades. Na proxima tela voce detalha frequencia e intensidade de cada uma.</div>
+        <div class="onb-subtitle">Selecione e indique se é toda semana, às vezes, ou algo que quer começar.</div>
         <div class="onb-cards">
           <div class="onb-card" data-activity="academia" onclick="toggleOnbActivity('academia', this)">
             <div class="onb-card-icon">🏋️</div>
@@ -2898,8 +3028,58 @@
         <div class="onb-file-chips" id="onbTreinoChips"></div>
         <div class="onb-hint" style="margin-top: 8px;">A IA extrai o texto da imagem/PDF e preenche o campo acima automaticamente.</div>
       </div>
-      <!-- Step 8: Tudo pronto! -->
+      <!-- Step 8: Habitos de vida -->
       <div class="onb-step" data-step="8">
+        <div class="onb-title">Hábitos de vida</div>
+        <div class="onb-subtitle">Essas informações ajudam o Coach a ajustar sua rotina de forma realista.</div>
+
+        <div class="onb-label">Horas de sono por noite</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
+          <input type="range" id="onbSonoHoras" min="4" max="10" step="0.5" value="7" oninput="updateOnbSonoVal(this.value)" style="flex:1;">
+          <span id="onbSonoHorasVal" style="font-size:15px;font-weight:600;color:var(--text-primary);min-width:28px;">7h</span>
+        </div>
+
+        <div class="onb-label" style="margin-top:14px;">Qualidade do sono</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
+          <button class="onb-yn-btn" data-sono-qual="ruim" onclick="selectSonoQual('ruim', this)">😫 Ruim</button>
+          <button class="onb-yn-btn" data-sono-qual="regular" onclick="selectSonoQual('regular', this)">😐 Regular</button>
+          <button class="onb-yn-btn" data-sono-qual="bom" onclick="selectSonoQual('bom', this)">😊 Bom</button>
+          <button class="onb-yn-btn" data-sono-qual="otimo" onclick="selectSonoQual('otimo', this)">💪 Ótimo</button>
+        </div>
+
+        <div class="onb-label" style="margin-top:14px;">Nível de estresse no dia a dia (1-10)</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
+          <input type="range" id="onbEstresse" min="1" max="10" value="5" oninput="updateOnbEstresseVal(this.value)" style="flex:1;">
+          <span id="onbEstresseVal" style="font-size:15px;font-weight:600;color:var(--text-primary);min-width:20px;">5</span>
+        </div>
+
+        <div class="onb-label" style="margin-top:14px;">Por que esse objetivo é importante para você agora?</div>
+        <textarea class="onb-input" id="onbMotivacaoIntrinseca" placeholder="Ex: quero ter energia para brincar com meus filhos, me sentir bem na praia em dezembro..." style="min-height:70px;"></textarea>
+
+        <div class="onb-label" style="margin-top:14px;">Já tentou começar antes e parou?</div>
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <button class="onb-yn-btn" data-tent="nao" onclick="selectTentativaAnterior('nao', this)">Não</button>
+          <button class="onb-yn-btn" data-tent="sim" onclick="selectTentativaAnterior('sim', this)">Sim</button>
+        </div>
+        <div id="onbTentativaDetalheWrap" style="display:none;margin-top:8px;">
+          <textarea class="onb-input" id="onbTentativaDetalhe" placeholder="O que atrapalhou ou te fez parar?" style="min-height:54px;"></textarea>
+        </div>
+
+        <div class="onb-label" style="margin-top:14px;">Quão confiante você está de manter a rotina? (1-10)</div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:4px;">
+          <input type="range" id="onbConfianca" min="1" max="10" value="7" oninput="updateOnbConfiancaVal(this.value)" style="flex:1;">
+          <span id="onbConfiancaVal" style="font-size:15px;font-weight:600;color:var(--text-primary);min-width:20px;">7</span>
+        </div>
+
+        <div class="onb-label" style="margin-top:14px;">Tem apoio de alguém nessa jornada? (parceiro, amigo, família)</div>
+        <div style="display:flex;gap:8px;margin-top:6px;">
+          <button class="onb-yn-btn" data-sup="nao" onclick="selectSuporteSocial(false, this)">Não</button>
+          <button class="onb-yn-btn" data-sup="sim" onclick="selectSuporteSocial(true, this)">Sim</button>
+        </div>
+      </div>
+
+      <!-- Step 9: Tudo pronto! -->
+      <div class="onb-step" data-step="9">
         <div class="onb-title">Tudo pronto!</div>
         <div class="onb-subtitle">Confira seus dados antes de comecar.</div>
         <div id="onbSummary" class="onb-summary"></div>
@@ -2910,7 +3090,10 @@
     </div>
     <div class="onboarding-nav">
       <button class="onb-btn-back" id="onbBackBtn" onclick="prevOnboardingStep()" style="display: none;">Voltar</button>
-      <button class="onb-btn-next" id="onbNextBtn" onclick="nextOnboardingStep()">Comecar</button>
+      <div style="display:flex;flex-direction:column;align-items:stretch;flex:1;">
+        <button class="onb-btn-next" id="onbNextBtn" onclick="nextOnboardingStep()">Comecar</button>
+        <button class="onb-skip-btn" id="onbSkipBtn" onclick="skipOnbStep()" style="display:none;">Pular esta etapa →</button>
+      </div>
     </div>
   </div>
 
@@ -4067,7 +4250,7 @@
     // ========== ONBOARDING ==========
 
     var onbStep = 1;
-    var onbTotalSteps = 8;
+    var onbTotalSteps = 9;
     var isNewUser = false;
     var isReOnboarding = false;
 
@@ -4077,12 +4260,27 @@
         objetivo_texto: '',
         objetivo_data: '',
         objetivo_resultado: '',
+        objetivo_categoria: '',
         nivel: '', restricoes: '',
         como_se_sente: '',
         exames_recentes: '',
         treino_atual: '',
         atividades: [],
-        atividades_detalhes: []
+        atividades_detalhes: [],
+        // Saúde/Médico
+        parq: {},
+        lesoes_ativas: [],
+        medicamentos: '',
+        // Hábitos de vida
+        sono_horas: '',
+        sono_qualidade: '',
+        estresse_nivel: '',
+        motivacao_intrinseca: '',
+        tentativa_anterior: '',
+        tentativa_anterior_detalhe: '',
+        nivel_confianca: '',
+        suporte_social: null,
+        skipped_steps: []
       };
     }
     var onbData = buildDefaultOnbData();
@@ -4112,13 +4310,14 @@
       var stepEl = document.querySelector('.onb-step[data-step="' + onbStep + '"]');
       if (stepEl) stepEl.classList.add('active');
 
-      // Render dynamic content for steps 6 and 8
+      // Render dynamic content for steps 6 and 9
       if (onbStep === 6) renderActivityDetails();
-      if (onbStep === 8) renderOnbSummary();
+      if (onbStep === 9) renderOnbSummary();
 
       // Update nav buttons
       var backBtn = document.getElementById('onbBackBtn');
       var nextBtn = document.getElementById('onbNextBtn');
+      var skipBtn = document.getElementById('onbSkipBtn');
       backBtn.style.display = onbStep === 1 ? 'none' : 'block';
 
       if (onbStep === 1) {
@@ -4128,6 +4327,22 @@
       } else {
         nextBtn.textContent = 'Proximo';
       }
+
+      // Show skip button on steps 2-8 only
+      if (skipBtn) {
+        skipBtn.style.display = (onbStep >= 2 && onbStep <= 8) ? 'block' : 'none';
+      }
+    }
+
+    function skipOnbStep() {
+      if (!onbData.skipped_steps) onbData.skipped_steps = [];
+      if (onbData.skipped_steps.indexOf(onbStep) === -1) {
+        onbData.skipped_steps.push(onbStep);
+      }
+      var nextStep = onbStep + 1;
+      if (isReOnboarding && onbStep === 1) nextStep = 3;
+      onbStep = nextStep;
+      renderOnboardingStep();
     }
 
     function nextOnboardingStep() {
@@ -4154,6 +4369,20 @@
         var treinoEl = document.getElementById('onbTreinoAtual');
         if (treinoEl) onbData.treino_atual = treinoEl.value.trim();
       }
+      if (onbStep === 8) {
+        var sonoHorasEl = document.getElementById('onbSonoHoras');
+        if (sonoHorasEl) onbData.sono_horas = sonoHorasEl.value;
+        var estresseEl = document.getElementById('onbEstresse');
+        if (estresseEl) onbData.estresse_nivel = estresseEl.value;
+        var motivacaoEl = document.getElementById('onbMotivacaoIntrinseca');
+        if (motivacaoEl) onbData.motivacao_intrinseca = motivacaoEl.value.trim();
+        var tentDetEl = document.getElementById('onbTentativaDetalhe');
+        if (tentDetEl) onbData.tentativa_anterior_detalhe = tentDetEl.value.trim();
+        var confiancaEl = document.getElementById('onbConfianca');
+        if (confiancaEl) onbData.nivel_confianca = confiancaEl.value;
+        var medicamentosEl = document.getElementById('onbMedicamentos');
+        if (medicamentosEl) onbData.medicamentos = medicamentosEl.value.trim();
+      }
 
       if (onbStep < onbTotalSteps) {
         // Skip step 2 (dados pessoais) when re-onboarding
@@ -4168,6 +4397,20 @@
 
     function prevOnboardingStep() {
       // Collect data before going back so it's preserved
+      if (onbStep === 8) {
+        var sonoHorasSaveEl = document.getElementById('onbSonoHoras');
+        if (sonoHorasSaveEl) onbData.sono_horas = sonoHorasSaveEl.value;
+        var estresseSaveEl = document.getElementById('onbEstresse');
+        if (estresseSaveEl) onbData.estresse_nivel = estresseSaveEl.value;
+        var motivacaoSaveEl = document.getElementById('onbMotivacaoIntrinseca');
+        if (motivacaoSaveEl) onbData.motivacao_intrinseca = motivacaoSaveEl.value.trim();
+        var confiancaSaveEl = document.getElementById('onbConfianca');
+        if (confiancaSaveEl) onbData.nivel_confianca = confiancaSaveEl.value;
+        var tentDetSaveEl = document.getElementById('onbTentativaDetalhe');
+        if (tentDetSaveEl) onbData.tentativa_anterior_detalhe = tentDetSaveEl.value.trim();
+        var medSaveEl = document.getElementById('onbMedicamentos');
+        if (medSaveEl) onbData.medicamentos = medSaveEl.value.trim();
+      }
       if (onbStep === 3) {
         onbData.objetivo_texto = document.getElementById('onbObjetivoTexto').value.trim();
         onbData.objetivo_data = document.getElementById('onbObjetivoData').value;
@@ -4201,6 +4444,11 @@
           if (onbData.objetivo_texto) document.getElementById('onbObjetivoTexto').value = onbData.objetivo_texto;
           if (onbData.objetivo_data) document.getElementById('onbObjetivoData').value = onbData.objetivo_data;
           if (onbData.objetivo_resultado) document.getElementById('onbObjetivoResultado').value = onbData.objetivo_resultado;
+          if (onbData.objetivo_categoria) {
+            document.querySelectorAll('.onb-obj-cat-card').forEach(function(c) { c.classList.remove('selected'); });
+            var catEl = document.querySelector('.onb-obj-cat-card[onclick*="' + onbData.objetivo_categoria + '"]');
+            if (catEl) catEl.classList.add('selected');
+          }
         }
         if (onbStep === 4) {
           if (onbData.restricoes) document.getElementById('onbRestricoes').value = onbData.restricoes;
@@ -4222,19 +4470,156 @@
           // Re-populate feeling textarea
           var comoSeSenteEl2 = document.getElementById('onbComoSeSente');
           if (comoSeSenteEl2 && onbData.como_se_sente) comoSeSenteEl2.value = onbData.como_se_sente;
+          // Re-select lesão chips
+          if (onbData.lesoes_ativas && onbData.lesoes_ativas.length > 0) {
+            document.querySelectorAll('.onb-lesao-chip').forEach(function(chip) {
+              var reg = chip.getAttribute('onclick').match(/toggleLesao\('([^']+)'/);
+              if (reg && onbData.lesoes_ativas.indexOf(reg[1]) > -1) chip.classList.add('selected');
+            });
+          }
+          if (onbData.medicamentos) {
+            var medRestEl = document.getElementById('onbMedicamentos');
+            if (medRestEl) medRestEl.value = onbData.medicamentos;
+          }
+          // Restore PAR-Q
+          if (onbData.parq && Object.keys(onbData.parq).length > 0) {
+            var hasPos = Object.values(onbData.parq).some(function(v) { return v === true; });
+            var parqWarn = document.getElementById('parqWarning');
+            if (parqWarn && hasPos) parqWarn.style.display = 'block';
+          }
         }
         if (onbStep === 5) {
-          // Re-select activity cards
-          onbData.atividades.forEach(function(act) {
+          // Re-select activity cards and show category pickers
+          onbData.atividades_detalhes.forEach(function(detail) {
+            var act = detail.nome;
             var card = document.querySelector('.onb-card[data-activity="' + act + '"]');
-            if (card) card.classList.add('selected');
+            if (card) {
+              card.classList.add('selected');
+              // Re-inject picker if not already there
+              var existingPicker = card.parentElement && card.parentElement.querySelector('.onb-cat-picker[data-for="' + act + '"]');
+              if (!existingPicker) {
+                var picker = document.createElement('div');
+                picker.className = 'onb-cat-picker';
+                picker.dataset.for = act;
+                var cat = detail.categoria || 'fixa';
+                picker.innerHTML =
+                  '<button class="onb-cat-btn' + (cat === 'fixa' ? ' selected' : '') + '" data-cat="fixa" onclick="setActivityCategoria(\'' + act + '\',\'fixa\',this)">🔒 Toda semana</button>' +
+                  '<button class="onb-cat-btn' + (cat === 'esporadica' ? ' selected' : '') + '" data-cat="esporadica" onclick="setActivityCategoria(\'' + act + '\',\'esporadica\',this)">🌊 Às vezes</button>' +
+                  '<button class="onb-cat-btn' + (cat === 'quer_comecar' ? ' selected' : '') + '" data-cat="quer_comecar" onclick="setActivityCategoria(\'' + act + '\',\'quer_comecar\',this)">✨ Quero começar</button>';
+                card.insertAdjacentElement('afterend', picker);
+              }
+            }
           });
         }
         if (onbStep === 7) {
           var treinoRestoreEl = document.getElementById('onbTreinoAtual');
           if (treinoRestoreEl && onbData.treino_atual) treinoRestoreEl.value = onbData.treino_atual;
         }
+        if (onbStep === 8) {
+          var sonoHorasRestEl = document.getElementById('onbSonoHoras');
+          if (sonoHorasRestEl && onbData.sono_horas) { sonoHorasRestEl.value = onbData.sono_horas; updateOnbSonoVal(onbData.sono_horas); }
+          var estresseRestEl = document.getElementById('onbEstresse');
+          if (estresseRestEl && onbData.estresse_nivel) { estresseRestEl.value = onbData.estresse_nivel; updateOnbEstresseVal(onbData.estresse_nivel); }
+          var motivacaoRestEl = document.getElementById('onbMotivacaoIntrinseca');
+          if (motivacaoRestEl && onbData.motivacao_intrinseca) motivacaoRestEl.value = onbData.motivacao_intrinseca;
+          var confiancaRestEl = document.getElementById('onbConfianca');
+          if (confiancaRestEl && onbData.nivel_confianca) { confiancaRestEl.value = onbData.nivel_confianca; updateOnbConfiancaVal(onbData.nivel_confianca); }
+          if (onbData.tentativa_anterior) {
+            document.querySelectorAll('[data-tent]').forEach(function(b) {
+              b.classList.toggle('selected', b.dataset.tent === onbData.tentativa_anterior);
+            });
+            if (onbData.tentativa_anterior === 'sim') {
+              var detEl = document.getElementById('onbTentativaDetalheWrap');
+              if (detEl) detEl.style.display = 'block';
+              var tentDetRestEl = document.getElementById('onbTentativaDetalhe');
+              if (tentDetRestEl && onbData.tentativa_anterior_detalhe) tentDetRestEl.value = onbData.tentativa_anterior_detalhe;
+            }
+          }
+          if (onbData.suporte_social !== null) {
+            document.querySelectorAll('[data-sup]').forEach(function(b) {
+              b.classList.toggle('selected', (b.dataset.sup === 'sim') === onbData.suporte_social);
+            });
+          }
+          if (onbData.sono_qualidade) {
+            document.querySelectorAll('[data-sono-qual]').forEach(function(b) {
+              b.classList.toggle('selected', b.dataset.sonoQual === onbData.sono_qualidade);
+            });
+          }
+        }
       }
+    }
+
+    // PAR-Q
+    function setParq(key, val, btn) {
+      if (!onbData.parq) onbData.parq = {};
+      onbData.parq[key] = val;
+      var btns = btn.parentElement.querySelectorAll('button');
+      btns.forEach(function(b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      // Show warning if any true
+      var hasPositive = Object.values(onbData.parq).some(function(v) { return v === true; });
+      var warn = document.getElementById('parqWarning');
+      if (warn) warn.style.display = hasPositive ? 'block' : 'none';
+    }
+
+    // Lesões ativas
+    function toggleLesao(regiao, el) {
+      if (!onbData.lesoes_ativas) onbData.lesoes_ativas = [];
+      var idx = onbData.lesoes_ativas.indexOf(regiao);
+      if (idx > -1) {
+        onbData.lesoes_ativas.splice(idx, 1);
+        el.classList.remove('selected');
+      } else {
+        onbData.lesoes_ativas.push(regiao);
+        el.classList.add('selected');
+      }
+    }
+
+    // Objetivo categoria
+    function selectObjetivoCategoria(cat, el) {
+      onbData.objetivo_categoria = cat;
+      document.querySelectorAll('.onb-obj-cat-card').forEach(function(c) { c.classList.remove('selected'); });
+      el.classList.add('selected');
+    }
+
+    // Activity category (fixa / esporadica / quer_comecar)
+    function setActivityCategoria(actName, categoria, btn) {
+      var detail = onbData.atividades_detalhes.find(function(d) { return d.nome === actName; });
+      if (detail) detail.categoria = categoria;
+      var picker = btn.closest('.onb-cat-picker');
+      if (picker) picker.querySelectorAll('.onb-cat-btn').forEach(function(b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+    }
+
+    // Hábitos helpers
+    function updateOnbSonoVal(val) {
+      var el = document.getElementById('onbSonoHorasVal');
+      if (el) el.textContent = parseFloat(val) + 'h';
+    }
+    function updateOnbEstresseVal(val) {
+      var el = document.getElementById('onbEstresseVal');
+      if (el) el.textContent = val;
+    }
+    function updateOnbConfiancaVal(val) {
+      var el = document.getElementById('onbConfiancaVal');
+      if (el) el.textContent = val;
+    }
+    function selectSonoQual(qual, el) {
+      onbData.sono_qualidade = qual;
+      document.querySelectorAll('[data-sono-qual]').forEach(function(c) { c.classList.remove('selected'); });
+      el.classList.add('selected');
+    }
+    function selectTentativaAnterior(val, btn) {
+      onbData.tentativa_anterior = val;
+      document.querySelectorAll('[data-tent]').forEach(function(b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      var wrap = document.getElementById('onbTentativaDetalheWrap');
+      if (wrap) wrap.style.display = val === 'sim' ? 'block' : 'none';
+    }
+    function selectSuporteSocial(val, btn) {
+      onbData.suporte_social = val;
+      document.querySelectorAll('[data-sup]').forEach(function(b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
     }
 
     function selectOnbSexo(sexo, el) {
@@ -4385,7 +4770,7 @@
     }
 
     function buildDefaultDetail(nome) {
-      var base = { nome: nome, frequencia: 3, intensidade: 'moderada', dias: [], horario: '', horarios: {} };
+      var base = { nome: nome, frequencia: 3, intensidade: 'moderada', dias: [], horario: '', horarios: {}, categoria: 'fixa', frequencia_estimada: '', motivo_comecar: '' };
       if (nome === 'academia') {
         base.tem_planilha = false; base.planilha_file_id = null;
         base.divisao = ''; base.series_por_exercicio = 3;
@@ -4410,11 +4795,26 @@
         el.classList.remove('selected');
         // Remove from detalhes
         onbData.atividades_detalhes = onbData.atividades_detalhes.filter(function(d) { return d.nome !== activity; });
+        // Remove category picker if visible
+        var picker = el.parentElement && el.parentElement.querySelector('.onb-cat-picker[data-for="' + activity + '"]');
+        if (picker) picker.remove();
       } else {
         onbData.atividades.push(activity);
         el.classList.add('selected');
         // Add to detalhes with defaults
         onbData.atividades_detalhes.push(buildDefaultDetail(activity));
+        // Show category picker below card
+        var existingPicker = el.parentElement && el.parentElement.querySelector('.onb-cat-picker[data-for="' + activity + '"]');
+        if (!existingPicker) {
+          var picker = document.createElement('div');
+          picker.className = 'onb-cat-picker';
+          picker.dataset.for = activity;
+          picker.innerHTML =
+            '<button class="onb-cat-btn selected" data-cat="fixa" onclick="setActivityCategoria(\'' + activity + '\',\'fixa\',this)">🔒 Toda semana</button>' +
+            '<button class="onb-cat-btn" data-cat="esporadica" onclick="setActivityCategoria(\'' + activity + '\',\'esporadica\',this)">🌊 Às vezes</button>' +
+            '<button class="onb-cat-btn" data-cat="quer_comecar" onclick="setActivityCategoria(\'' + activity + '\',\'quer_comecar\',this)">✨ Quero começar</button>';
+          el.insertAdjacentElement('afterend', picker);
+        }
       }
     }
 
@@ -4426,11 +4826,22 @@
       onbData.atividades.push(nome);
       onbData.atividades_detalhes.push(buildDefaultDetail(nome));
       var container = document.getElementById('onbCustomActivities');
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'display:flex;flex-direction:column;gap:0;';
       var tag = document.createElement('div');
-      tag.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--accent-dim);border:1px solid var(--accent);border-radius:20px;font-size:13px;color:var(--text-primary);';
+      tag.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--accent-dim);border:1px solid var(--accent);border-radius:8px 8px 0 0;font-size:13px;color:var(--text-primary);';
       tag.innerHTML = '<span>' + nome.charAt(0).toUpperCase() + nome.slice(1) + '</span>' +
-        '<button onclick="removeOnbCustomActivity(\'' + nome + '\',this.parentElement)" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:0;line-height:1;">×</button>';
-      container.appendChild(tag);
+        '<button onclick="removeOnbCustomActivity(\'' + nome + '\',this.closest(\'div[style]\'))" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:0;line-height:1;margin-left:auto;">×</button>';
+      var picker = document.createElement('div');
+      picker.className = 'onb-cat-picker';
+      picker.dataset.for = nome;
+      picker.innerHTML =
+        '<button class="onb-cat-btn selected" data-cat="fixa" onclick="setActivityCategoria(\'' + nome + '\',\'fixa\',this)">🔒 Toda semana</button>' +
+        '<button class="onb-cat-btn" data-cat="esporadica" onclick="setActivityCategoria(\'' + nome + '\',\'esporadica\',this)">🌊 Às vezes</button>' +
+        '<button class="onb-cat-btn" data-cat="quer_comecar" onclick="setActivityCategoria(\'' + nome + '\',\'quer_comecar\',this)">✨ Quero começar</button>';
+      wrap.appendChild(tag);
+      wrap.appendChild(picker);
+      container.appendChild(wrap);
       if (!onbActivityIcons[nome]) onbActivityIcons[nome] = '🏃';
       input.value = '';
     }
@@ -4564,73 +4975,123 @@
         return;
       }
 
-      var html = '';
+      var fixas = [], esporadicas = [], querComecar = [];
       onbData.atividades.forEach(function(act) {
         var detail = onbData.atividades_detalhes.find(function(d) { return d.nome === act; });
-        if (!detail) {
-          detail = buildDefaultDetail(act);
-          onbData.atividades_detalhes.push(detail);
-        }
+        if (!detail) { detail = buildDefaultDetail(act); onbData.atividades_detalhes.push(detail); }
+        var cat = detail.categoria || 'fixa';
+        if (cat === 'esporadica') esporadicas.push(act);
+        else if (cat === 'quer_comecar') querComecar.push(act);
+        else fixas.push(act);
+      });
+
+      var html = '';
+
+      function renderActRow(act, cat) {
+        var detail = onbData.atividades_detalhes.find(function(d) { return d.nome === act; });
+        if (!detail) { detail = buildDefaultDetail(act); onbData.atividades_detalhes.push(detail); }
         var icon = onbActivityIcons[act] || '🏃';
         var label = act.charAt(0).toUpperCase() + act.slice(1);
 
-        html += '<div class="onb-activity-row">';
-        html += '<div class="onb-activity-row-header"><span>' + icon + '</span><span>' + label + '</span></div>';
-        html += '<div class="onb-activity-row-controls">';
+        var r = '<div class="onb-activity-row">';
+        r += '<div class="onb-activity-row-header"><span>' + icon + '</span><span>' + label + '</span></div>';
+        r += '<div class="onb-activity-row-controls">';
 
-        // Frequencia
-        html += '<div class="onb-control-label">Vezes por semana</div>';
-        html += '<div class="onb-freq-mini">';
-        for (var f = 1; f <= 7; f++) {
-          var selClass = detail.frequencia === f ? ' selected' : '';
-          html += '<button class="onb-freq-btn' + selClass + '" onclick="setActivityFreq(\'' + act + '\',' + f + ',this)">' + f + '</button>';
-        }
-        html += '</div>';
-
-        // Intensidade
-        html += '<div class="onb-control-label" style="margin-top: 6px;">Intensidade</div>';
-        html += '<div class="onb-intensity-btns">';
-        ['leve', 'moderada', 'intensa'].forEach(function(intens) {
-          var selClass = detail.intensidade === intens ? ' selected' : '';
-          var ilabel = intens.charAt(0).toUpperCase() + intens.slice(1);
-          html += '<button class="onb-intensity-btn' + selClass + '" onclick="setActivityIntensity(\'' + act + '\',\'' + intens + '\',this)">' + ilabel + '</button>';
-        });
-        html += '</div>';
-
-        // Dias da semana
-        var diasSemana = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
-        var diasKeys = ['seg','ter','qua','qui','sex','sab','dom'];
-        html += '<div class="onb-control-label" style="margin-top: 8px;">Dias preferidos</div>';
-        html += '<div class="onb-dias-btns">';
-        diasKeys.forEach(function(dk, di) {
-          var selClass = (detail.dias && detail.dias.indexOf(dk) > -1) ? ' selected' : '';
-          html += '<button class="onb-dia-btn' + selClass + '" onclick="toggleActivityDia(\'' + act + '\',\'' + dk + '\',this)">' + diasSemana[di] + '</button>';
-        });
-        html += '</div>';
-
-        // Horario — per-day when multiple days selected
-        if (detail.dias && detail.dias.length > 1) {
-          html += '<div class="onb-control-label" style="margin-top: 8px;">Horário por dia</div>';
-          html += '<div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">';
-          var diasSemanaMap = { seg:'Seg',ter:'Ter',qua:'Qua',qui:'Qui',sex:'Sex',sab:'Sáb',dom:'Dom' };
-          detail.dias.forEach(function(dk) {
-            var horVal = (detail.horarios && detail.horarios[dk]) || '';
-            html += '<div style="display:flex;align-items:center;gap:8px;">';
-            html += '<span style="font-size:12px;color:var(--text-muted);width:28px;">' + (diasSemanaMap[dk] || dk) + '</span>';
-            html += '<input type="time" class="onb-input onb-time-input" style="margin:0;width:auto;flex:1;" value="' + horVal + '" onchange="updateDayTime(\'' + act + '\',\'' + dk + '\',this.value)">';
-            html += '</div>';
+        if (cat === 'esporadica') {
+          // Frequência estimada
+          r += '<div class="onb-control-label">Frequência estimada</div>';
+          r += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;">';
+          [{v:'raramente',l:'Raramente'},{v:'algumas_vezes_mes',l:'Algumas vezes/mês'},{v:'toda_semana_quando_da',l:'Toda semana quando dá'}].forEach(function(o) {
+            var selS = detail.frequencia_estimada === o.v ? ' selected' : '';
+            r += '<button class="onb-cat-btn' + selS + '" onclick="updateActivityDetail(\'' + act + '\',\'frequencia_estimada\',\'' + o.v + '\');renderActivityDetails()">' + o.l + '</button>';
           });
-          html += '</div>';
+          r += '</div>';
+          // Dias possíveis
+          var diasSemana = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+          var diasKeys = ['seg','ter','qua','qui','sex','sab','dom'];
+          r += '<div class="onb-control-label" style="margin-top: 8px;">Dias possíveis</div>';
+          r += '<div class="onb-dias-btns">';
+          diasKeys.forEach(function(dk, di) {
+            var selClass = (detail.dias && detail.dias.indexOf(dk) > -1) ? ' selected' : '';
+            r += '<button class="onb-dia-btn' + selClass + '" onclick="toggleActivityDia(\'' + act + '\',\'' + dk + '\',this)">' + diasSemana[di] + '</button>';
+          });
+          r += '</div>';
+          // Sport-specific
+          r += renderSportSpecificFields(act, detail);
+        } else if (cat === 'quer_comecar') {
+          // Motivo
+          r += '<div class="onb-control-label">Por que quer começar?</div>';
+          r += '<textarea class="onb-input" style="margin:4px 0 0;min-height:54px;" placeholder="Ex: sempre tive vontade, indicação médica..." onchange="updateActivityDetail(\'' + act + '\',\'motivo_comecar\',this.value)">' + (detail.motivo_comecar || '') + '</textarea>';
+          // Frequência desejada
+          r += '<div class="onb-control-label" style="margin-top: 8px;">Frequência desejada (vezes/sem)</div>';
+          r += '<div class="onb-freq-mini">';
+          for (var fq = 1; fq <= 7; fq++) {
+            var sfq = detail.frequencia === fq ? ' selected' : '';
+            r += '<button class="onb-freq-btn' + sfq + '" onclick="setActivityFreq(\'' + act + '\',' + fq + ',this)">' + fq + '</button>';
+          }
+          r += '</div>';
         } else {
-          html += '<div class="onb-control-label" style="margin-top: 8px;">Horário</div>';
-          html += '<input type="time" class="onb-input onb-time-input" style="margin: 0; width: auto;" value="' + (detail.horario || '') + '" onchange="updateActivityDetail(\'' + act + '\',\'horario\',this.value)">';
+          // Fixa — full controls
+          r += '<div class="onb-control-label">Vezes por semana</div>';
+          r += '<div class="onb-freq-mini">';
+          for (var f = 1; f <= 7; f++) {
+            var selClass = detail.frequencia === f ? ' selected' : '';
+            r += '<button class="onb-freq-btn' + selClass + '" onclick="setActivityFreq(\'' + act + '\',' + f + ',this)">' + f + '</button>';
+          }
+          r += '</div>';
+          r += '<div class="onb-control-label" style="margin-top: 6px;">Intensidade</div>';
+          r += '<div class="onb-intensity-btns">';
+          ['leve', 'moderada', 'intensa'].forEach(function(intens) {
+            var selClass = detail.intensidade === intens ? ' selected' : '';
+            var ilabel = intens.charAt(0).toUpperCase() + intens.slice(1);
+            r += '<button class="onb-intensity-btn' + selClass + '" onclick="setActivityIntensity(\'' + act + '\',\'' + intens + '\',this)">' + ilabel + '</button>';
+          });
+          r += '</div>';
+          var diasSemana2 = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+          var diasKeys2 = ['seg','ter','qua','qui','sex','sab','dom'];
+          r += '<div class="onb-control-label" style="margin-top: 8px;">Dias preferidos</div>';
+          r += '<div class="onb-dias-btns">';
+          diasKeys2.forEach(function(dk, di) {
+            var selClass = (detail.dias && detail.dias.indexOf(dk) > -1) ? ' selected' : '';
+            r += '<button class="onb-dia-btn' + selClass + '" onclick="toggleActivityDia(\'' + act + '\',\'' + dk + '\',this)">' + diasSemana2[di] + '</button>';
+          });
+          r += '</div>';
+          if (detail.dias && detail.dias.length > 1) {
+            r += '<div class="onb-control-label" style="margin-top: 8px;">Horário por dia</div>';
+            r += '<div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">';
+            var diasSemanaMap = { seg:'Seg',ter:'Ter',qua:'Qua',qui:'Qui',sex:'Sex',sab:'Sáb',dom:'Dom' };
+            detail.dias.forEach(function(dk) {
+              var horVal = (detail.horarios && detail.horarios[dk]) || '';
+              r += '<div style="display:flex;align-items:center;gap:8px;">';
+              r += '<span style="font-size:12px;color:var(--text-muted);width:28px;">' + (diasSemanaMap[dk] || dk) + '</span>';
+              r += '<input type="time" class="onb-input onb-time-input" style="margin:0;width:auto;flex:1;" value="' + horVal + '" onchange="updateDayTime(\'' + act + '\',\'' + dk + '\',this.value)">';
+              r += '</div>';
+            });
+            r += '</div>';
+          } else {
+            r += '<div class="onb-control-label" style="margin-top: 8px;">Horário</div>';
+            r += '<input type="time" class="onb-input onb-time-input" style="margin: 0; width: auto;" value="' + (detail.horario || '') + '" onchange="updateActivityDetail(\'' + act + '\',\'horario\',this.value)">';
+          }
+          r += renderSportSpecificFields(act, detail);
         }
 
-        // Sport-specific fields
-        html += renderSportSpecificFields(act, detail);
+        r += '</div></div>';
+        return r;
+      }
 
-        html += '</div></div>';
-      });
+      if (fixas.length > 0) {
+        html += '<div class="onb-cat-section-header">🔒 Atividades Fixas</div>';
+        fixas.forEach(function(act) { html += renderActRow(act, 'fixa'); });
+      }
+      if (esporadicas.length > 0) {
+        html += '<div class="onb-cat-section-header">🌊 Às Vezes</div>';
+        esporadicas.forEach(function(act) { html += renderActRow(act, 'esporadica'); });
+      }
+      if (querComecar.length > 0) {
+        html += '<div class="onb-cat-section-header">✨ Quero Começar</div>';
+        querComecar.forEach(function(act) { html += renderActRow(act, 'quer_comecar'); });
+      }
+
       container.innerHTML = html;
     }
 
@@ -4644,6 +5105,10 @@
       if (onbData.altura) items.push({ label: 'Altura', value: onbData.altura + ' cm' });
       if (onbData.peso) items.push({ label: 'Peso', value: onbData.peso + ' kg' });
       if (onbData.sexo) items.push({ label: 'Sexo', value: onbData.sexo === 'M' ? 'Masculino' : 'Feminino' });
+      if (onbData.objetivo_categoria) {
+        var catLabels = { emagrecimento:'Emagrecer', hipertrofia:'Ganhar músculo', condicionamento:'Condicionamento', saude_geral:'Saúde geral', reabilitacao:'Reabilitação', performance:'Performance', bem_estar:'Bem-estar' };
+        items.push({ label: 'Foco', value: catLabels[onbData.objetivo_categoria] || onbData.objetivo_categoria });
+      }
       if (onbData.objetivo_texto) items.push({ label: 'Objetivo', value: onbData.objetivo_texto });
       if (onbData.objetivo_data) {
         var parts = onbData.objetivo_data.split('-');
@@ -4675,10 +5140,26 @@
         });
       }
 
-      // Total frequencia
-      var totalFreq = onbData.atividades_detalhes.reduce(function(sum, d) { return sum + d.frequencia; }, 0);
-      if (totalFreq > 0) items.push({ label: 'Total semanal', value: totalFreq + ' sessoes' });
+      // Atividades por camada
+      var fixasActs = onbData.atividades_detalhes.filter(function(d) { return (d.categoria || 'fixa') === 'fixa'; });
+      var espActs = onbData.atividades_detalhes.filter(function(d) { return d.categoria === 'esporadica'; });
+      var qcActs = onbData.atividades_detalhes.filter(function(d) { return d.categoria === 'quer_comecar'; });
+      if (espActs.length > 0) items.push({ label: '🌊 Às vezes', value: espActs.map(function(d) { return d.nome; }).join(', ') });
+      if (qcActs.length > 0) items.push({ label: '✨ Quer começar', value: qcActs.map(function(d) { return d.nome; }).join(', ') });
+
+      // Lesões
+      if (onbData.lesoes_ativas && onbData.lesoes_ativas.length > 0) items.push({ label: '🩹 Lesões', value: onbData.lesoes_ativas.join(', ') });
+
+      // Total frequencia (fixas only)
+      var totalFreq = fixasActs.reduce(function(sum, d) { return sum + (d.frequencia || 0); }, 0);
+      if (totalFreq > 0) items.push({ label: 'Total semanal (fixas)', value: totalFreq + ' sessoes' });
       if (onbData.treino_atual) items.push({ label: 'Treino atual', value: onbData.treino_atual.substring(0, 100) + (onbData.treino_atual.length > 100 ? '…' : '') });
+
+      // Hábitos
+      if (onbData.sono_horas) items.push({ label: '😴 Sono', value: onbData.sono_horas + 'h' + (onbData.sono_qualidade ? ' (' + onbData.sono_qualidade + ')' : '') });
+      if (onbData.estresse_nivel) items.push({ label: '🧠 Estresse', value: onbData.estresse_nivel + '/10' });
+      if (onbData.nivel_confianca) items.push({ label: '💪 Confiança', value: onbData.nivel_confianca + '/10' });
+      if (onbData.motivacao_intrinseca) items.push({ label: '🎯 Motivação', value: onbData.motivacao_intrinseca.substring(0, 80) + (onbData.motivacao_intrinseca.length > 80 ? '…' : '') });
 
       var html = '';
       items.forEach(function(item) {
@@ -4732,7 +5213,20 @@
               data_alvo: onbData.objetivo_data,
               resultado_esperado: onbData.objetivo_resultado,
               exames_recentes: onbData.exames_recentes || null,
-              treino_atual: onbData.treino_atual || null
+              treino_atual: onbData.treino_atual || null,
+              categoria: onbData.objetivo_categoria || null,
+              motivacao_intrinseca: onbData.motivacao_intrinseca || null,
+              tentativa_anterior: onbData.tentativa_anterior || null,
+              tentativa_anterior_detalhe: onbData.tentativa_anterior_detalhe || null,
+              nivel_confianca: onbData.nivel_confianca || null,
+              suporte_social: onbData.suporte_social,
+              parq: onbData.parq && Object.keys(onbData.parq).length > 0 ? onbData.parq : null,
+              lesoes_ativas: onbData.lesoes_ativas && onbData.lesoes_ativas.length > 0 ? onbData.lesoes_ativas : null,
+              medicamentos: onbData.medicamentos || null,
+              sono_horas: onbData.sono_horas || null,
+              sono_qualidade: onbData.sono_qualidade || null,
+              estresse_nivel: onbData.estresse_nivel || null,
+              skipped_steps: onbData.skipped_steps && onbData.skipped_steps.length > 0 ? onbData.skipped_steps : null
             },
             nivel_experiencia: onbData.nivel || null,
             atividades_praticadas: atividadesFormatted,
@@ -6944,16 +7438,45 @@
         }).join('\n');
       }
 
+      // Anamnese enrichment
+      var objetivoCategoria = onbData.objetivo_categoria || '';
+      var lesoesList = (onbData.lesoes_ativas && onbData.lesoes_ativas.length > 0) ? onbData.lesoes_ativas.join(', ') : '';
+      var medicamentos = onbData.medicamentos || '';
+      var sonoInfo = onbData.sono_horas ? onbData.sono_horas + 'h' + (onbData.sono_qualidade ? ' (' + onbData.sono_qualidade + ')' : '') : '';
+      var estresseInfo = onbData.estresse_nivel ? onbData.estresse_nivel + '/10' : '';
+      var confiancaInfo = onbData.nivel_confianca ? onbData.nivel_confianca + '/10' : '';
+      var motivacaoInfo = onbData.motivacao_intrinseca || '';
+      var parqPositivo = onbData.parq && Object.values(onbData.parq).some(function(v) { return v === true; });
+
+      // Build rich activity details with category info
+      var atividadesRicasComCat = '';
+      if (onbData.atividades_detalhes && onbData.atividades_detalhes.length > 0) {
+        var fixasList = onbData.atividades_detalhes.filter(function(d) { return (d.categoria || 'fixa') === 'fixa'; });
+        var espList = onbData.atividades_detalhes.filter(function(d) { return d.categoria === 'esporadica'; });
+        var qcList = onbData.atividades_detalhes.filter(function(d) { return d.categoria === 'quer_comecar'; });
+        if (fixasList.length > 0) atividadesRicasComCat += 'FIXAS (toda semana): ' + fixasList.map(function(d) { return d.nome + ' ' + d.frequencia + 'x/sem'; }).join(', ') + '\n';
+        if (espList.length > 0) atividadesRicasComCat += 'ESPORÁDICAS (às vezes): ' + espList.map(function(d) { return d.nome + (d.frequencia_estimada ? ' (' + d.frequencia_estimada + ')' : ''); }).join(', ') + '\n';
+        if (qcList.length > 0) atividadesRicasComCat += 'QUER COMEÇAR: ' + qcList.map(function(d) { return d.nome + (d.motivo_comecar ? ' — motivo: ' + d.motivo_comecar : ''); }).join(', ') + '\n';
+      }
+
       return '## PERFIL\n' +
         'Nome: ' + nome + ' | Idade: ' + idade + ' | Altura: ' + altura + 'cm' + (peso ? ' | Peso: ' + peso + 'kg' : '') + ' | Sexo: ' + (selectedSexo || '?') + '\n' +
         'Objetivo: ' + objetivo + '\n' +
         (objetivoTexto ? 'Objetivo detalhado: ' + objetivoTexto + '\n' : '') +
+        (objetivoCategoria ? 'Foco: ' + objetivoCategoria + '\n' : '') +
         (objetivoPrazo ? 'Prazo: ' + objetivoPrazo + '\n' : '') +
         (objetivoResultado ? 'Resultado esperado: ' + objetivoResultado + '\n' : '') +
+        (motivacaoInfo ? 'Motivação intrínseca: ' + motivacaoInfo + '\n' : '') +
         (nivelExp ? 'Nivel: ' + nivelExp + '\n' : '') +
-        (atividadesRicas ? '## ATIVIDADES DETALHADAS\n' + atividadesRicas + '\n\n' : (atividadesP ? 'Atividades: ' + atividadesP + '\n' : '')) +
+        (atividadesRicasComCat ? '## ATIVIDADES POR CATEGORIA\n' + atividadesRicasComCat + '\n' : (atividadesRicas ? '## ATIVIDADES DETALHADAS\n' + atividadesRicas + '\n\n' : (atividadesP ? 'Atividades: ' + atividadesP + '\n' : ''))) +
         (freqSemanal ? 'Frequencia semanal total: ' + freqSemanal + 'x\n' : '') +
         'Dores/Problemas: ' + dores + '\n' +
+        (lesoesList ? 'Lesões ativas: ' + lesoesList + ' ⚠️ RESTRIÇÃO IMPORTANTE\n' : '') +
+        (parqPositivo ? '⚠️ PAR-Q positivo — condições de saúde declaradas. Respeitar limitações médicas.\n' : '') +
+        (medicamentos ? 'Medicamentos: ' + medicamentos + '\n' : '') +
+        (sonoInfo ? 'Sono: ' + sonoInfo + '\n' : '') +
+        (estresseInfo ? 'Estresse: ' + estresseInfo + '\n' : '') +
+        (confiancaInfo ? 'Confiança na rotina: ' + confiancaInfo + '\n' : '') +
         'Estado hoje: ' + estado + '\n' +
         (examAnalises.length > 0 ? '## EXAMES E LAUDOS (do mais recente para o mais antigo)\n' +
           examAnalises.slice(0, 5).map(function(e) {
@@ -9310,6 +9833,21 @@
             onbData.objetivo_data = profile.objetivo_data.data_alvo || '';
             onbData.objetivo_resultado = profile.objetivo_data.resultado_esperado || '';
           }
+          // Load new anamnese fields from objetivo_data
+          var od = profile.objetivo_data || {};
+          if (!onbData.objetivo_categoria && od.categoria) onbData.objetivo_categoria = od.categoria;
+          if (!onbData.motivacao_intrinseca && od.motivacao_intrinseca) onbData.motivacao_intrinseca = od.motivacao_intrinseca;
+          if (!onbData.tentativa_anterior && od.tentativa_anterior) onbData.tentativa_anterior = od.tentativa_anterior;
+          if (!onbData.tentativa_anterior_detalhe && od.tentativa_anterior_detalhe) onbData.tentativa_anterior_detalhe = od.tentativa_anterior_detalhe;
+          if (!onbData.nivel_confianca && od.nivel_confianca) onbData.nivel_confianca = od.nivel_confianca;
+          if (onbData.suporte_social === null && od.suporte_social !== undefined && od.suporte_social !== null) onbData.suporte_social = od.suporte_social;
+          if (!onbData.parq && od.parq) onbData.parq = od.parq;
+          if ((!onbData.lesoes_ativas || onbData.lesoes_ativas.length === 0) && od.lesoes_ativas && od.lesoes_ativas.length > 0) onbData.lesoes_ativas = od.lesoes_ativas;
+          if (!onbData.medicamentos && od.medicamentos) onbData.medicamentos = od.medicamentos;
+          if (!onbData.sono_horas && od.sono_horas) onbData.sono_horas = od.sono_horas;
+          if (!onbData.sono_qualidade && od.sono_qualidade) onbData.sono_qualidade = od.sono_qualidade;
+          if (!onbData.estresse_nivel && od.estresse_nivel) onbData.estresse_nivel = od.estresse_nivel;
+          if ((!onbData.skipped_steps || onbData.skipped_steps.length === 0) && od.skipped_steps && od.skipped_steps.length > 0) onbData.skipped_steps = od.skipped_steps;
           if (!onbData.peso && profile.peso) onbData.peso = String(profile.peso);
           if (!onbData.treino_atual && profile.objetivo_data && profile.objetivo_data.treino_atual)
             onbData.treino_atual = profile.objetivo_data.treino_atual;
