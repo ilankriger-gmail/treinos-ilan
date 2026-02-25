@@ -6017,15 +6017,23 @@
         });
 
         // Deduplicate: remove duplicate activity types per date, save back if needed
+        // Priority: done > skipped > planned — keep the most meaningful status
+        var _statusPrio = { done: 0, skipped: 1, planned: 2 };
         var datesWithDups = [];
         Object.keys(activities).forEach(function(date) {
           var arr = activities[date];
           if (!Array.isArray(arr)) return;
+          // Sort so dedup always keeps the most meaningful entry (done beats planned)
+          arr.sort(function(a, b) {
+            var pa = _statusPrio[a.status] !== undefined ? _statusPrio[a.status] : 0;
+            var pb = _statusPrio[b.status] !== undefined ? _statusPrio[b.status] : 0;
+            return pa - pb;
+          });
           var seen = {};
           var deduped = arr.filter(function(a) {
-            var key = a.type;
-            if (seen[key]) return false;
-            seen[key] = true;
+            if (!a.type) return false;
+            if (seen[a.type]) return false;
+            seen[a.type] = true;
             return true;
           });
           if (deduped.length !== arr.length) {
@@ -6033,23 +6041,25 @@
             datesWithDups.push(date);
           }
         });
+        // Save deduped dates back (awaited — not fire-and-forget)
         if (datesWithDups.length > 0) {
-          datesWithDups.forEach(function(date) {
-            var dayActs = activities[date] || [];
-            var uid = getCurrentUserId();
-            fetch(`${SUPABASE_URL}/rest/v1/calendar_activities?user_id=eq.${uid}&date=eq.${date}`, {
-              method: 'DELETE',
-              headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-            }).then(function() {
-              if (dayActs.length > 0) {
-                fetch(`${SUPABASE_URL}/rest/v1/calendar_activities`, {
+          var _uid = getCurrentUserId();
+          for (var _di = 0; _di < datesWithDups.length; _di++) {
+            var _d = datesWithDups[_di];
+            var _da = activities[_d] || [];
+            try {
+              await fetch(`${SUPABASE_URL}/rest/v1/calendar_activities?user_id=eq.${_uid}&date=eq.${_d}`, {
+                method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+              });
+              if (_da.length > 0) {
+                await fetch(`${SUPABASE_URL}/rest/v1/calendar_activities`, {
                   method: 'POST',
                   headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ date: date, activities: dayActs, user_id: uid })
+                  body: JSON.stringify({ date: _d, activities: _da, user_id: _uid })
                 });
               }
-            });
-          });
+            } catch(e) { /* non-critical */ }
+          }
         }
       } catch (e) {
         // Fallback to localStorage
@@ -8001,6 +8011,7 @@
         case '/treino': cmdTreino(); return true;
         case '/reset': cmdReset(); return true;
         case '/relatorio': cmdRelatorio(); return true;
+        case '/limpar-plano': cmdLimparPlano(); return true;
         default: return false;
       }
     }
@@ -8010,6 +8021,7 @@
         '`/treino` — Mostra seu treino atual com séries, reps e pesos\n' +
         '`/relatorio` — Pede um relatório completo ao coach (perfil, progresso, recomendações)\n' +
         '`/reset` — Limpa a conversa e recomeça do zero\n' +
+        '`/limpar-plano` — Remove todas as atividades planejadas do calendário (mantém as já realizadas)\n' +
         '`/ajuda` — Lista estes comandos';
       addChatBubble(helpText, 'assistant');
     }
@@ -8051,6 +8063,40 @@
       localStorage.removeItem('chat-date');
       document.getElementById('chatMessages').innerHTML = '';
       addChatBubble('Conversa reiniciada. Clique em "Voltar" e inicie novamente para um novo contexto.', 'assistant');
+    }
+
+    async function cmdLimparPlano() {
+      var today = getTodayDateStr();
+      var cleared = 0;
+      var affectedDates = [];
+      Object.keys(activities).forEach(function(date) {
+        if (date < today) return; // Só a partir de hoje
+        var arr = activities[date];
+        if (!Array.isArray(arr)) return;
+        var filtered = arr.filter(function(a) { return (a.status || 'done') !== 'planned'; });
+        if (filtered.length !== arr.length) {
+          cleared += arr.length - filtered.length;
+          activities[date] = filtered;
+          if (activities[date].length === 0) delete activities[date];
+          affectedDates.push(date);
+        }
+      });
+      if (cleared === 0) {
+        addChatBubble('Nenhuma atividade planejada encontrada no calendário.', 'assistant');
+        return;
+      }
+      // Save all affected dates
+      addChatBubble('Limpando ' + cleared + ' atividade(s) planejada(s)...', 'assistant');
+      var prevSel = selectedDate;
+      for (var i = 0; i < affectedDates.length; i++) {
+        var parts = affectedDates[i].split('-');
+        selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        await saveActivities();
+      }
+      selectedDate = prevSel;
+      renderCalendar();
+      renderDayActivities();
+      addChatBubble('✅ Plano limpo! Removidas **' + cleared + ' atividade(s) planejada(s)** de ' + affectedDates.length + ' dia(s). As atividades já realizadas foram mantidas.\n\nAgora peça um novo plano ao Coach.', 'assistant');
     }
 
     async function cmdRelatorio() {
@@ -8842,8 +8888,6 @@
         } else {
           // action: add (default)
           if (!activities[targetDate]) activities[targetDate] = [];
-          var existingIdx = activities[targetDate].findIndex(function(a) { return a.type === type; });
-          var existingStatus = existingIdx >= 0 ? (activities[targetDate][existingIdx].status || 'done') : null;
           var dateLabel = targetDate === getTodayDateStr() ? 'hoje' : targetDate;
           var newEntry = {
             type: type,
@@ -8853,22 +8897,16 @@
             effort: null,
             status: 'planned'
           };
-          if (existingStatus === 'done' || existingStatus === 'skipped') {
-            // Already completed or explicitly skipped — don't overwrite
-            cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--text-muted); font-size: 12px;">Já ' + (existingStatus === 'done' ? 'realizado' : 'ignorado') + ' em ' + dateLabel + '</span>';
-          } else if (existingStatus === 'planned') {
-            // Replace existing planned entry (coach update)
-            activities[targetDate][existingIdx] = newEntry;
-            const prevSelected = selectedDate;
-            var parts = targetDate.split('-');
-            selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
-            await saveActivities();
-            selectedDate = prevSelected;
-            renderCalendar();
-            renderDayActivities();
-            cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Atualizado em ' + dateLabel + '</span>';
+          // Check for any done/skipped entries of this type
+          var hasDone = activities[targetDate].some(function(a) { return a.type === type && (a.status || 'done') === 'done'; });
+          var hasSkipped = activities[targetDate].some(function(a) { return a.type === type && a.status === 'skipped'; });
+          if (hasDone || hasSkipped) {
+            // Already completed or skipped — don't overwrite
+            cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--text-muted); font-size: 12px;">Já ' + (hasDone ? 'realizado' : 'ignorado') + ' em ' + dateLabel + '</span>';
           } else {
-            // New entry
+            // Remove ALL existing planned entries of this type (handles accumulated duplicates)
+            var hadPlanned = activities[targetDate].some(function(a) { return a.type === type; });
+            activities[targetDate] = activities[targetDate].filter(function(a) { return a.type !== type; });
             activities[targetDate].push(newEntry);
             const prevSelected = selectedDate;
             var parts = targetDate.split('-');
@@ -8877,7 +8915,8 @@
             selectedDate = prevSelected;
             renderCalendar();
             renderDayActivities();
-            cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">Adicionado em ' + dateLabel + '</span>';
+            var addLabel = hadPlanned ? 'Atualizado em ' : 'Adicionado em ';
+            cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">' + addLabel + dateLabel + '</span>';
           }
         }
       } else {
