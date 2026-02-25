@@ -8948,16 +8948,34 @@
       barBtn.disabled = true;
       barBtn.textContent = 'Aplicando...';
       var count = 0;
+      var skipped = 0;
+      var validActivityTypes = ['corrida', 'surf', 'tenis', 'bike', 'fisio', 'upper', 'lower', 'caminhada', 'descanso', 'mobilidade'];
       for (var i = 0; i < cards.length; i++) {
         var card = cards[i];
         var s;
         try { s = JSON.parse(card.dataset.suggestion); } catch(e) { continue; }
+        // Enforce max 2 planned activities per day (in code, not just prompt)
+        if (s.type === 'atividade' && s.activity_type && validActivityTypes.includes(s.activity_type)) {
+          var tDate = s.date && /^\d{4}-\d{2}-\d{2}$/.test(s.date) ? s.date : getTodayDateStr();
+          var plannedTypes = (activities[tDate] || [])
+            .filter(function(a) { return a.status === 'planned' && a.type; })
+            .map(function(a) { return a.type; });
+          var uniquePlanned = plannedTypes.filter(function(t, i, arr) { return arr.indexOf(t) === i; });
+          // Skip if this type isn't already there AND limit is reached
+          if (uniquePlanned.indexOf(s.activity_type) === -1 && uniquePlanned.length >= 2) {
+            card.classList.add('rejected');
+            card.querySelector('.suggestion-card-actions').innerHTML =
+              '<span style="color: var(--text-muted); font-size: 12px;">Dia já tem 2 atividades — ignorado</span>';
+            skipped++;
+            continue;
+          }
+        }
         await _doAcceptSuggestion(s, card);
         count++;
       }
-      showToast(count + ' sugestões aplicadas!');
+      showToast(count + ' sugestões aplicadas!' + (skipped > 0 ? ' (' + skipped + ' ignoradas — limite 2/dia)' : ''));
       var bar = barBtn.closest('.suggestion-batch-bar');
-      if (bar) bar.innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">✓ Todas aplicadas</span>';
+      if (bar) bar.innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">✓ ' + count + ' aplicadas' + (skipped > 0 ? ', ' + skipped + ' ignoradas (limite 2/dia)' : '') + '</span>';
     }
 
     function modifySuggestion(idx) {
