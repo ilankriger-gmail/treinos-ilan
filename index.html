@@ -5405,10 +5405,9 @@
       // Restrições
       if (onbData.restricoes) lines.push('**Restrições/lesões:** ' + onbData.restricoes);
 
-      // Atividades detalhadas
+      // Atividades separadas por categoria
       if (onbData.atividades_detalhes.length > 0) {
-        lines.push('**Atividades que pratico:**');
-        onbData.atividades_detalhes.forEach(function(d) {
+        function buildAtividadeDetail(d) {
           var parts = [];
           var label = d.nome.charAt(0).toUpperCase() + d.nome.slice(1);
           if (d.dias && d.dias.length > 0) parts.push('dias: ' + d.dias.join('/'));
@@ -5420,11 +5419,9 @@
           }
           parts.push(d.frequencia + 'x/semana');
           parts.push('intensidade ' + d.intensidade);
-          // Sport-specific
           if (d.nome === 'academia') {
             if (d.divisao) parts.push('divisão: ' + d.divisao);
             if (d.series_por_exercicio) parts.push(d.series_por_exercicio + ' séries/exercício');
-            if (!d.tem_planilha) parts.push('sem planilha prévia');
           } else if (d.nome === 'surf' && d.nivel_surf) {
             parts.push('nível ' + d.nivel_surf);
           } else if (d.nome === 'fisio') {
@@ -5438,8 +5435,26 @@
           } else if (d.duracao_media) {
             parts.push('duração: ' + d.duracao_media);
           }
-          lines.push('- ' + label + ': ' + parts.join(', '));
-        });
+          return '- ' + label + ': ' + parts.join(', ');
+        }
+        var fixas = onbData.atividades_detalhes.filter(function(d) { return (d.categoria || 'fixa') === 'fixa'; });
+        var esp = onbData.atividades_detalhes.filter(function(d) { return d.categoria === 'esporadica'; });
+        var qc = onbData.atividades_detalhes.filter(function(d) { return d.categoria === 'quer_comecar'; });
+        if (fixas.length > 0) {
+          lines.push('**🔒 ATIVIDADES FIXAS (compromissos semanais imutáveis — NÃO ALTERE os dias/horários):**');
+          fixas.forEach(function(d) { lines.push(buildAtividadeDetail(d)); });
+        }
+        if (esp.length > 0) {
+          lines.push('**🌊 Atividades esporádicas (pratico às vezes, sem dia fixo):**');
+          esp.forEach(function(d) { lines.push(buildAtividadeDetail(d)); });
+        }
+        if (qc.length > 0) {
+          lines.push('**✨ Quero começar (ainda não faço):**');
+          qc.forEach(function(d) { lines.push(buildAtividadeDetail(d)); });
+        }
+        if (fixas.length > 0) {
+          lines.push('⚠️ REGRA: Monte o plano semanal AO REDOR das atividades FIXAS. Não mude os dias delas.');
+        }
       }
 
       // Exames recentes
@@ -7255,6 +7270,8 @@
       return 'Voce e o Coach AI, um coach de treino pessoal interativo. Seu nome e Coach AI. Voce conversa em portugues brasileiro, de forma direta e motivadora.\n\n' +
         'REGRA FUNDAMENTAL — OBJETIVO DO ALUNO:\n' +
         'O objetivo do aluno e a sua BUSSOLA. SEMPRE mantenha o objetivo no horizonte em TODAS as interacoes. Cada sugestao de treino, cada ajuste de exercicio, cada feedback sobre progresso DEVE estar conectado ao objetivo. Reforce como as acoes de hoje aproximam o aluno do objetivo. Se o aluno esta se desviando, traga de volta com gentileza. Se esta progredindo, celebre e mostre o quanto ja avancou em direcao ao objetivo. Nunca perca de vista o que o aluno quer alcançar.\n\n' +
+        'REGRA OBRIGATORIA — ATIVIDADES FIXAS:\n' +
+        'Atividades marcadas como FIXAS (🔒) sao compromissos semanais IMUTAVEIS. NUNCA sugira alterar os dias ou horarios de uma atividade fixa. Ao montar qualquer plano semanal, encaixe tudo AO REDOR dessas atividades, nao o contrario. Se o contexto nao lista atividades fixas, pergunte ao aluno quais sao antes de sugerir uma rotina.\n\n' +
         'REGRAS:\n' +
         '1. Na PRIMEIRA mensagem, faca 2-3 perguntas sobre como o aluno esta hoje, o que quer treinar, e como se sente.\n' +
         '2. Depois das respostas, de sugestoes praticas e personalizadas ALINHADAS ao objetivo.\n' +
@@ -7594,9 +7611,26 @@
         var fixasList = onbData.atividades_detalhes.filter(function(d) { return (d.categoria || 'fixa') === 'fixa'; });
         var espList = onbData.atividades_detalhes.filter(function(d) { return d.categoria === 'esporadica'; });
         var qcList = onbData.atividades_detalhes.filter(function(d) { return d.categoria === 'quer_comecar'; });
-        if (fixasList.length > 0) atividadesRicasComCat += 'FIXAS (toda semana): ' + fixasList.map(function(d) { return d.nome + ' ' + d.frequencia + 'x/sem'; }).join(', ') + '\n';
-        if (espList.length > 0) atividadesRicasComCat += 'ESPORÁDICAS (às vezes): ' + espList.map(function(d) { return d.nome + (d.frequencia_estimada ? ' (' + d.frequencia_estimada + ')' : ''); }).join(', ') + '\n';
-        if (qcList.length > 0) atividadesRicasComCat += 'QUER COMEÇAR: ' + qcList.map(function(d) { return d.nome + (d.motivo_comecar ? ' — motivo: ' + d.motivo_comecar : ''); }).join(', ') + '\n';
+        if (fixasList.length > 0) {
+          atividadesRicasComCat += '🔒 FIXAS (toda semana — dias IMUTÁVEIS):\n';
+          fixasList.forEach(function(d) {
+            var info = d.nome + ' ' + d.frequencia + 'x/sem';
+            if (d.dias && d.dias.length > 0) info += ' | dias: ' + d.dias.join('/');
+            if (d.horarios && Object.keys(d.horarios).length > 0) {
+              var hp = d.dias.filter(function(dk) { return d.horarios[dk]; }).map(function(dk) { return dk + ':' + d.horarios[dk]; });
+              if (hp.length > 0) info += ' | horários: ' + hp.join(', ');
+            } else if (d.horario) { info += ' | às ' + d.horario; }
+            if (d.divisao) info += ' | divisão: ' + d.divisao;
+            atividadesRicasComCat += '  - ' + info + '\n';
+          });
+          atividadesRicasComCat += '  ⚠️ Não altere os dias das atividades fixas ao montar o plano.\n';
+        }
+        if (espList.length > 0) {
+          atividadesRicasComCat += '🌊 ESPORÁDICAS (às vezes, sem dia fixo): ' + espList.map(function(d) { return d.nome + (d.frequencia_estimada ? ' (' + d.frequencia_estimada + ')' : ''); }).join(', ') + '\n';
+        }
+        if (qcList.length > 0) {
+          atividadesRicasComCat += '✨ QUER COMEÇAR: ' + qcList.map(function(d) { return d.nome + (d.motivo_comecar ? ' — motivo: ' + d.motivo_comecar : ''); }).join(', ') + '\n';
+        }
       }
 
       return '## PERFIL\n' +
