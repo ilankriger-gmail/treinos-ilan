@@ -7292,9 +7292,14 @@
         'REGRA OBRIGATORIA PARA ROTINAS SEMANAIS:\n' +
         'Quando sugerir uma rotina semanal ou plano de varios dias, voce DEVE criar um bloco <' + sg + '> SEPARADO para CADA atividade de CADA dia.\n' +
         'Cada bloco DEVE ter o campo "date" com a data exata no formato YYYY-MM-DD (use as datas dos proximos 7 dias acima).\n' +
-        'Se um dia tem 2 atividades (ex: surf + fisio), crie 2 blocos separados com a mesma data.\n' +
         'SEMPRE inclua HOJE no plano se houver atividades fixas para o dia da semana de hoje. Nao pule o dia atual.\n' +
         'NUNCA sugira rotina apenas como texto - SEMPRE use blocos <' + sg + '> para que o aluno possa aceitar e adicionar ao calendario.\n\n' +
+        'LIMITE ABSOLUTO DE ATIVIDADES POR DIA:\n' +
+        'MAXIMO 2 blocos de sugestao por dia. Ponto final. Nunca 3, nunca 4, nunca 5.\n' +
+        'Exemplos validos: [surf] ou [fisio + upper] ou [corrida + mobilidade].\n' +
+        'Exemplos PROIBIDOS: [fisio + upper + mobilidade] ou [surf + corrida + lower + caminhada].\n' +
+        'Se o dia ja tem uma atividade fixa intensa (surf, tenis, fisio), o segundo slot e opcional e so para algo leve (mobilidade) OU vazio (dia de descanso).\n' +
+        'Caminhada, mobilidade e descanso NAO substituem o limite — continuam contando como 1 atividade.\n\n' +
         '<' + sg + '>\n' +
         'type: exercicio\naction: modify\nlabel: Nome do exercicio\n' +
         'exercise_name: Nome EXATO do exercicio (da lista abaixo)\ndetail: O que mudar no exercicio\n' +
