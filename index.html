@@ -8959,9 +8959,14 @@
         }
       });
       exerciseConfigs = {};
-      saveExerciseConfigs();
-      saveCustomExercises([]);
+      // Clear localStorage only (no Supabase sync to avoid race condition —
+      // the final addNewExercise call will sync the complete state)
+      localStorage.setItem('exercise-configs', JSON.stringify({}));
+      localStorage.setItem('custom-exercises', JSON.stringify([]));
       localStorage.setItem('workout-replaced', 'true');
+      // Clear old workout progress so stale data doesn't persist
+      localStorage.removeItem('workout-progress-v6');
+      localStorage.removeItem('workout-date');
       _exerciseCacheDirty = true;
     }
 
@@ -8996,7 +9001,7 @@
       }
       try {
         // If workout was fully replaced by AI, clear hardcoded exercises first
-        if (custom.length > 0 && localStorage.getItem('workout-replaced') === 'true') {
+        if (localStorage.getItem('workout-replaced') === 'true') {
           ['braco', 'perna', 'mob1', 'mob2', 'mob3'].forEach(function(cid) {
             var cont = document.getElementById(cid);
             if (cont) cont.querySelectorAll('.exercise, .section-title').forEach(function(el) { el.remove(); });
@@ -9075,6 +9080,12 @@
           }
         }
         _bulkOperation = false;
+        // Final sync to Supabase with complete state (avoids race conditions)
+        saveExerciseConfigs();
+        try {
+          var finalCustom = JSON.parse(localStorage.getItem('custom-exercises') || '[]');
+          saveCustomExercises(finalCustom);
+        } catch(e) {}
         // Collapse treino card
         cardEl.innerHTML =
           '<div style="display:flex;align-items:center;gap:10px;">' +
