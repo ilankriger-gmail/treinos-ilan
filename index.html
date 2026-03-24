@@ -3282,552 +3282,47 @@
       
       <!-- Upper Body -->
       <div id="braco" class="workout active">
-        <div class="exercise" data-id="b1" data-name="Remada Aberta Curvada">
-          <div class="exercise-header">
-            <div class="exercise-number">1</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Remada Aberta Curvada</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>10-12</strong> reps</span>
-                <span>⏱ <strong>90s</strong></span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Puxe a barra na direção do umbigo. Cotovelos a 45°, junte as escápulas (ossos das costas) no topo. Peito pra fora, lombar neutra</div>
-          <div class="weight-row">
-            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
-            <span class="weight-unit">kg</span>
-          </div>
-          <div class="weight-last" id="last-b1"></div>
-          <button class="timer-btn" onclick="startTimer(90)">⏱ Descanso 90s</button>
+        <div class="workout-empty-state">
+          <div style="font-size:40px;margin-bottom:12px;">🏋️</div>
+          <div style="font-size:14px;font-weight:500;color:var(--text-secondary);">Nenhum exercicio cadastrado</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Peca ao Coach AI para criar seu treino</div>
         </div>
         
-        <div class="exercise" data-id="b2" data-name="Crucifixo Inclinado">
-          <div class="exercise-header">
-            <div class="exercise-number">2</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Crucifixo Inclinado</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>10-12</strong> reps</span>
-                <span>⏱ <strong>90s</strong></span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Banco a 30°. Abra os braços em arco, cotovelos levemente flexionados. Não desça abaixo da linha do ombro. Sinta o peitoral (músculo do peito) esticar</div>
-          <div class="weight-row">
-            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
-            <span class="weight-unit">kg</span>
-          </div>
-          <div class="weight-last" id="last-b2"></div>
-          <button class="timer-btn" onclick="startTimer(90)">⏱ Descanso 90s</button>
-        </div>
-        
-        <div class="exercise" data-id="b3" data-name="Remada Fechada Triângulo">
-          <div class="exercise-header">
-            <div class="exercise-number">3</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Remada Fechada Triângulo</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>10-12</strong> reps</span>
-                <span>⏱ <strong>90s</strong></span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Puxe o triângulo até o abdômen. Junte as escápulas (ossos das costas) no final — "esmague" as costas. Ombros longe da orelha, peito aberto</div>
-          <div class="weight-row">
-            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
-            <span class="weight-unit">kg</span>
-          </div>
-          <div class="weight-last" id="last-b3"></div>
-          <button class="timer-btn" onclick="startTimer(90)">⏱ Descanso 90s</button>
-        </div>
-        
-        <div class="exercise" data-id="b4" data-name="Crucifixo Inverso">
-          <div class="exercise-header">
-            <div class="exercise-number">4</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Crucifixo Inverso</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>15</strong> reps</span>
-                <span>⏱ <strong>60s</strong></span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Carga LEVE. Foco no deltóide posterior (parte de trás do ombro). Abra os braços para os lados com cotovelos levemente flexionados. Aperte as escápulas no final</div>
-          <div class="weight-row">
-            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
-            <span class="weight-unit">kg</span>
-          </div>
-          <div class="weight-last" id="last-b4"></div>
-          <button class="timer-btn" onclick="startTimer(60)">⏱ Descanso 60s</button>
-        </div>
-        
-        <div class="exercise" data-id="b5" data-name="Face Pull">
-          <div class="exercise-header">
-            <div class="exercise-number">5</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Face Pull</div>
-              <div class="exercise-stats">
-                <span><strong>4</strong> séries</span>
-                <span><strong>15-20</strong> reps</span>
-                <span>⏱ <strong>60s</strong></span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Carga LEVE. Puxe a corda até a altura da testa, abrindo as mãos para fora. Segure 2s com as escápulas (ossos das costas) apertadas. Fortalece o manguito rotador (músculos profundos do ombro)</div>
-          <div class="weight-row">
-            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
-            <span class="weight-unit">kg</span>
-          </div>
-          <div class="weight-last" id="last-b5"></div>
-          <button class="timer-btn" onclick="startTimer(60)">⏱ Descanso 60s</button>
-        </div>
-        
-        <div class="exercise" data-id="b6" data-name="Tríceps Corda">
-          <div class="exercise-header">
-            <div class="exercise-number">6</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Tríceps Corda</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>12-15</strong> reps</span>
-                <span>⏱ <strong>60s</strong></span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Cotovelos grudados no corpo. Estenda os braços totalmente lá embaixo, abrindo a corda para os lados. Contraia o tríceps (parte de trás do braço) no final</div>
-          <div class="weight-row">
-            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
-            <span class="weight-unit">kg</span>
-          </div>
-          <div class="weight-last" id="last-b6"></div>
-          <button class="timer-btn" onclick="startTimer(60)">⏱ Descanso 60s</button>
-        </div>
-        
-        <div class="exercise" data-id="b7" data-name="Supino Reto Halteres">
-          <div class="exercise-header">
-            <div class="exercise-number">7</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Supino Reto Halteres</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>10-12</strong> reps</span>
-                <span>⏱ <strong>90s</strong></span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Cotovelos a 45° do corpo (posição de seta ↗), nunca abertos a 90° (posição de cruz ✚). Desça até o halter na linha do peito. Empurre juntando os peitorais no topo</div>
-          <div class="weight-row">
-            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
-            <span class="weight-unit">kg</span>
-          </div>
-          <div class="weight-last" id="last-b7"></div>
-          <button class="timer-btn" onclick="startTimer(90)">⏱ Descanso 90s</button>
-        </div>
-        
-        <div class="exercise" data-id="b8" data-name="Bíceps Barra W">
-          <div class="exercise-header">
-            <div class="exercise-number">8</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Bíceps Barra W</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>12-15</strong> reps</span>
-                <span>⏱ <strong>60s</strong></span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Cotovelos colados na lateral do corpo (na costela). Suba contraindo o bíceps sem balançar o tronco. Desça controlado, sem soltar o peso</div>
-          <div class="weight-row">
-            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
-            <span class="weight-unit">kg</span>
-          </div>
-          <div class="weight-last" id="last-b8"></div>
-          <button class="timer-btn" onclick="startTimer(60)">⏱ Descanso 60s</button>
-        </div>
       </div>
-      
+
       <!-- Lower Body -->
       <div id="perna" class="workout">
-        <p class="section-title">🔥 Analgésico — Antes de tudo</p>
-        
-        <div class="exercise" data-id="p1" data-name="Isometria Abdução na Parede">
-          <div class="exercise-header">
-            <div class="exercise-number">1</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Isometria Abdução na Parede</div>
-              <div class="exercise-stats">
-                <span><strong>5</strong> séries</span>
-                <span><strong>45s</strong> hold</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Isometria analgésica: pressione o joelho contra a parede lateralmente (abdução = abrir a perna). Mantém 45s — "desliga" o sinal de dor do tendão para treinar o resto</div>
-        </div>
-        
-        <p class="section-title">🎯 Ativação Segura — Chão</p>
-        
-        <div class="exercise" data-id="p2" data-name="Ponte Bipodal no Chão">
-          <div class="exercise-header">
-            <div class="exercise-number">2</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Ponte Bipodal no Chão</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>15-20</strong> reps</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Deitado, pés no chão. Suba o quadril apertando MUITO o glúteo (músculo do bumbum) lá em cima. Segure 1s. Joelhos alinhados com os pés, não deixe abrir</div>
-        </div>
-        
-        <p class="section-title">⚡ Força Principal — Em pé</p>
-        
-        <div class="exercise" data-id="p3" data-name="Agachamento Espanhol">
-          <div class="exercise-header">
-            <div class="exercise-number">3</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Agachamento Espanhol</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>10</strong> reps</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Elástico atrás do joelho preso em algo fixo. Sente como se fosse sentar, tronco reto. Foco no quadríceps (músculo da frente da coxa). Substitui agachamento pesado protegendo o tendão</div>
-          <div class="weight-row">
-            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
-            <span class="weight-unit">kg</span>
-          </div>
-          <div class="weight-last" id="last-p3"></div>
-        </div>
-        
-        <div class="exercise" data-id="p4" data-name="Afundo com Flexão de Tronco">
-          <div class="exercise-header">
-            <div class="exercise-number">4</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Afundo com Flexão de Tronco</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>10</strong> reps</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Dê um passo à frente e flexione. Joelho da frente alinhado com o pé — NÃO deixe entrar (valgo). Incline o tronco à frente para ativar mais o glúteo</div>
-          <div class="weight-row">
-            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
-            <span class="weight-unit">kg</span>
-          </div>
-          <div class="weight-last" id="last-p4"></div>
-        </div>
-        
-        <p class="section-title">🏁 Finalização — Máquinas</p>
-        
-        <div class="exercise" data-id="p5" data-name="Cadeira Flexora">
-          <div class="exercise-header">
-            <div class="exercise-number">5</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Cadeira Flexora</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>12-15</strong> reps</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="weight-row">
-            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
-            <span class="weight-unit">kg</span>
-          </div>
-          <div class="weight-last" id="last-p5"></div>
-        </div>
-        
-        <div class="exercise" data-id="p6" data-name="Panturrilha no Step">
-          <div class="exercise-header">
-            <div class="exercise-number">6</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Panturrilha no Step</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>15-20</strong> reps</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="weight-row">
-            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
-            <span class="weight-unit">kg</span>
-          </div>
-          <div class="weight-last" id="last-p6"></div>
-        </div>
-        
-        <div class="exercise" data-id="p7" data-name="Cadeira Solear">
-          <div class="exercise-header">
-            <div class="exercise-number">7</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Cadeira Solear</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>15-20</strong> reps</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="weight-row">
-            <input type="number" class="weight-input" placeholder="Peso" step="0.5" onchange="saveWeight(this)">
-            <span class="weight-unit">kg</span>
-          </div>
-          <div class="weight-last" id="last-p7"></div>
+        <div class="workout-empty-state">
+          <div style="font-size:40px;margin-bottom:12px;">🦵</div>
+          <div style="font-size:14px;font-weight:500;color:var(--text-secondary);">Nenhum exercicio cadastrado</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Peca ao Coach AI para criar seu treino</div>
         </div>
       </div>
 
       <!-- Mobilidade 1 -->
       <div id="mob1" class="workout">
-        <div class="exercise" data-id="m1-1" data-name="Gato-Vaca">
-          <div class="exercise-header">
-            <div class="exercise-number">1</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Gato-Vaca</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>10</strong> reps</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">De quatro apoios. Arqueie as costas para cima (gato) arredondando a coluna, depois solte a barriga para baixo (vaca) abrindo o peito. Movimento lento e controlado</div>
-        </div>
-
-        <div class="exercise" data-id="m1-2" data-name="Maior Alongamento do Mundo">
-          <div class="exercise-header">
-            <div class="exercise-number">2</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Maior Alongamento do Mundo</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>5</strong> reps/lado</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Afundo à frente, mão no chão. Gire o tronco abrindo o braço pro teto (rotação torácica = girar a parte de cima das costas). Alonga quadril, costas e ombros de uma vez</div>
-        </div>
-
-        <div class="exercise" data-id="m1-3" data-name="90/90 Rotacao de Quadril">
-          <div class="exercise-header">
-            <div class="exercise-number">3</div>
-            <div class="exercise-info">
-              <div class="exercise-name">90/90 Rotacao de Quadril</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>8</strong> reps/lado</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Sentado, ambos os joelhos a 90°. Gire as pernas para o outro lado alternando. Trabalha rotação interna e externa do quadril (capacidade de girar a perna para dentro e para fora)</div>
-        </div>
-
-        <div class="exercise" data-id="m1-4" data-name="Toracica em Quadrupedia">
-          <div class="exercise-header">
-            <div class="exercise-number">4</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Toracica em Quadrupedia</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>8</strong> reps/lado</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">De quatro apoios, mão na nuca. Gire o tronco abrindo o cotovelo pro teto, depois feche trazendo pro chão. Mobiliza a coluna torácica (região do meio das costas)</div>
-        </div>
-
-        <div class="exercise" data-id="m1-5" data-name="Alongamento Bretzel">
-          <div class="exercise-header">
-            <div class="exercise-number">5</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Alongamento Bretzel</div>
-              <div class="exercise-stats">
-                <span><strong>2</strong> séries</span>
-                <span><strong>30s</strong> hold/lado</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Deitado de lado, perna de cima flexionada à frente, perna de baixo flexionada atrás. Gire o tronco abrindo o peito. Alonga quadril, peito e coluna torácica ao mesmo tempo</div>
+        <div class="workout-empty-state">
+          <div style="font-size:40px;margin-bottom:12px;">🧘</div>
+          <div style="font-size:14px;font-weight:500;color:var(--text-secondary);">Nenhum exercicio cadastrado</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Peca ao Coach AI para criar seu treino</div>
         </div>
       </div>
 
       <!-- Mobilidade 2 -->
       <div id="mob2" class="workout">
-        <div class="exercise" data-id="m2-1" data-name="CARs de Ombro">
-          <div class="exercise-header">
-            <div class="exercise-number">1</div>
-            <div class="exercise-info">
-              <div class="exercise-name">CARs de Ombro</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>5</strong> reps/lado</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">CARs = Rotações Articulares Controladas. Em pé, gire o braço lentamente fazendo o maior círculo possível. Força máxima no movimento. Mapeia a amplitude do ombro</div>
-        </div>
-
-        <div class="exercise" data-id="m2-2" data-name="CARs de Quadril">
-          <div class="exercise-header">
-            <div class="exercise-number">2</div>
-            <div class="exercise-info">
-              <div class="exercise-name">CARs de Quadril</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>5</strong> reps/lado</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Em pé (apoie numa parede). Levante o joelho à frente, abra pro lado e leve pra trás — o maior círculo possível com a perna. Controle total, sem compensar com o tronco</div>
-        </div>
-
-        <div class="exercise" data-id="m2-3" data-name="Alongamento Escorpiao">
-          <div class="exercise-header">
-            <div class="exercise-number">3</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Alongamento Escorpiao</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>8</strong> reps/lado</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Deitado de barriga pra baixo, braços abertos. Leve o pé por cima do corpo até o lado oposto, girando o quadril e a coluna. Alonga peito, quadril e coluna torácica</div>
-        </div>
-
-        <div class="exercise" data-id="m2-4" data-name="Agachamento Profundo Isometrico">
-          <div class="exercise-header">
-            <div class="exercise-number">4</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Agachamento Profundo Isometrico</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>30s</strong> hold</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Desça no agachamento mais fundo que conseguir e segure a posição. Use os cotovelos para empurrar os joelhos pra fora. Alonga quadril, tornozelos e parte interna da coxa (adutores)</div>
-        </div>
-
-        <div class="exercise" data-id="m2-5" data-name="Alongamento Pombo">
-          <div class="exercise-header">
-            <div class="exercise-number">5</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Alongamento Pombo</div>
-              <div class="exercise-stats">
-                <span><strong>2</strong> séries</span>
-                <span><strong>45s</strong> hold/lado</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Perna da frente cruzada com canela no chão, perna de trás estendida. Desça o tronco à frente. Alonga o glúteo profundo (piriforme) e abre o quadril</div>
+        <div class="workout-empty-state">
+          <div style="font-size:40px;margin-bottom:12px;">🧘</div>
+          <div style="font-size:14px;font-weight:500;color:var(--text-secondary);">Nenhum exercicio cadastrado</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Peca ao Coach AI para criar seu treino</div>
         </div>
       </div>
 
       <!-- Mobilidade 3 -->
       <div id="mob3" class="workout">
-        <div class="exercise" data-id="m3-1" data-name="Minhoca">
-          <div class="exercise-header">
-            <div class="exercise-number">1</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Minhoca</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>6</strong> reps</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Em pé, incline e caminhe com as mãos no chão até posição de prancha. Volte caminhando as mãos de volta aos pés. Alonga posterior da coxa (isquiotibiais) e ativa o core (centro do corpo)</div>
-        </div>
-
-        <div class="exercise" data-id="m3-2" data-name="Homem-Aranha com Rotacao">
-          <div class="exercise-header">
-            <div class="exercise-number">2</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Homem-Aranha com Rotacao</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>6</strong> reps/lado</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Posição de prancha, traga o pé ao lado da mão (afundo profundo). Gire o tronco abrindo o braço pro teto. Alonga quadril, mobiliza coluna torácica (meio das costas)</div>
-        </div>
-
-        <div class="exercise" data-id="m3-3" data-name="Agachamento Cossaco">
-          <div class="exercise-header">
-            <div class="exercise-number">3</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Agachamento Cossaco</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>8</strong> reps/lado</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Pernas bem abertas. Agache para um lado com a outra perna estendida (pé apontando pra cima). Alterna os lados. Trabalha mobilidade do quadril e tornozelo, alonga adutores (parte interna da coxa)</div>
-        </div>
-
-        <div class="exercise" data-id="m3-4" data-name="Deslize na Parede">
-          <div class="exercise-header">
-            <div class="exercise-number">4</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Deslize na Parede</div>
-              <div class="exercise-stats">
-                <span><strong>3</strong> séries</span>
-                <span><strong>10</strong> reps</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Costas e braços colados na parede. Deslize os braços pra cima mantendo contato total com a parede. Trabalha mobilidade do ombro e postura das escápulas (ossos das costas)</div>
-        </div>
-
-        <div class="exercise" data-id="m3-5" data-name="Posicao de Crianca com Rotacao">
-          <div class="exercise-header">
-            <div class="exercise-number">5</div>
-            <div class="exercise-info">
-              <div class="exercise-name">Posicao de Crianca com Rotacao</div>
-              <div class="exercise-stats">
-                <span><strong>2</strong> séries</span>
-                <span><strong>30s</strong> hold/lado</span>
-              </div>
-            </div>
-            <div class="checkbox" onclick="toggleExercise(this)"></div>
-          </div>
-          <div class="exercise-note">Sentado nos calcanhares, braços estendidos à frente (posição de criança). Passe um braço por baixo do tronco girando. Alonga costas e mobiliza a coluna torácica (região do meio das costas)</div>
+        <div class="workout-empty-state">
+          <div style="font-size:40px;margin-bottom:12px;">🧘</div>
+          <div style="font-size:14px;font-weight:500;color:var(--text-secondary);">Nenhum exercicio cadastrado</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Peca ao Coach AI para criar seu treino</div>
         </div>
       </div>
 
@@ -8872,6 +8367,10 @@
       var container = document.getElementById(containerMap[group] || 'braco');
       if (!container) return;
 
+      // Remove empty state placeholder
+      var emptyState = container.querySelector('.workout-empty-state');
+      if (emptyState) emptyState.remove();
+
       // Generate unique id
       var customExercises = [];
       try { customExercises = JSON.parse(localStorage.getItem('custom-exercises') || '[]'); } catch(e) {}
@@ -9020,6 +8519,10 @@
           var groupContainerMap = { lower: 'perna', upper: 'braco', mob1: 'mob1', mob2: 'mob2', mob3: 'mob3' };
           var container = document.getElementById(groupContainerMap[c.group] || 'braco');
           if (!container) return;
+
+          // Remove empty state placeholder
+          var emptyState = container.querySelector('.workout-empty-state');
+          if (emptyState) emptyState.remove();
 
           var existingCount = container.querySelectorAll('.exercise').length;
 
