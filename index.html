@@ -4339,6 +4339,117 @@
       fisio: '🏥', bike: '🚴', natacao: '🏊', yoga: '🧘'
     };
 
+    var onbParqLabels = {
+      dor_peito: 'Dor no peito durante atividade física',
+      tontura: 'Tontura/desmaio ou perda de equilíbrio',
+      osso_articulacao: 'Problema ósseo/articular que piora com exercício',
+      medicacao_pressao: 'Uso de medicação para pressão/coração',
+      condicao_cardiaca: 'Condição cardíaca conhecida',
+      recomendacao_medica: 'Recomendação médica para evitar exercício'
+    };
+
+    function normalizeActivityName(name) {
+      if (name === null || name === undefined) return '';
+      return String(name).trim().toLowerCase().replace(/\s+/g, ' ');
+    }
+
+    function uniqOnbArray(arr) {
+      var seen = {};
+      var out = [];
+      (arr || []).forEach(function(item) {
+        var key = String(item);
+        if (!key || seen[key]) return;
+        seen[key] = true;
+        out.push(item);
+      });
+      return out;
+    }
+
+    function mergeActivityDetails(base, incoming) {
+      var out = Object.assign({}, base || {});
+      if (!incoming || typeof incoming !== 'object') return out;
+      Object.keys(incoming).forEach(function(key) {
+        var val = incoming[key];
+        if (val === undefined || val === null) return;
+        if (Array.isArray(val)) {
+          if (val.length > 0) out[key] = uniqOnbArray(val);
+          return;
+        }
+        if (typeof val === 'object') {
+          if (Object.keys(val).length > 0) out[key] = Object.assign({}, out[key] || {}, val);
+          return;
+        }
+        if (val !== '') out[key] = val;
+      });
+      return out;
+    }
+
+    function normalizeActivityDetail(raw) {
+      var nome = '';
+      if (typeof raw === 'string') nome = normalizeActivityName(raw);
+      else if (raw && typeof raw === 'object') nome = normalizeActivityName(raw.nome || raw.name || '');
+      if (!nome) return null;
+
+      var detail = buildDefaultDetail(nome);
+      if (raw && typeof raw === 'object') {
+        detail = mergeActivityDetails(detail, raw);
+      }
+      detail.nome = nome;
+      if (!Array.isArray(detail.dias)) detail.dias = [];
+      detail.dias = uniqOnbArray(detail.dias.map(function(d) { return normalizeActivityName(d); }).filter(Boolean));
+      if (!detail.horarios || typeof detail.horarios !== 'object' || Array.isArray(detail.horarios)) detail.horarios = {};
+      var fq = parseInt(detail.frequencia, 10);
+      detail.frequencia = isNaN(fq) ? 3 : fq;
+      if (!detail.intensidade) detail.intensidade = 'moderada';
+      if (!detail.categoria) detail.categoria = 'fixa';
+      return detail;
+    }
+
+    function normalizeOnbActivities(target) {
+      var data = target || onbData;
+      if (!data) return;
+      if (!Array.isArray(data.atividades)) data.atividades = [];
+      if (!Array.isArray(data.atividades_detalhes)) data.atividades_detalhes = [];
+
+      var names = [];
+      var detailByName = {};
+
+      function ensureName(nome) {
+        if (!nome) return;
+        if (names.indexOf(nome) === -1) names.push(nome);
+      }
+
+      data.atividades_detalhes.forEach(function(rawDetail) {
+        var detail = normalizeActivityDetail(rawDetail);
+        if (!detail) return;
+        ensureName(detail.nome);
+        if (detailByName[detail.nome]) {
+          detailByName[detail.nome] = mergeActivityDetails(detailByName[detail.nome], detail);
+        } else {
+          detailByName[detail.nome] = detail;
+        }
+      });
+
+      data.atividades.forEach(function(rawName) {
+        var nome = normalizeActivityName(rawName);
+        if (!nome) return;
+        ensureName(nome);
+        if (!detailByName[nome]) detailByName[nome] = buildDefaultDetail(nome);
+      });
+
+      data.atividades = names.slice();
+      data.atividades_detalhes = names.map(function(nome) {
+        return normalizeActivityDetail(detailByName[nome] || buildDefaultDetail(nome));
+      }).filter(Boolean);
+    }
+
+    function getParqPositives(parq) {
+      if (!parq || typeof parq !== 'object') return [];
+      return Object.keys(parq).filter(function(key) { return parq[key] === true; }).map(function(key) {
+        return onbParqLabels[key] || key;
+      });
+    }
+
     function showOnboarding() {
       document.getElementById('authScreen').classList.add('hidden');
       document.getElementById('onboardingScreen').classList.add('visible');
@@ -4436,6 +4547,8 @@
     }
 
     function renderOnboardingStep() {
+      normalizeOnbActivities();
+
       // Update progress dots
       var progressHtml = '';
       for (var i = 1; i <= onbTotalSteps; i++) {
@@ -4817,12 +4930,19 @@
     }
 
     function toggleOnbActivity(activity, el) {
+      normalizeOnbActivities();
+      activity = normalizeActivityName(activity);
+      if (!activity) return;
+
       var idx = onbData.atividades.indexOf(activity);
       if (idx > -1) {
         onbData.atividades.splice(idx, 1);
         el.classList.remove('selected');
         // Remove from detalhes
-        onbData.atividades_detalhes = onbData.atividades_detalhes.filter(function(d) { return d.nome !== activity; });
+        onbData.atividades_detalhes = onbData.atividades_detalhes.filter(function(d) {
+          var nome = normalizeActivityName(d && d.nome ? d.nome : d);
+          return nome !== activity;
+        });
         // Remove category picker if visible
         var picker = el.parentElement && el.parentElement.querySelector('.onb-cat-picker[data-for="' + activity + '"]');
         if (picker) picker.remove();
@@ -4830,7 +4950,9 @@
         onbData.atividades.push(activity);
         el.classList.add('selected');
         // Add to detalhes with defaults
-        onbData.atividades_detalhes.push(buildDefaultDetail(activity));
+        if (!onbData.atividades_detalhes.some(function(d) { return normalizeActivityName(d && d.nome ? d.nome : d) === activity; })) {
+          onbData.atividades_detalhes.push(buildDefaultDetail(activity));
+        }
         // Show category picker below card
         var existingPicker = el.parentElement && el.parentElement.querySelector('.onb-cat-picker[data-for="' + activity + '"]');
         if (!existingPicker) {
@@ -4844,15 +4966,19 @@
           el.insertAdjacentElement('afterend', picker);
         }
       }
+      normalizeOnbActivities();
     }
 
     function addOnbCustomActivity() {
       var input = document.getElementById('onbOutroInput');
-      var nome = (input.value || '').trim().toLowerCase();
+      var nome = normalizeActivityName(input.value || '');
       if (!nome) return;
       if (onbData.atividades.indexOf(nome) > -1) { input.value = ''; return; }
       onbData.atividades.push(nome);
-      onbData.atividades_detalhes.push(buildDefaultDetail(nome));
+      if (!onbData.atividades_detalhes.some(function(d) { return normalizeActivityName(d && d.nome ? d.nome : d) === nome; })) {
+        onbData.atividades_detalhes.push(buildDefaultDetail(nome));
+      }
+      normalizeOnbActivities();
       var container = document.getElementById('onbCustomActivities');
       var wrap = document.createElement('div');
       wrap.style.cssText = 'display:flex;flex-direction:column;gap:0;';
@@ -4875,8 +5001,12 @@
     }
 
     function removeOnbCustomActivity(nome, el) {
-      onbData.atividades = onbData.atividades.filter(function(a) { return a !== nome; });
-      onbData.atividades_detalhes = onbData.atividades_detalhes.filter(function(d) { return d.nome !== nome; });
+      nome = normalizeActivityName(nome);
+      onbData.atividades = onbData.atividades.filter(function(a) { return normalizeActivityName(a) !== nome; });
+      onbData.atividades_detalhes = onbData.atividades_detalhes.filter(function(d) {
+        return normalizeActivityName(d && d.nome ? d.nome : d) !== nome;
+      });
+      normalizeOnbActivities();
       if (el) el.remove();
     }
 
@@ -4995,6 +5125,8 @@
     }
 
     function renderActivityDetails() {
+      normalizeOnbActivities();
+
       var container = document.getElementById('onbActivityDetails');
       if (!container) return;
 
@@ -5124,6 +5256,8 @@
     }
 
     function renderOnbSummary() {
+      normalizeOnbActivities();
+
       var container = document.getElementById('onbSummary');
       if (!container) return;
 
@@ -5197,6 +5331,8 @@
     }
 
     async function completeOnboarding() {
+      normalizeOnbActivities();
+
       isReOnboarding = false;
       localStorage.setItem('onboarding-completed', 'true');
 
@@ -5251,6 +5387,7 @@
               parq: onbData.parq && Object.keys(onbData.parq).length > 0 ? onbData.parq : null,
               lesoes_ativas: onbData.lesoes_ativas && onbData.lesoes_ativas.length > 0 ? onbData.lesoes_ativas : null,
               medicamentos: onbData.medicamentos || null,
+              como_se_sente: onbData.como_se_sente || null,
               sono_horas: onbData.sono_horas || null,
               sono_qualidade: onbData.sono_qualidade || null,
               estresse_nivel: onbData.estresse_nivel || null,
@@ -5374,6 +5511,8 @@
     }
 
     function startCoachChatOnboarding() {
+      normalizeOnbActivities();
+
       var lines = ['Olá! Aqui estão meus dados:'];
 
       // Dados pessoais
@@ -5392,6 +5531,18 @@
         if (onbData.objetivo_resultado) obj += ' — Resultado esperado: ' + onbData.objetivo_resultado;
         lines.push('**' + obj + '**');
       }
+      if (onbData.objetivo_categoria) {
+        var objCatLabels = {
+          emagrecimento: 'Emagrecimento',
+          hipertrofia: 'Hipertrofia',
+          condicionamento: 'Condicionamento',
+          saude_geral: 'Saúde geral',
+          reabilitacao: 'Reabilitação',
+          performance: 'Performance',
+          bem_estar: 'Bem-estar'
+        };
+        lines.push('**Foco principal:** ' + (objCatLabels[onbData.objetivo_categoria] || onbData.objetivo_categoria));
+      }
 
       // Nível
       if (onbData.nivel) lines.push('**Nível:** ' + onbData.nivel.charAt(0).toUpperCase() + onbData.nivel.slice(1));
@@ -5404,6 +5555,35 @@
 
       // Restrições
       if (onbData.restricoes) lines.push('**Restrições/lesões:** ' + onbData.restricoes);
+      if (onbData.lesoes_ativas && onbData.lesoes_ativas.length > 0) {
+        lines.push('**Lesões ativas declaradas:** ' + onbData.lesoes_ativas.join(', '));
+      }
+      if (onbData.medicamentos) {
+        lines.push('**Medicamentos em uso:** ' + onbData.medicamentos);
+      }
+      var parqPositivos = getParqPositives(onbData.parq);
+      if (parqPositivos.length > 0) {
+        lines.push('**PAR-Q com respostas positivas (atenção):** ' + parqPositivos.join('; '));
+      }
+
+      // Hábitos e contexto comportamental
+      if (onbData.sono_horas || onbData.sono_qualidade) {
+        var sonoTxt = [];
+        if (onbData.sono_horas) sonoTxt.push(onbData.sono_horas + 'h/noite');
+        if (onbData.sono_qualidade) sonoTxt.push('qualidade: ' + onbData.sono_qualidade);
+        lines.push('**Sono:** ' + sonoTxt.join(' | '));
+      }
+      if (onbData.estresse_nivel) lines.push('**Estresse atual:** ' + onbData.estresse_nivel + '/10');
+      if (onbData.nivel_confianca) lines.push('**Confiança para manter rotina:** ' + onbData.nivel_confianca + '/10');
+      if (onbData.motivacao_intrinseca) lines.push('**Motivação principal:** ' + onbData.motivacao_intrinseca);
+      if (onbData.tentativa_anterior) {
+        var tentTxt = onbData.tentativa_anterior === 'sim' ? 'Já tentou antes' : 'Ainda não tentou de forma estruturada';
+        if (onbData.tentativa_anterior_detalhe) tentTxt += ' — ' + onbData.tentativa_anterior_detalhe;
+        lines.push('**Histórico de tentativas:** ' + tentTxt);
+      }
+      if (onbData.suporte_social !== null) {
+        lines.push('**Tem suporte social para o objetivo:** ' + (onbData.suporte_social ? 'Sim' : 'Não'));
+      }
 
       // Atividades separadas por categoria
       if (onbData.atividades_detalhes.length > 0) {
@@ -5558,6 +5738,8 @@
     var diasToNum = { 'seg': 1, 'ter': 2, 'qua': 3, 'qui': 4, 'sex': 5, 'sab': 6, 'dom': 0 };
 
     function getUserWeeklySchedule() {
+      normalizeOnbActivities();
+
       if (!onbData.atividades_detalhes || onbData.atividades_detalhes.length === 0) {
         return WEEKLY_SCHEDULE;
       }
@@ -7278,14 +7460,28 @@
         'DATA DE HOJE: ' + getTodayDateStr() + ' (' + ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][getSaoPauloNow().getDay()] + ')\n' +
         'PROXIMOS 7 DIAS: ' + getNext7Days() + '\n\n' +
         'FORMATO DE SUGESTAO — REGRA FUNDAMENTAL:\n' +
-        'Existem DOIS contextos completamente diferentes. NUNCA misture os dois na mesma resposta:\n\n' +
+        'Existem TRES contextos completamente diferentes. NUNCA misture contextos na mesma resposta:\n\n' +
         'CONTEXTO 1 — PLANO SEMANAL (calendario):\n' +
         'Use APENAS type:atividade. PROIBIDO usar type:exercicio ao mesmo tempo.\n' +
         'Cada atividade = 1 bloco. Se a atividade e upper/lower, coloque TODOS os exercicios no campo "detail" (ex: "Remada 3x12, Crucifixo 3x10, Face Pull 3x15...").\n' +
         'NAO crie blocos separados de type:exercicio para listar os exercicios do treino — tudo vai no "detail" do card de atividade.\n\n' +
         'CONTEXTO 2 — MODIFICAR PLANO DE TREINO (aba Treinos):\n' +
-        'Use APENAS type:exercicio quando o aluno PEDIR para ajustar os exercicios do plano.\n' +
+        'Use APENAS type:exercicio quando o aluno PEDIR para ajustar exercicios especificos do plano.\n' +
         'Nao use type:exercicio durante a criacao de um plano semanal.\n\n' +
+        'CONTEXTO 3 — CRIAR TREINO NOVO COMPLETO (substituir toda a aba Treinos):\n' +
+        'Quando o aluno pedir para CRIAR UM TREINO NOVO do zero (ex: "cria meu treino", "monta um treino pra mim", "quero um treino novo"), use:\n' +
+        '1. PRIMEIRO, um bloco header type:treino que APAGA todos os exercicios existentes:\n' +
+        '<' + sg + '>\n' +
+        'type: treino\nlabel: Novo Plano de Treino\ndetail: Descricao curta do plano\n' +
+        '</' + sg + '>\n' +
+        '2. DEPOIS, um bloco type:exercicio action:add para CADA exercicio do novo treino:\n' +
+        '<' + sg + '>\n' +
+        'type: exercicio\naction: add\nlabel: Nome do Exercicio\nexercise_name: Nome do Exercicio\ndetail: Instrucoes detalhadas de execucao\nsets: 3\nreps: 12\nweight: 0\nworkout_group: upper|lower|mob1|mob2|mob3\n' +
+        '</' + sg + '>\n' +
+        'IMPORTANTE: O bloco type:treino APAGA todos os exercicios existentes. Os blocos type:exercicio ADICIONAM os novos. Quando o aluno clica "Aplicar Treino", a aba Treinos inteira e substituida.\n' +
+        'Use workout_group para organizar: upper = treino de membros superiores, lower = treino de membros inferiores, mob1/mob2/mob3 = mobilidade.\n' +
+        'Inclua TODOS os exercicios necessarios com instrucoes claras no campo detail.\n' +
+        'SEMPRE inclua entre 6 a 10 exercicios por grupo (upper/lower). Para mobilidade, 4 a 6 exercicios.\n\n' +
         'Para agendar atividade no CALENDARIO (contexto 1):\n' +
         '<' + sg + '>\n' +
         'type: atividade\naction: add\nlabel: Nome da atividade\n' +
@@ -7336,7 +7532,8 @@
         'Use <' + sg + '> APENAS quando tiver sugestoes concretas e acionaveis. Nao use em perguntas iniciais.\n\n' +
         'GESTAO DE TREINOS DE MUSCULACAO:\n' +
         'Voce tem controle total sobre os treinos de musculacao do aluno. Pode modificar sets/reps/peso, adicionar exercicios novos, remover exercicios desnecessarios, substituir exercicios e mudar a ordem dos exercicios.\n' +
-        'Quando o aluno pedir mudancas no treino (ex: "muda meu treino", "troca exercicio tal", "tira esse exercicio", "muda a ordem"), use os blocos de sugestao com action: modify, add, remove, replace ou reorder.\n' +
+        'Quando o aluno pedir mudancas ESPECIFICAS no treino (ex: "troca exercicio tal", "tira esse exercicio", "muda a ordem"), use type:exercicio com action: modify, add, remove, replace ou reorder.\n' +
+        'Quando o aluno pedir um TREINO NOVO COMPLETO (ex: "cria meu treino", "monta um treino", "quero um treino novo", "faz meu treino"), use type:treino + type:exercicio (CONTEXTO 3 acima).\n' +
         'Seja proativo: se perceber que o treino pode melhorar com base no objetivo, dores ou historico do aluno, sugira mudancas.\n\n' +
         'PESOS: Quando sugerir exercicios, SEMPRE inclua o campo weight com um peso adequado baseado no historico de pesos do aluno. Se nao tem historico, sugira um peso inicial conservador. Se o aluno ja treina o exercicio, sugira progressao de carga quando apropriado.\n' +
         'ORDEM DOS EXERCICIOS: A ordem importa! Sugira reordenacao quando necessario seguindo principios de treino: compostos pesados primeiro (supino, remada, agachamento), depois isolados. Agrupe musculos antagonistas. Se perceber que a ordem nao esta otimizada, sugira mudancas com action: reorder.\n' +
@@ -7469,6 +7666,8 @@
     }
 
     async function gatherCoachContext() {
+      normalizeOnbActivities();
+
       let workoutHistory = [];
       let calendarData = [];
 
@@ -8416,9 +8615,9 @@
       var action = (s.action || '').toLowerCase();
       const emojiMap = { remove: '🗑️', replace: '🔄', reorder: '↕️' };
       const badgeMap = { remove: 'Remover', replace: 'Substituir', reorder: 'Reordenar' };
-      const emoji = s.activity_type ? (activityEmojis[s.activity_type] || '📋') : (emojiMap[action] || '💡');
+      const emoji = s.type === 'treino' ? '🏋️' : (s.activity_type ? (activityEmojis[s.activity_type] || '📋') : (emojiMap[action] || '💡'));
       const actBadgeMap = { remove: 'Remover Atividade', replace: 'Substituir Atividade' };
-      const badge = s.type === 'atividade' ? (actBadgeMap[action] || 'Atividade') : (s.type === 'exercicio' ? (badgeMap[action] || 'Exercício') : 'Sugestão');
+      const badge = s.type === 'treino' ? 'Novo Treino' : (s.type === 'atividade' ? (actBadgeMap[action] || 'Atividade') : (s.type === 'exercicio' ? (badgeMap[action] || 'Exercício') : 'Sugestão'));
 
       var displayLabel = s.label;
       if (action === 'replace' && s.exercise_name && s.exercise_name !== s.label) {
@@ -8447,7 +8646,7 @@
         '</div>' +
         '<div class="suggestion-card-detail">' + detailHtml + '</div>' +
         '<div class="suggestion-card-actions">' +
-          '<button class="suggestion-accept" onclick="acceptSuggestion(' + idx + ', this)">Aceitar</button>' +
+          '<button class="suggestion-accept" onclick="acceptSuggestion(' + idx + ', this)">' + (s.type === 'treino' ? 'Aplicar Treino' : 'Aceitar') + '</button>' +
           '<button class="suggestion-modify" onclick="modifySuggestion(' + idx + ')">Modificar</button>' +
           '<button class="suggestion-reject" onclick="rejectSuggestion(' + idx + ', this)">Rejeitar</button>' +
         '</div>';
@@ -8684,12 +8883,15 @@
       exDiv.dataset.id = id;
       exDiv.dataset.name = name;
       var numSets = parseInt(sets) || 3;
+      var defaultRepsVal = '';
+      var repsMatchNew = String(reps).match(/(\d+)/);
+      if (repsMatchNew) defaultRepsVal = repsMatchNew[1];
       var setsHtml = '<div class="sets-container">';
       for (var si = 1; si <= numSets; si++) {
         setsHtml +=
           '<div class="set-row" data-set="' + si + '">' +
             '<span class="set-label">' + si + '</span>' +
-            '<input type="number" class="set-reps" placeholder="reps">' +
+            '<input type="number" class="set-reps" value="' + defaultRepsVal + '">' +
             '<span class="set-x">\u00d7</span>' +
             '<input type="number" class="set-weight" placeholder="kg" step="0.5">' +
             '<div class="set-check" onclick="toggleSet(this)"></div>' +
@@ -8744,7 +8946,23 @@
       };
       exDiv.appendChild(recordBtn);
 
-      showToast('Exercício ' + name + ' adicionado!');
+      if (!_bulkOperation) showToast('Exercício ' + name + ' adicionado!');
+    }
+
+    var _bulkOperation = false;
+
+    function clearAllWorkoutContainers() {
+      ['braco', 'perna', 'mob1', 'mob2', 'mob3'].forEach(function(cid) {
+        var container = document.getElementById(cid);
+        if (container) {
+          container.querySelectorAll('.exercise, .section-title').forEach(function(el) { el.remove(); });
+        }
+      });
+      exerciseConfigs = {};
+      saveExerciseConfigs();
+      saveCustomExercises([]);
+      localStorage.setItem('workout-replaced', 'true');
+      _exerciseCacheDirty = true;
     }
 
     function saveCustomExercises(customArr) {
@@ -8777,11 +8995,18 @@
         try { custom = JSON.parse(localStorage.getItem('custom-exercises') || '[]'); } catch(e) {}
       }
       try {
-        // var custom already loaded above
+        // If workout was fully replaced by AI, clear hardcoded exercises first
+        if (custom.length > 0 && localStorage.getItem('workout-replaced') === 'true') {
+          ['braco', 'perna', 'mob1', 'mob2', 'mob3'].forEach(function(cid) {
+            var cont = document.getElementById(cid);
+            if (cont) cont.querySelectorAll('.exercise, .section-title').forEach(function(el) { el.remove(); });
+          });
+        }
         custom.forEach(function(c) {
           // Check if already exists in DOM
           if (document.querySelector('[data-id="' + c.id + '"]')) return;
-          var container = c.group === 'lower' ? document.getElementById('perna') : document.getElementById('braco');
+          var groupContainerMap = { lower: 'perna', upper: 'braco', mob1: 'mob1', mob2: 'mob2', mob3: 'mob3' };
+          var container = document.getElementById(groupContainerMap[c.group] || 'braco');
           if (!container) return;
 
           var existingCount = container.querySelectorAll('.exercise').length;
@@ -8828,6 +9053,59 @@
 
     async function _doAcceptSuggestion(s, cardEl) {
       cardEl.classList.add('accepted');
+
+      // Handle full workout replacement
+      if (s.type === 'treino') {
+        clearAllWorkoutContainers();
+        _bulkOperation = true;
+        // Auto-accept all pending exercise suggestion cards
+        var pendingCards = document.querySelectorAll('#chatMessages .suggestion-card:not(.accepted):not(.rejected)');
+        var addedCount = 0;
+        for (var ci = 0; ci < pendingCards.length; ci++) {
+          var ps;
+          try { ps = JSON.parse(pendingCards[ci].dataset.suggestion); } catch(e) { continue; }
+          if (ps.type === 'exercicio') {
+            applyExerciseSuggestion(ps);
+            pendingCards[ci].classList.add('accepted');
+            pendingCards[ci].innerHTML =
+              '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">' +
+              '<span style="font-size:16px;">✅</span>' +
+              '<span style="font-size:12px;color:var(--text-secondary);">' + escapeHtml(ps.exercise_name || ps.label) + '</span></div>';
+            addedCount++;
+          }
+        }
+        _bulkOperation = false;
+        // Collapse treino card
+        cardEl.innerHTML =
+          '<div style="display:flex;align-items:center;gap:10px;">' +
+          '<span style="font-size:22px;">✅</span>' +
+          '<div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">Treino aplicado!</div>' +
+          '<div style="font-size:11px;color:var(--success);margin-top:2px;">' + addedCount + ' exercícios criados</div></div></div>';
+        // Mark batch bar as done
+        var prev = cardEl.previousElementSibling;
+        while (prev && !prev.classList.contains('chat-bubble')) {
+          if (prev.classList.contains('suggestion-batch-bar')) {
+            prev.innerHTML = '<span style="color:var(--success);font-size:12px;font-weight:600;">✓ Treino completo aplicado</span>';
+            break;
+          }
+          prev = prev.previousElementSibling;
+        }
+        showView('workouts');
+        // Activate first tab that has exercises
+        var tabContainers = ['braco', 'perna', 'mob1', 'mob2', 'mob3'];
+        for (var ti = 0; ti < tabContainers.length; ti++) {
+          var cont = document.getElementById(tabContainers[ti]);
+          if (cont && cont.querySelectorAll('.exercise').length > 0) {
+            var tabBtn = document.querySelector('.workout-tab[onclick*="' + tabContainers[ti] + '"]');
+            if (!tabBtn) tabBtn = document.querySelector('.workout-tab');
+            showWorkout(tabContainers[ti], tabBtn);
+            break;
+          }
+        }
+        updateProgress();
+        showToast('🏋️ Novo treino aplicado com ' + addedCount + ' exercícios!');
+        return;
+      }
 
       if (s.type === 'exercicio') {
         var exAction = (s.action || 'modify').toLowerCase();
@@ -8935,6 +9213,10 @@
       const card = btn.closest('.suggestion-card');
       const s = JSON.parse(card.dataset.suggestion);
       await _doAcceptSuggestion(s, card);
+      if (s.type === 'treino') {
+        // treino handler already shows toast and switches view
+        return;
+      }
       if (s.type === 'exercicio') {
         var exAction = (s.action || 'modify').toLowerCase();
         var toastLabels = { add: 'adicionado', remove: 'removido', replace: 'substituído', reorder: 'reordenado', modify: 'atualizado' };
@@ -8954,6 +9236,8 @@
       var validActivityTypes = ['corrida', 'surf', 'tenis', 'bike', 'fisio', 'upper', 'lower', 'caminhada', 'descanso', 'mobilidade'];
       for (var i = 0; i < cards.length; i++) {
         var card = cards[i];
+        // Skip if already processed (e.g. by treino auto-accept)
+        if (card.classList.contains('accepted') || card.classList.contains('rejected')) continue;
         var s;
         try { s = JSON.parse(card.dataset.suggestion); } catch(e) { continue; }
         // Enforce max 2 planned activities per day (in code, not just prompt)
@@ -10080,46 +10364,55 @@
             updateSaveStatus(true, new Date());
           }
 
-          // Backfill onbData.atividades_detalhes from profile if not already set
-          if ((!onbData.atividades_detalhes || onbData.atividades_detalhes.length === 0) &&
-              profile.atividades_praticadas && Array.isArray(profile.atividades_praticadas)) {
-            onbData.atividades_detalhes = profile.atividades_praticadas;
-            onbData.atividades = profile.atividades_praticadas.map(function(d) { return d.nome || d; });
-          }
-          // Backfill onbData from profile fields
-          if (!onbData.nome && profile.nome) onbData.nome = profile.nome;
-          if (!onbData.objetivo_texto && profile.objetivo_data && profile.objetivo_data.texto) {
-            onbData.objetivo_texto = profile.objetivo_data.texto;
-            onbData.objetivo_data = profile.objetivo_data.data_alvo || '';
-            onbData.objetivo_resultado = profile.objetivo_data.resultado_esperado || '';
-          }
-          // Load new anamnese fields from objetivo_data
+          // Backfill onbData from persisted profile (for re-onboarding and coach context)
           var od = profile.objetivo_data || {};
-          if (!onbData.objetivo_categoria && od.categoria) onbData.objetivo_categoria = od.categoria;
-          if (!onbData.motivacao_intrinseca && od.motivacao_intrinseca) onbData.motivacao_intrinseca = od.motivacao_intrinseca;
-          if (!onbData.tentativa_anterior && od.tentativa_anterior) onbData.tentativa_anterior = od.tentativa_anterior;
-          if (!onbData.tentativa_anterior_detalhe && od.tentativa_anterior_detalhe) onbData.tentativa_anterior_detalhe = od.tentativa_anterior_detalhe;
-          if (!onbData.nivel_confianca && od.nivel_confianca) onbData.nivel_confianca = od.nivel_confianca;
-          if (onbData.suporte_social === null && od.suporte_social !== undefined && od.suporte_social !== null) onbData.suporte_social = od.suporte_social;
-          if (!onbData.parq && od.parq) onbData.parq = od.parq;
-          if ((!onbData.lesoes_ativas || onbData.lesoes_ativas.length === 0) && od.lesoes_ativas && od.lesoes_ativas.length > 0) onbData.lesoes_ativas = od.lesoes_ativas;
-          if (!onbData.medicamentos && od.medicamentos) onbData.medicamentos = od.medicamentos;
-          if (!onbData.sono_horas && od.sono_horas) onbData.sono_horas = od.sono_horas;
-          if (!onbData.sono_qualidade && od.sono_qualidade) onbData.sono_qualidade = od.sono_qualidade;
-          if (!onbData.estresse_nivel && od.estresse_nivel) onbData.estresse_nivel = od.estresse_nivel;
-          if ((!onbData.skipped_steps || onbData.skipped_steps.length === 0) && od.skipped_steps && od.skipped_steps.length > 0) onbData.skipped_steps = od.skipped_steps;
-          if (!onbData.peso && profile.peso) onbData.peso = String(profile.peso);
-          if (!onbData.treino_atual && profile.objetivo_data && profile.objetivo_data.treino_atual)
-            onbData.treino_atual = profile.objetivo_data.treino_atual;
+          if (profile.nome !== undefined && profile.nome !== null) onbData.nome = profile.nome || '';
+          if (profile.idade !== undefined && profile.idade !== null && profile.idade !== '') onbData.idade = String(profile.idade);
+          if (profile.altura !== undefined && profile.altura !== null && profile.altura !== '') onbData.altura = String(profile.altura);
+          if (profile.peso !== undefined && profile.peso !== null && profile.peso !== '') onbData.peso = String(profile.peso);
+          if (profile.sexo) onbData.sexo = profile.sexo;
+          if (profile.nivel_experiencia) onbData.nivel = profile.nivel_experiencia;
+          if (profile.restricoes) onbData.restricoes = profile.restricoes;
+          else if (profile.dores) onbData.restricoes = profile.dores;
+
+          if (profile.objetivo) onbData.objetivo_texto = profile.objetivo;
+          if (od.texto) onbData.objetivo_texto = od.texto;
+          if (od.data_alvo !== undefined && od.data_alvo !== null) onbData.objetivo_data = od.data_alvo || '';
+          if (od.resultado_esperado !== undefined && od.resultado_esperado !== null) onbData.objetivo_resultado = od.resultado_esperado || '';
+          if (od.categoria) onbData.objetivo_categoria = od.categoria;
+          if (od.como_se_sente) onbData.como_se_sente = od.como_se_sente;
+
+          if (od.motivacao_intrinseca) onbData.motivacao_intrinseca = od.motivacao_intrinseca;
+          if (od.tentativa_anterior) onbData.tentativa_anterior = od.tentativa_anterior;
+          if (od.tentativa_anterior_detalhe) onbData.tentativa_anterior_detalhe = od.tentativa_anterior_detalhe;
+          if (od.nivel_confianca) onbData.nivel_confianca = od.nivel_confianca;
+          if (od.suporte_social !== undefined && od.suporte_social !== null) onbData.suporte_social = od.suporte_social;
+          if (od.parq && typeof od.parq === 'object') onbData.parq = od.parq;
+          if (Array.isArray(od.lesoes_ativas)) onbData.lesoes_ativas = od.lesoes_ativas.slice();
+          if (od.medicamentos) onbData.medicamentos = od.medicamentos;
+          if (od.sono_horas) onbData.sono_horas = od.sono_horas;
+          if (od.sono_qualidade) onbData.sono_qualidade = od.sono_qualidade;
+          if (od.estresse_nivel) onbData.estresse_nivel = od.estresse_nivel;
+          if (od.treino_atual) onbData.treino_atual = od.treino_atual;
+          if (Array.isArray(od.skipped_steps)) onbData.skipped_steps = od.skipped_steps.slice();
+
+          if (profile.atividades_praticadas && Array.isArray(profile.atividades_praticadas)) {
+            onbData.atividades_detalhes = profile.atividades_praticadas.slice();
+            onbData.atividades = profile.atividades_praticadas.map(function(d) {
+              return normalizeActivityName(d && d.nome ? d.nome : d);
+            }).filter(Boolean);
+          }
+          normalizeOnbActivities();
+
           // Load exam analyses
-          if (profile.objetivo_data && Array.isArray(profile.objetivo_data.exames_analise) && profile.objetivo_data.exames_analise.length > 0) {
-            examAnalises = profile.objetivo_data.exames_analise;
+          if (Array.isArray(od.exames_analise) && od.exames_analise.length > 0) {
+            examAnalises = od.exames_analise;
             onbData.exames_recentes = examAnalises.slice(0, 3).map(function(e) {
               return '[' + new Date(e.data).toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' }) + '] ' + e.nome + ': ' + e.analise.substring(0, 200);
             }).join('\n\n');
             renderAnalysisHistory();
-          } else if (!onbData.exames_recentes && profile.objetivo_data && profile.objetivo_data.exames_recentes) {
-            onbData.exames_recentes = profile.objetivo_data.exames_recentes;
+          } else if (od.exames_recentes) {
+            onbData.exames_recentes = od.exames_recentes;
           }
 
           // Update chat profile summary
@@ -10623,8 +10916,11 @@
         // Update weekly schedule from atividades_praticadas if onbData is empty
         if ((!onbData.atividades_detalhes || onbData.atividades_detalhes.length === 0) &&
             profile.atividades_praticadas && Array.isArray(profile.atividades_praticadas)) {
-          onbData.atividades_detalhes = profile.atividades_praticadas;
-          onbData.atividades = profile.atividades_praticadas.map(function(d) { return d.nome; });
+          onbData.atividades_detalhes = profile.atividades_praticadas.slice();
+          onbData.atividades = profile.atividades_praticadas.map(function(d) {
+            return normalizeActivityName(d && d.nome ? d.nome : d);
+          }).filter(Boolean);
+          normalizeOnbActivities();
         }
 
         // Calculate goal progress
