@@ -8571,9 +8571,16 @@
       // Batch accept bar (when 2+ valid suggestions) — shown ABOVE cards
       var validSuggestions = suggestions.filter(function(s) { return s; });
       if (validSuggestions.length >= 2) {
+        // Detect full workout replacement pattern
+        var exAddCount = validSuggestions.filter(function(s) { return s.type === 'exercicio' && (s.action || 'add').toLowerCase() === 'add'; }).length;
+        var hasTreinoHeader = validSuggestions.some(function(s) { return s.type === 'treino'; });
+        var isFullWorkout = hasTreinoHeader || exAddCount >= 4;
+        var btnLabel = isFullWorkout
+          ? '🏋️ Aplicar Novo Treino (' + exAddCount + ' exercícios)'
+          : '✓ Aceitar todas (' + validSuggestions.length + ')';
         var bar = document.createElement('div');
         bar.className = 'suggestion-batch-bar';
-        bar.innerHTML = '<button class="suggestion-accept-all" onclick="acceptAllSuggestions(this)">✓ Aceitar todas (' + validSuggestions.length + ')</button>';
+        bar.innerHTML = '<button class="suggestion-accept-all" onclick="acceptAllSuggestions(this)">' + btnLabel + '</button>';
         container.appendChild(bar);
       }
 
@@ -9242,6 +9249,22 @@
       if (!cards.length) return;
       barBtn.disabled = true;
       barBtn.textContent = 'Aplicando...';
+
+      // Auto-detect full workout replacement: 4+ exercise:add OR treino header
+      var exAddCount = 0;
+      var hasTreinoHeader = false;
+      for (var di = 0; di < cards.length; di++) {
+        var ds;
+        try { ds = JSON.parse(cards[di].dataset.suggestion); } catch(e) { continue; }
+        if (ds.type === 'treino') hasTreinoHeader = true;
+        if (ds.type === 'exercicio' && (ds.action || 'add').toLowerCase() === 'add') exAddCount++;
+      }
+      var isFullReplacement = hasTreinoHeader || exAddCount >= 4;
+      if (isFullReplacement) {
+        clearAllWorkoutContainers();
+        _bulkOperation = true;
+      }
+
       var count = 0;
       var skipped = 0;
       var validActivityTypes = ['corrida', 'surf', 'tenis', 'bike', 'fisio', 'upper', 'lower', 'caminhada', 'descanso', 'mobilidade'];
@@ -9251,6 +9274,15 @@
         if (card.classList.contains('accepted') || card.classList.contains('rejected')) continue;
         var s;
         try { s = JSON.parse(card.dataset.suggestion); } catch(e) { continue; }
+        // Skip treino header card in full replacement mode (already handled above)
+        if (s.type === 'treino' && isFullReplacement) {
+          card.classList.add('accepted');
+          card.innerHTML =
+            '<div style="display:flex;align-items:center;gap:10px;">' +
+            '<span style="font-size:22px;">✅</span>' +
+            '<div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">Treino aplicado!</div></div></div>';
+          continue;
+        }
         // Enforce max 2 planned activities per day (in code, not just prompt)
         if (s.type === 'atividade' && s.activity_type && validActivityTypes.includes(s.activity_type)) {
           var tDate = s.date && /^\d{4}-\d{2}-\d{2}$/.test(s.date) ? s.date : getTodayDateStr();
@@ -9258,7 +9290,6 @@
             .filter(function(a) { return a.status === 'planned' && a.type; })
             .map(function(a) { return a.type; });
           var uniquePlanned = plannedTypes.filter(function(t, i, arr) { return arr.indexOf(t) === i; });
-          // Skip if this type isn't already there AND limit is reached
           if (uniquePlanned.indexOf(s.activity_type) === -1 && uniquePlanned.length >= 2) {
             card.classList.add('rejected');
             card.querySelector('.suggestion-card-actions').innerHTML =
@@ -9267,12 +9298,47 @@
             continue;
           }
         }
+        // For full replacement, collapse exercise cards after applying
+        if (isFullReplacement && s.type === 'exercicio') {
+          applyExerciseSuggestion(s);
+          card.classList.add('accepted');
+          card.innerHTML =
+            '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">' +
+            '<span style="font-size:16px;">✅</span>' +
+            '<span style="font-size:12px;color:var(--text-secondary);">' + escapeHtml(s.exercise_name || s.label) + '</span></div>';
+          count++;
+          continue;
+        }
         await _doAcceptSuggestion(s, card);
         count++;
       }
-      showToast(count + ' sugestões aplicadas!' + (skipped > 0 ? ' (' + skipped + ' ignoradas — limite 2/dia)' : ''));
+
+      // Finalize full workout replacement
+      if (isFullReplacement) {
+        _bulkOperation = false;
+        saveExerciseConfigs();
+        try {
+          var finalCustom = JSON.parse(localStorage.getItem('custom-exercises') || '[]');
+          saveCustomExercises(finalCustom);
+        } catch(e) {}
+        showView('workouts');
+        // Activate first tab with exercises
+        var tabContainers = ['braco', 'perna', 'mob1', 'mob2', 'mob3'];
+        for (var ti = 0; ti < tabContainers.length; ti++) {
+          var cont = document.getElementById(tabContainers[ti]);
+          if (cont && cont.querySelectorAll('.exercise').length > 0) {
+            var tabBtn = document.querySelector('.workout-tab[onclick*="' + tabContainers[ti] + '"]');
+            showWorkout(tabContainers[ti], tabBtn || document.querySelector('.workout-tab'));
+            break;
+          }
+        }
+        updateProgress();
+        showToast('🏋️ Novo treino aplicado com ' + count + ' exercícios!');
+      } else {
+        showToast(count + ' sugestões aplicadas!' + (skipped > 0 ? ' (' + skipped + ' ignoradas — limite 2/dia)' : ''));
+      }
       var bar = barBtn.closest('.suggestion-batch-bar');
-      if (bar) bar.innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">✓ ' + count + ' aplicadas' + (skipped > 0 ? ', ' + skipped + ' ignoradas (limite 2/dia)' : '') + '</span>';
+      if (bar) bar.innerHTML = '<span style="color: var(--success); font-size: 12px; font-weight: 600;">✓ ' + count + (isFullReplacement ? ' exercícios aplicados' : ' aplicadas') + (skipped > 0 ? ', ' + skipped + ' ignoradas (limite 2/dia)' : '') + '</span>';
     }
 
     function modifySuggestion(idx) {
