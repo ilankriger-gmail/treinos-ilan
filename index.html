@@ -6892,7 +6892,8 @@
       if (!dataId) return;
 
       await loadExerciseData();
-      var result = fetchExerciseImage(dataId);
+      var exerciseName = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
+      var result = fetchExerciseImage(dataId, exerciseName);
       if (result && result.url) {
         var header = ex.querySelector('.exercise-header');
         var numberEl = header?.querySelector('.exercise-number');
@@ -6943,7 +6944,9 @@
         'REGRA FUNDAMENTAL — OBJETIVO DO ALUNO:\n' +
         'O objetivo do aluno e a sua BUSSOLA. SEMPRE mantenha o objetivo no horizonte em TODAS as interacoes. Cada sugestao de treino, cada ajuste de exercicio, cada feedback sobre progresso DEVE estar conectado ao objetivo. Reforce como as acoes de hoje aproximam o aluno do objetivo. Se o aluno esta se desviando, traga de volta com gentileza. Se esta progredindo, celebre e mostre o quanto ja avancou em direcao ao objetivo. Nunca perca de vista o que o aluno quer alcançar.\n\n' +
         'REGRA OBRIGATORIA — ATIVIDADES FIXAS:\n' +
-        'Atividades marcadas como FIXAS (🔒) sao compromissos semanais IMUTAVEIS. NUNCA sugira alterar os dias ou horarios de uma atividade fixa. Ao montar qualquer plano semanal, encaixe tudo AO REDOR dessas atividades, nao o contrario. Se o contexto nao lista atividades fixas, pergunte ao aluno quais sao antes de sugerir uma rotina.\n\n' +
+        'Atividades marcadas como FIXAS (🔒) sao compromissos semanais IMUTAVEIS. NUNCA sugira alterar os dias ou horarios de uma atividade fixa. Ao montar qualquer plano semanal, encaixe tudo AO REDOR dessas atividades, nao o contrario. Se o contexto nao lista atividades fixas, pergunte ao aluno quais sao antes de sugerir uma rotina.\n' +
+        'Exemplos de atividades fixas: surf na quarta, fisioterapia na sexta, tenis no sabado. Essas atividades SAO SAGRADAS — mantenha-as no plano sem alterar dia ou horario.\n' +
+        'Se voce acredita que uma atividade fixa deveria mudar (ex: conflito, sobrecarga, lesao), NUNCA remova sozinho. PERGUNTE ao aluno: "Voce gostaria de ajustar [atividade] por [motivo]?" e espere a resposta antes de fazer qualquer mudanca.\n\n' +
         'REGRAS:\n' +
         '1. Na PRIMEIRA mensagem, faca 2-3 perguntas sobre como o aluno esta hoje, o que quer treinar, e como se sente.\n' +
         '2. Depois das respostas, de sugestoes praticas e personalizadas ALINHADAS ao objetivo.\n' +
@@ -6975,8 +6978,11 @@
         '</' + sg + '>\n' +
         'IMPORTANTE: O bloco type:treino APAGA todos os exercicios existentes. Os blocos type:exercicio ADICIONAM os novos. Quando o aluno clica "Aplicar Treino", a aba Treinos inteira e substituida.\n' +
         'Use workout_group para organizar: upper = treino de membros superiores, lower = treino de membros inferiores, mob1/mob2/mob3 = mobilidade.\n' +
-        'Inclua TODOS os exercicios necessarios com instrucoes claras no campo detail.\n' +
         'SEMPRE inclua entre 6 a 10 exercicios por grupo (upper/lower). Para mobilidade, 4 a 6 exercicios.\n\n' +
+        'REGRA OBRIGATORIA — INSTRUCOES E NOMES:\n' +
+        'Para CADA exercicio, o campo "detail" DEVE conter instrucoes DETALHADAS de execucao: posicao inicial, movimento, respiracao, erros comuns. Escreva como se o aluno nunca tivesse feito o exercicio.\n' +
+        'Use NOMES CONHECIDOS de exercicios (ex: "Remada Curvada", "Supino Inclinado", "Agachamento", "Face Pull", "Crucifixo", "Biceps Barra W", "Triceps Corda", "Afundo", "Panturrilha", "Cadeira Flexora", "Ponte de Gluteo"). O sistema busca imagens automaticamente pelo nome — nomes inventados nao terao imagem.\n' +
+        'EXERCICIOS COM IMAGEM DISPONIVEL: Remada Aberta Curvada, Crucifixo Inclinado, Remada Fechada Triangulo, Crucifixo Inverso, Face Pull, Triceps Corda, Supino Reto Halteres, Biceps Barra W, Isometria Abducao Parede, Ponte Bipodal, Agachamento Espanhol, Afundo c/ Flexao Tronco, Cadeira Flexora, Panturrilha no Step, Cadeira Solear.\n\n' +
         'Para agendar atividade no CALENDARIO (contexto 1):\n' +
         '<' + sg + '>\n' +
         'type: atividade\naction: add\nlabel: Nome da atividade\n' +
@@ -8986,13 +8992,37 @@
     }
 
     // Exercise images from free-exercise-db (synchronous after DB load)
-    function fetchExerciseImage(dataId) {
+    function fetchExerciseImage(dataId, exerciseName) {
+      // Try direct ID match first
       var ex = findExerciseByDataId(dataId);
-      if (!ex || !ex.gifFile) return null;
-      return {
-        url: '/exercises/gifs/' + ex.gifFile,
-        exercise: ex
-      };
+      if (ex && ex.gifFile) return { url: '/exercises/gifs/' + ex.gifFile, exercise: ex };
+      // Fallback: match by name (for custom exercises created by AI)
+      if (exerciseName && exerciseData) {
+        var searchName = exerciseName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        var bestMatch = null;
+        var bestScore = 0;
+        Object.values(exerciseData).forEach(function(e) {
+          var ptName = (e.ptName || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          var enName = (e.name || '').toLowerCase();
+          // Exact match
+          if (ptName === searchName || enName === searchName) { bestMatch = e; bestScore = 100; return; }
+          // Contains match
+          if (ptName.includes(searchName) || searchName.includes(ptName)) {
+            var score = Math.min(ptName.length, searchName.length) / Math.max(ptName.length, searchName.length) * 80;
+            if (score > bestScore) { bestMatch = e; bestScore = score; }
+          }
+          // Word overlap
+          var searchWords = searchName.split(/\s+/);
+          var ptWords = ptName.split(/\s+/);
+          var overlap = searchWords.filter(function(w) { return ptWords.some(function(pw) { return pw.includes(w) || w.includes(pw); }); }).length;
+          var wordScore = (overlap / Math.max(searchWords.length, 1)) * 60;
+          if (wordScore > bestScore && overlap >= 2) { bestMatch = e; bestScore = wordScore; }
+        });
+        if (bestMatch && bestMatch.gifFile && bestScore >= 40) {
+          return { url: '/exercises/gifs/' + bestMatch.gifFile, exercise: bestMatch };
+        }
+      }
+      return null;
     }
 
     function openExerciseModal(exercise) {
