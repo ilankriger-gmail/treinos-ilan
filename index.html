@@ -8657,13 +8657,34 @@
           '<button class="workout-preview-btn workout-preview-btn-cancel" id="wpResetCancel">Cancelar</button>' +
         '</div></div>';
       document.body.appendChild(overlay);
-      document.getElementById('wpResetConfirm').onclick = function() {
+      document.getElementById('wpResetConfirm').onclick = async function() {
         overlay.remove();
         backupCurrentWorkout();
         clearAllWorkoutContainers();
-        // Clear custom exercises from Supabase too
-        saveCustomExercises([]);
-        saveExerciseConfigs();
+        // Force sync empty state to Supabase (await, not fire-and-forget)
+        try {
+          await fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId(), {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ custom_exercises: [], exercise_configs: {} })
+          });
+        } catch(e) { console.error('reset sync:', e); }
+        localStorage.setItem('custom-exercises', JSON.stringify([]));
+        localStorage.setItem('exercise-configs', JSON.stringify({}));
+        // Re-add empty states to containers
+        ['braco', 'perna', 'mob1', 'mob2', 'mob3'].forEach(function(cid) {
+          var container = document.getElementById(cid);
+          if (!container) return;
+          if (container.querySelectorAll('.exercise').length === 0 && !container.querySelector('.workout-empty-state')) {
+            var emojis = { braco: '🏋️', perna: '🦵', mob1: '🧘', mob2: '🧘', mob3: '🧘' };
+            var div = document.createElement('div');
+            div.className = 'workout-empty-state';
+            div.innerHTML = '<div style="font-size:40px;margin-bottom:12px;">' + (emojis[cid] || '🏋️') + '</div>' +
+              '<div style="font-size:14px;font-weight:500;color:var(--text-secondary);">Nenhum exercicio cadastrado</div>' +
+              '<div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Peca ao Coach AI para criar seu treino</div>';
+            container.appendChild(div);
+          }
+        });
         showToast('Treino resetado! Backup salvo no Historico.');
       };
       document.getElementById('wpResetCancel').onclick = function() { overlay.remove(); };
@@ -8898,20 +8919,37 @@
 
     async function loadCustomExercises() {
       var custom = [];
-      // Try Supabase first
-      try {
-        var res = await fetch(`${SUPABASE_URL}/rest/v1/user_profile?user_id=eq.${getCurrentUserId()}&select=custom_exercises`, {
-          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-        });
-        var data = await res.json();
-        if (data[0]?.custom_exercises?.length > 0) {
-          custom = data[0].custom_exercises;
-          localStorage.setItem('custom-exercises', JSON.stringify(custom));
-        }
-      } catch(e) { console.error('load custom exercises from cloud:', e); }
-      // Fallback localStorage
-      if (!custom.length) {
+      var wasReplaced = localStorage.getItem('workout-replaced') === 'true';
+      // If workout was just reset/replaced, use localStorage as source of truth
+      // (it was already cleared, and Supabase may still have stale data)
+      if (wasReplaced) {
         try { custom = JSON.parse(localStorage.getItem('custom-exercises') || '[]'); } catch(e) {}
+        // Push the local state to Supabase to fix any stale cloud data
+        if (custom.length === 0) {
+          try {
+            fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId(), {
+              method: 'PATCH',
+              headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ custom_exercises: [] })
+            }).catch(function(e) {});
+          } catch(e) {}
+        }
+      } else {
+        // Normal flow: try Supabase first
+        try {
+          var res = await fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId() + '&select=custom_exercises', {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+          });
+          var data = await res.json();
+          if (data[0]?.custom_exercises?.length > 0) {
+            custom = data[0].custom_exercises;
+            localStorage.setItem('custom-exercises', JSON.stringify(custom));
+          }
+        } catch(e) { console.error('load custom exercises from cloud:', e); }
+        // Fallback localStorage
+        if (!custom.length) {
+          try { custom = JSON.parse(localStorage.getItem('custom-exercises') || '[]'); } catch(e) {}
+        }
       }
       try {
         // If workout was fully replaced by AI, clear hardcoded exercises first
