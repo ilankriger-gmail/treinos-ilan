@@ -7046,7 +7046,9 @@
         'LIMITE ABSOLUTO DE ATIVIDADES POR DIA:\n' +
         'MAXIMO 2 blocos por dia. Nunca 3, 4 ou 5.\n' +
         'Exemplos validos: [surf] ou [fisio + upper] ou [corrida].\n' +
-        'Se o dia tem atividade fixa intensa (surf, tenis, fisio), o segundo slot so para algo leve OU vazio.\n\n' +
+        'Se o dia tem atividade fixa intensa (surf, tenis, fisio), o segundo slot so para algo leve OU vazio.\n' +
+        'NUNCA coloque corrida e caminhada no mesmo dia — sao atividades conflitantes. Escolha UMA so.\n' +
+        'NUNCA coloque upper e lower no mesmo dia — divida em dias diferentes.\n\n' +
         '<' + sg + '>\n' +
         'type: exercicio\naction: modify\nlabel: Nome do exercicio\n' +
         'exercise_name: Nome EXATO do exercicio (da lista abaixo)\ndetail: O que mudar no exercicio\n' +
@@ -9114,6 +9116,17 @@
           // action: add (default)
           if (!activities[targetDate]) activities[targetDate] = [];
           var dateLabel = targetDate === getTodayDateStr() ? 'hoje' : targetDate;
+          // Block conflicting activities (corrida+caminhada, upper+lower)
+          var existingTypes = (activities[targetDate] || []).filter(function(a) { return a.status === 'planned'; }).map(function(a) { return a.type; });
+          var conflictGroups = [['corrida', 'caminhada'], ['upper', 'lower']];
+          var conflictFound = conflictGroups.some(function(group) {
+            if (group.indexOf(type) === -1) return false;
+            return existingTypes.some(function(t) { return group.indexOf(t) !== -1 && t !== type; });
+          });
+          if (conflictFound) {
+            cardEl.querySelector('.suggestion-card-actions').innerHTML = '<span style="color: var(--text-muted); font-size: 12px;">Conflito — atividade similar já existe em ' + dateLabel + '</span>';
+            return;
+          }
           var newEntry = {
             type: type,
             time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
@@ -9232,13 +9245,26 @@
             '<div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">Treino aplicado!</div></div></div>';
           continue;
         }
-        // Enforce max 2 planned activities per day
+        // Enforce max 2 planned activities per day + conflict check
         if (s.type === 'atividade' && s.activity_type && validActivityTypes.includes(s.activity_type)) {
           var tDate = s.date && /^\d{4}-\d{2}-\d{2}$/.test(s.date) ? s.date : getTodayDateStr();
           var plannedTypes = (activities[tDate] || [])
             .filter(function(a) { return a.status === 'planned' && a.type; })
             .map(function(a) { return a.type; });
           var uniquePlanned = plannedTypes.filter(function(t, i, arr) { return arr.indexOf(t) === i; });
+          // Block conflicting activities on same day
+          var conflictGroups = [['corrida', 'caminhada'], ['upper', 'lower']];
+          var hasConflict = conflictGroups.some(function(group) {
+            if (group.indexOf(s.activity_type) === -1) return false;
+            return uniquePlanned.some(function(t) { return group.indexOf(t) !== -1 && t !== s.activity_type; });
+          });
+          if (hasConflict) {
+            card.classList.add('rejected');
+            card.querySelector('.suggestion-card-actions').innerHTML =
+              '<span style="color: var(--text-muted); font-size: 12px;">Conflito — atividade similar já existe neste dia</span>';
+            skipped++;
+            continue;
+          }
           if (uniquePlanned.indexOf(s.activity_type) === -1 && uniquePlanned.length >= 2) {
             card.classList.add('rejected');
             card.querySelector('.suggestion-card-actions').innerHTML =
