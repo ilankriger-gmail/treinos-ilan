@@ -3328,6 +3328,7 @@
           <button class="workout-tab" onclick="showWorkout('fisio', this)">🏥 Fisio</button>
         </div>
         <button class="workout-history-btn" onclick="showWorkoutHistory()">Historico</button>
+        <button class="workout-history-btn" style="color:#ef4444;border-color:rgba(239,68,68,0.3);" onclick="confirmResetWorkout()">Resetar</button>
       </div>
       
       <!-- Upper Body -->
@@ -8633,6 +8634,39 @@
         }).catch(function(e) {});
       } catch(e) {}
       showWorkoutHistory();
+    }
+
+    function confirmResetWorkout() {
+      var current = getCurrentWorkoutSnapshot();
+      if (current.length === 0) { showToast('Treino ja esta vazio'); return; }
+      var existing = document.querySelector('.workout-preview-overlay');
+      if (existing) existing.remove();
+      var overlay = document.createElement('div');
+      overlay.className = 'workout-preview-overlay';
+      overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+      overlay.innerHTML = '<div class="workout-preview-modal" style="max-width:380px;">' +
+        '<div class="workout-preview-header">' +
+          '<div class="workout-preview-title">Resetar Treino</div>' +
+          '<div class="workout-preview-subtitle">Isso vai apagar todos os ' + current.length + ' exercicios do treino atual.</div>' +
+        '</div>' +
+        '<div class="workout-preview-body" style="padding:16px 20px;">' +
+          '<div style="font-size:13px;color:var(--text-secondary);line-height:1.5;">Um backup sera salvo automaticamente no Historico. Voce pode restaurar depois se quiser.</div>' +
+        '</div>' +
+        '<div class="workout-preview-actions">' +
+          '<button class="workout-preview-btn workout-preview-btn-primary" style="background:#ef4444;" id="wpResetConfirm">Apagar tudo</button>' +
+          '<button class="workout-preview-btn workout-preview-btn-cancel" id="wpResetCancel">Cancelar</button>' +
+        '</div></div>';
+      document.body.appendChild(overlay);
+      document.getElementById('wpResetConfirm').onclick = function() {
+        overlay.remove();
+        backupCurrentWorkout();
+        clearAllWorkoutContainers();
+        // Clear custom exercises from Supabase too
+        saveCustomExercises([]);
+        saveExerciseConfigs();
+        showToast('Treino resetado! Backup salvo no Historico.');
+      };
+      document.getElementById('wpResetCancel').onclick = function() { overlay.remove(); };
     }
 
     function showWorkoutHistory() {
