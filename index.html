@@ -8445,26 +8445,14 @@
 
       var name = s.exercise_name || s.label || 'Novo Exercício';
 
-      // Skip if exercise with same name already exists in DOM
-      var nameNorm = name.toLowerCase().trim();
-      var dupeFound = false;
-      document.querySelectorAll('.exercise[data-name]').forEach(function(el) {
-        if ((el.dataset.name || '').toLowerCase().trim() === nameNorm) dupeFound = true;
-      });
-      if (dupeFound) {
-        if (!_bulkOperation) console.log('addNewExercise: skipping duplicate "' + name + '"');
-        return;
-      }
-
       // Remove empty state placeholder
       var emptyState = container.querySelector('.workout-empty-state');
       if (emptyState) emptyState.remove();
 
-      // Generate unique id
+      // Generate unique id (timestamp-based to avoid collisions in bulk)
       var customExercises = [];
       try { customExercises = JSON.parse(localStorage.getItem('custom-exercises') || '[]'); } catch(e) {}
-      var nextNum = customExercises.length + 1;
-      var id = 'c' + nextNum;
+      var id = 'c_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
 
       var sets = s.sets || 3;
       var reps = s.reps || '10';
@@ -8556,12 +8544,8 @@
         }
       });
       exerciseConfigs = {};
-      // Clear localStorage only (no Supabase sync to avoid race condition —
-      // the final addNewExercise call will sync the complete state)
       localStorage.setItem('exercise-configs', JSON.stringify({}));
       localStorage.setItem('custom-exercises', JSON.stringify([]));
-      localStorage.setItem('workout-replaced', 'true');
-      // Clear old workout progress so stale data doesn't persist
       localStorage.removeItem('workout-progress-v6');
       localStorage.removeItem('workout-date');
       _exerciseCacheDirty = true;
@@ -9091,32 +9075,36 @@
         _bulkOperation = true;
       }
       var addedCount = 0;
-      for (var ci = 0; ci < pendingCards.length; ci++) {
-        var ps;
-        try { ps = JSON.parse(pendingCards[ci].dataset.suggestion); } catch(e) { continue; }
-        if (ps.type === 'exercicio') {
-          // In merge mode, skip exercises that already exist
-          if (mode === 'merge') {
-            var existingEl = findExerciseByName(ps.exercise_name || ps.label);
-            if (existingEl) {
-              pendingCards[ci].classList.add('accepted');
-              pendingCards[ci].innerHTML =
-                '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">' +
-                '<span style="font-size:16px;">✅</span>' +
-                '<span style="font-size:12px;color:var(--text-muted);">' + escapeHtml(ps.exercise_name || ps.label) + ' (ja existe)</span></div>';
-              continue;
+      try {
+        for (var ci = 0; ci < pendingCards.length; ci++) {
+          var ps;
+          try { ps = JSON.parse(pendingCards[ci].dataset.suggestion); } catch(e) { continue; }
+          if (ps.type === 'exercicio') {
+            if (mode === 'merge') {
+              var existingEl = findExerciseByName(ps.exercise_name || ps.label);
+              if (existingEl) {
+                pendingCards[ci].classList.add('accepted');
+                pendingCards[ci].innerHTML =
+                  '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">' +
+                  '<span style="font-size:16px;">✅</span>' +
+                  '<span style="font-size:12px;color:var(--text-muted);">' + escapeHtml(ps.exercise_name || ps.label) + ' (ja existe)</span></div>';
+                continue;
+              }
             }
+            applyExerciseSuggestion(ps);
+            pendingCards[ci].classList.add('accepted');
+            pendingCards[ci].innerHTML =
+              '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">' +
+              '<span style="font-size:16px;">✅</span>' +
+              '<span style="font-size:12px;color:var(--text-secondary);">' + escapeHtml(ps.exercise_name || ps.label) + '</span></div>';
+            addedCount++;
           }
-          applyExerciseSuggestion(ps);
-          pendingCards[ci].classList.add('accepted');
-          pendingCards[ci].innerHTML =
-            '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">' +
-            '<span style="font-size:16px;">✅</span>' +
-            '<span style="font-size:12px;color:var(--text-secondary);">' + escapeHtml(ps.exercise_name || ps.label) + '</span></div>';
-          addedCount++;
         }
+      } finally {
+        _bulkOperation = false;
       }
-      _bulkOperation = false;
+      // Clear reset flag — new workout successfully applied
+      localStorage.removeItem('workout-replaced');
       saveExerciseConfigs();
       try {
         var finalCustom = JSON.parse(localStorage.getItem('custom-exercises') || '[]');
@@ -9441,6 +9429,8 @@
       // Finalize full workout replacement
       if (isFullReplacement) {
         _bulkOperation = false;
+        // Clear reset flag — new workout successfully applied
+        localStorage.removeItem('workout-replaced');
         saveExerciseConfigs();
         try {
           var finalCustom = JSON.parse(localStorage.getItem('custom-exercises') || '[]');
