@@ -8443,6 +8443,19 @@
       var container = document.getElementById(containerMap[group] || 'braco');
       if (!container) return;
 
+      var name = s.exercise_name || s.label || 'Novo Exercício';
+
+      // Skip if exercise with same name already exists in DOM
+      var nameNorm = name.toLowerCase().trim();
+      var dupeFound = false;
+      document.querySelectorAll('.exercise[data-name]').forEach(function(el) {
+        if ((el.dataset.name || '').toLowerCase().trim() === nameNorm) dupeFound = true;
+      });
+      if (dupeFound) {
+        if (!_bulkOperation) console.log('addNewExercise: skipping duplicate "' + name + '"');
+        return;
+      }
+
       // Remove empty state placeholder
       var emptyState = container.querySelector('.workout-empty-state');
       if (emptyState) emptyState.remove();
@@ -8455,7 +8468,6 @@
 
       var sets = s.sets || 3;
       var reps = s.reps || '10';
-      var name = s.exercise_name || s.label || 'Novo Exercício';
       var note = s.detail || '';
 
       var existingCount = container.querySelectorAll('.exercise').length;
@@ -8511,7 +8523,10 @@
           '<span><input type="text" class="stat-input stat-input-wide" value="' + reps + '" onchange="updateExConfig(\'' + id + '\', \'reps\', this.value)"> <span id="reps-label-' + id + '">reps</span></span>';
       }
 
-      // Save to custom exercises list for persistence
+      // Save to custom exercises list for persistence (deduplicate by name+group)
+      customExercises = customExercises.filter(function(c) {
+        return c.name.toLowerCase().trim() !== name.toLowerCase().trim() || c.group !== group;
+      });
       customExercises.push({ id: id, name: name, group: group, note: note, sets: numSets, reps: reps });
       saveCustomExercises(customExercises);
 
@@ -8996,9 +9011,23 @@
             if (cont) cont.querySelectorAll('.exercise, .section-title').forEach(function(el) { el.remove(); });
           });
         }
+        // Deduplicate by name+group before adding to DOM
+        var seen = {};
+        custom = custom.filter(function(c) {
+          var key = (c.name || '').toLowerCase().trim() + '|' + (c.group || 'upper');
+          if (seen[key]) return false;
+          seen[key] = true;
+          return true;
+        });
         custom.forEach(function(c) {
-          // Check if already exists in DOM
+          // Check if already exists in DOM (by id or by name)
           if (document.querySelector('[data-id="' + c.id + '"]')) return;
+          var nameNorm = (c.name || '').toLowerCase().trim();
+          var dupeInDom = false;
+          document.querySelectorAll('.exercise[data-name]').forEach(function(el) {
+            if ((el.dataset.name || '').toLowerCase().trim() === nameNorm) dupeInDom = true;
+          });
+          if (dupeInDom) return;
           var groupContainerMap = { lower: 'perna', upper: 'braco', mob1: 'mob1', mob2: 'mob2', mob3: 'mob3' };
           var container = document.getElementById(groupContainerMap[c.group] || 'braco');
           if (!container) return;
