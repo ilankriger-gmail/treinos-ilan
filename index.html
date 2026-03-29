@@ -2803,6 +2803,53 @@
     .goal-modal-btn { padding:12px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; border:none; }
     .goal-modal-btn-primary { background:var(--accent); color:white; }
     .goal-modal-btn-secondary { background:var(--bg-tertiary); color:var(--text-secondary); border:1px solid var(--border); }
+
+    /* Workout Preview Modal */
+    .workout-preview-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:10002; display:flex; align-items:center; justify-content:center; padding:16px; }
+    .workout-preview-modal { background:var(--bg-primary); border:1px solid var(--border); border-radius:14px; max-width:480px; width:100%; max-height:85vh; display:flex; flex-direction:column; }
+    .workout-preview-header { padding:20px 20px 12px; border-bottom:1px solid var(--border); }
+    .workout-preview-title { font-size:18px; font-weight:700; color:var(--text-primary); margin-bottom:4px; }
+    .workout-preview-subtitle { font-size:13px; color:var(--text-muted); }
+    .workout-preview-body { padding:16px 20px; overflow-y:auto; flex:1; }
+    .workout-preview-section { margin-bottom:16px; }
+    .workout-preview-section-title { font-size:12px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; }
+    .workout-preview-item { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; margin-bottom:4px; font-size:13px; }
+    .workout-preview-item.removed { background:rgba(239,68,68,0.1); color:#ef4444; }
+    .workout-preview-item.added { background:rgba(34,197,94,0.1); color:#22c55e; }
+    .workout-preview-item.kept { background:var(--bg-secondary); color:var(--text-secondary); }
+    .workout-preview-item .wp-icon { font-size:16px; width:20px; text-align:center; flex-shrink:0; }
+    .workout-preview-item .wp-name { flex:1; }
+    .workout-preview-item .wp-detail { font-size:11px; color:var(--text-muted); }
+    .workout-preview-actions { padding:16px 20px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:8px; }
+    .workout-preview-btn { padding:12px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; border:none; text-align:center; }
+    .workout-preview-btn-primary { background:var(--accent); color:white; }
+    .workout-preview-btn-merge { background:var(--bg-tertiary); color:var(--text-primary); border:1px solid var(--border); }
+    .workout-preview-btn-cancel { background:none; color:var(--text-muted); }
+    .workout-preview-fixed { padding:10px 12px; background:rgba(127,109,242,0.08); border:1px solid rgba(127,109,242,0.2); border-radius:8px; margin-bottom:12px; }
+    .workout-preview-fixed-title { font-size:12px; font-weight:600; color:var(--accent); margin-bottom:6px; }
+    .workout-preview-fixed-item { font-size:12px; color:var(--text-secondary); padding:2px 0; }
+    .workout-preview-stats { display:flex; gap:12px; margin-bottom:16px; }
+    .workout-preview-stat { flex:1; text-align:center; padding:10px 8px; background:var(--bg-secondary); border-radius:8px; }
+    .workout-preview-stat-num { font-size:20px; font-weight:700; }
+    .workout-preview-stat-num.red { color:#ef4444; }
+    .workout-preview-stat-num.green { color:#22c55e; }
+    .workout-preview-stat-label { font-size:11px; color:var(--text-muted); margin-top:2px; }
+
+    /* Workout History Panel */
+    .workout-history-btn { background:none; border:1px solid var(--border); border-radius:8px; padding:6px 12px; font-size:12px; color:var(--text-muted); cursor:pointer; font-family:'Inter',sans-serif; white-space:nowrap; }
+    .workout-history-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:10002; display:flex; align-items:center; justify-content:center; padding:16px; }
+    .workout-history-modal { background:var(--bg-primary); border:1px solid var(--border); border-radius:14px; max-width:420px; width:100%; max-height:80vh; display:flex; flex-direction:column; }
+    .workout-history-header { padding:20px 20px 12px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+    .workout-history-title { font-size:16px; font-weight:700; color:var(--text-primary); }
+    .workout-history-close { background:none; border:none; font-size:20px; cursor:pointer; color:var(--text-muted); padding:4px; }
+    .workout-history-body { padding:16px 20px; overflow-y:auto; flex:1; }
+    .workout-history-entry { padding:14px; background:var(--bg-secondary); border:1px solid var(--border); border-radius:10px; margin-bottom:10px; }
+    .workout-history-entry-date { font-size:12px; color:var(--text-muted); margin-bottom:6px; }
+    .workout-history-entry-info { font-size:13px; color:var(--text-secondary); margin-bottom:10px; line-height:1.4; }
+    .workout-history-entry-actions { display:flex; gap:8px; }
+    .workout-history-restore-btn { padding:8px 14px; background:var(--accent); border:none; border-radius:8px; color:white; font-size:12px; font-weight:600; cursor:pointer; font-family:'Inter',sans-serif; }
+    .workout-history-delete-btn { padding:8px 14px; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:8px; color:var(--text-muted); font-size:12px; cursor:pointer; font-family:'Inter',sans-serif; }
+    .workout-history-empty { text-align:center; padding:40px 20px; color:var(--text-muted); font-size:13px; }
   </style>
 </head>
 <body>
@@ -3265,19 +3312,22 @@
         <button id="sessionTimerToggle" onclick="toggleSessionTimer()">Iniciar</button>
       </div>
 
-      <div class="workout-tabs">
-        <button class="workout-tab active" onclick="showWorkout('braco', this)">💪 Upper</button>
-        <button class="workout-tab" onclick="showWorkout('perna', this)">🦵 Lower</button>
-        <div class="workout-tab-separator"></div>
-        <button class="workout-tab" onclick="showWorkout('mob1', this)">🧘 Mob 1</button>
-        <button class="workout-tab" onclick="showWorkout('mob2', this)">🧘 Mob 2</button>
-        <button class="workout-tab" onclick="showWorkout('mob3', this)">🧘 Mob 3</button>
-        <div class="workout-tab-separator"></div>
-        <button class="workout-tab" onclick="showWorkout('cardio', this)">🏃 Cardio</button>
-        <div class="workout-tab-separator"></div>
-        <button class="workout-tab" onclick="showWorkout('surf', this)">🏄 Surf</button>
-        <button class="workout-tab" onclick="showWorkout('tenis', this)">🎾 Tenis</button>
-        <button class="workout-tab" onclick="showWorkout('fisio', this)">🏥 Fisio</button>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div class="workout-tabs" style="flex:1;">
+          <button class="workout-tab active" onclick="showWorkout('braco', this)">💪 Upper</button>
+          <button class="workout-tab" onclick="showWorkout('perna', this)">🦵 Lower</button>
+          <div class="workout-tab-separator"></div>
+          <button class="workout-tab" onclick="showWorkout('mob1', this)">🧘 Mob 1</button>
+          <button class="workout-tab" onclick="showWorkout('mob2', this)">🧘 Mob 2</button>
+          <button class="workout-tab" onclick="showWorkout('mob3', this)">🧘 Mob 3</button>
+          <div class="workout-tab-separator"></div>
+          <button class="workout-tab" onclick="showWorkout('cardio', this)">🏃 Cardio</button>
+          <div class="workout-tab-separator"></div>
+          <button class="workout-tab" onclick="showWorkout('surf', this)">🏄 Surf</button>
+          <button class="workout-tab" onclick="showWorkout('tenis', this)">🎾 Tenis</button>
+          <button class="workout-tab" onclick="showWorkout('fisio', this)">🏥 Fisio</button>
+        </div>
+        <button class="workout-history-btn" onclick="showWorkoutHistory()">Historico</button>
       </div>
       
       <!-- Upper Body -->
@@ -8483,6 +8533,321 @@
       _exerciseCacheDirty = true;
     }
 
+    // ========== WORKOUT BACKUP & HISTORY ==========
+
+    function getCurrentWorkoutSnapshot() {
+      var exercises = [];
+      var groupMap = { braco: 'upper', perna: 'lower', mob1: 'mob1', mob2: 'mob2', mob3: 'mob3' };
+      ['braco', 'perna', 'mob1', 'mob2', 'mob3'].forEach(function(cid) {
+        var container = document.getElementById(cid);
+        if (!container) return;
+        container.querySelectorAll('.exercise[data-id]').forEach(function(ex) {
+          var id = ex.dataset.id;
+          var name = ex.dataset.name || ex.querySelector('.exercise-name')?.textContent || '';
+          var cfg = exerciseConfigs[id] || {};
+          exercises.push({
+            id: id, name: name, group: groupMap[cid] || 'upper',
+            sets: cfg.sets || 3, reps: cfg.reps || '10', rest: cfg.rest || 60,
+            type: cfg.type || 'kg', weight: cfg.weight || 0,
+            note: ex.querySelector('.exercise-note')?.textContent || ''
+          });
+        });
+      });
+      return exercises;
+    }
+
+    function backupCurrentWorkout() {
+      var exercises = getCurrentWorkoutSnapshot();
+      if (exercises.length === 0) return null;
+      var backup = {
+        id: Date.now(),
+        date: new Date().toISOString(),
+        exercises: exercises,
+        configs: JSON.parse(JSON.stringify(exerciseConfigs)),
+        customExercises: JSON.parse(localStorage.getItem('custom-exercises') || '[]')
+      };
+      var history = getWorkoutHistory();
+      history.unshift(backup);
+      // Keep max 10 backups
+      if (history.length > 10) history = history.slice(0, 10);
+      localStorage.setItem('workout-history', JSON.stringify(history));
+      // Sync to Supabase
+      try {
+        fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId(), {
+          method: 'PATCH',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ workout_history: history })
+        }).catch(function(e) { console.error('sync workout history:', e); });
+      } catch(e) {}
+      return backup;
+    }
+
+    function getWorkoutHistory() {
+      try { return JSON.parse(localStorage.getItem('workout-history') || '[]'); } catch(e) { return []; }
+    }
+
+    function restoreWorkoutBackup(backupId) {
+      var history = getWorkoutHistory();
+      var backup = history.find(function(b) { return b.id === backupId; });
+      if (!backup) { showToast('Backup nao encontrado', 'error'); return; }
+      // Backup current before restoring
+      backupCurrentWorkout();
+      // Clear current
+      clearAllWorkoutContainers();
+      _bulkOperation = true;
+      // Restore exercises
+      backup.exercises.forEach(function(ex) {
+        addNewExercise({
+          exercise_name: ex.name,
+          workout_group: ex.group,
+          sets: ex.sets,
+          reps: ex.reps,
+          weight: ex.weight,
+          detail: ex.note,
+          action: 'add'
+        });
+      });
+      _bulkOperation = false;
+      // Restore configs
+      if (backup.configs) {
+        Object.keys(backup.configs).forEach(function(k) { exerciseConfigs[k] = backup.configs[k]; });
+        saveExerciseConfigs();
+      }
+      showToast('Treino restaurado!');
+      // Close modal
+      var overlay = document.querySelector('.workout-history-overlay');
+      if (overlay) overlay.remove();
+    }
+
+    function deleteWorkoutBackup(backupId) {
+      var history = getWorkoutHistory();
+      history = history.filter(function(b) { return b.id !== backupId; });
+      localStorage.setItem('workout-history', JSON.stringify(history));
+      try {
+        fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId(), {
+          method: 'PATCH',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ workout_history: history })
+        }).catch(function(e) {});
+      } catch(e) {}
+      showWorkoutHistory();
+    }
+
+    function showWorkoutHistory() {
+      // Remove existing
+      var existing = document.querySelector('.workout-history-overlay');
+      if (existing) existing.remove();
+      var history = getWorkoutHistory();
+      var overlay = document.createElement('div');
+      overlay.className = 'workout-history-overlay';
+      overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+      var groupLabels = { upper: 'Upper', lower: 'Lower', mob1: 'Mob 1', mob2: 'Mob 2', mob3: 'Mob 3' };
+      var bodyHtml = '';
+      if (history.length === 0) {
+        bodyHtml = '<div class="workout-history-empty">Nenhum treino anterior salvo.<br>Backups sao criados automaticamente antes de trocar de treino.</div>';
+      } else {
+        history.forEach(function(b) {
+          var d = new Date(b.date);
+          var dateStr = d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+          var groups = {};
+          (b.exercises || []).forEach(function(ex) {
+            var g = groupLabels[ex.group] || ex.group;
+            if (!groups[g]) groups[g] = [];
+            groups[g].push(ex.name);
+          });
+          var infoLines = [];
+          Object.keys(groups).forEach(function(g) {
+            infoLines.push('<strong>' + g + ':</strong> ' + groups[g].join(', '));
+          });
+          bodyHtml += '<div class="workout-history-entry">' +
+            '<div class="workout-history-entry-date">' + dateStr + ' — ' + (b.exercises || []).length + ' exercicios</div>' +
+            '<div class="workout-history-entry-info">' + infoLines.join('<br>') + '</div>' +
+            '<div class="workout-history-entry-actions">' +
+              '<button class="workout-history-restore-btn" onclick="restoreWorkoutBackup(' + b.id + ')">Restaurar</button>' +
+              '<button class="workout-history-delete-btn" onclick="deleteWorkoutBackup(' + b.id + ')">Excluir</button>' +
+            '</div></div>';
+        });
+      }
+      overlay.innerHTML = '<div class="workout-history-modal">' +
+        '<div class="workout-history-header">' +
+          '<div class="workout-history-title">Historico de Treinos</div>' +
+          '<button class="workout-history-close" onclick="this.closest(\'.workout-history-overlay\').remove()">&times;</button>' +
+        '</div>' +
+        '<div class="workout-history-body">' + bodyHtml + '</div></div>';
+      document.body.appendChild(overlay);
+    }
+
+    // ========== WORKOUT PREVIEW MODAL ==========
+
+    function buildWorkoutPreview(newSuggestions) {
+      var currentExercises = getCurrentWorkoutSnapshot();
+      var currentNames = currentExercises.map(function(e) { return e.name.toLowerCase(); });
+      var newExercises = newSuggestions.filter(function(s) {
+        return s.type === 'exercicio' && (s.action || 'add').toLowerCase() === 'add';
+      });
+      var newNames = newExercises.map(function(s) { return (s.exercise_name || s.label || '').toLowerCase(); });
+      var removed = currentExercises.filter(function(e) { return newNames.indexOf(e.name.toLowerCase()) === -1; });
+      var added = newExercises.filter(function(s) { return currentNames.indexOf((s.exercise_name || s.label || '').toLowerCase()) === -1; });
+      var kept = currentExercises.filter(function(e) { return newNames.indexOf(e.name.toLowerCase()) !== -1; });
+      return { removed: removed, added: added, kept: kept, currentExercises: currentExercises, newExercises: newExercises };
+    }
+
+    function getFixedActivities() {
+      if (!onbData.atividades_detalhes || !Array.isArray(onbData.atividades_detalhes)) return [];
+      return onbData.atividades_detalhes.filter(function(d) { return (d.categoria || 'fixa') === 'fixa'; });
+    }
+
+    function showWorkoutPreviewModal(suggestions, onAccept) {
+      var existing = document.querySelector('.workout-preview-overlay');
+      if (existing) existing.remove();
+      var preview = buildWorkoutPreview(suggestions);
+      var fixas = getFixedActivities();
+      var overlay = document.createElement('div');
+      overlay.className = 'workout-preview-overlay';
+      overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+      var groupLabels = { upper: 'Upper', lower: 'Lower', mob1: 'Mob 1', mob2: 'Mob 2', mob3: 'Mob 3' };
+      // Stats
+      var statsHtml = '<div class="workout-preview-stats">' +
+        '<div class="workout-preview-stat"><div class="workout-preview-stat-num red">' + preview.removed.length + '</div><div class="workout-preview-stat-label">Removidos</div></div>' +
+        '<div class="workout-preview-stat"><div class="workout-preview-stat-num green">' + preview.added.length + '</div><div class="workout-preview-stat-label">Novos</div></div>' +
+        '<div class="workout-preview-stat"><div class="workout-preview-stat-num">' + preview.kept.length + '</div><div class="workout-preview-stat-label">Mantidos</div></div>' +
+        '</div>';
+      // Fixed activities warning
+      var fixedHtml = '';
+      if (fixas.length > 0) {
+        var actSuggestions = suggestions.filter(function(s) { return s.type === 'atividade'; });
+        var suggestedTypes = actSuggestions.map(function(s) { return (s.activity_type || '').toLowerCase(); });
+        var missingFixas = fixas.filter(function(f) { return suggestedTypes.indexOf(f.nome.toLowerCase()) === -1; });
+        fixedHtml = '<div class="workout-preview-fixed">' +
+          '<div class="workout-preview-fixed-title">Atividades Fixas</div>';
+        fixas.forEach(function(f) {
+          var isMissing = missingFixas.some(function(m) { return m.nome === f.nome; });
+          var diasStr = (f.dias && f.dias.length) ? f.dias.join(', ') : '';
+          fixedHtml += '<div class="workout-preview-fixed-item">' +
+            (isMissing ? '⚠️ ' : '✅ ') + f.nome + (diasStr ? ' (' + diasStr + ')' : '') +
+            (isMissing ? ' — <strong>sera preservada automaticamente</strong>' : ' — incluida pelo Coach') +
+            '</div>';
+        });
+        fixedHtml += '</div>';
+      }
+      // Removed
+      var removedHtml = '';
+      if (preview.removed.length > 0) {
+        removedHtml = '<div class="workout-preview-section"><div class="workout-preview-section-title">Serao removidos</div>';
+        preview.removed.forEach(function(e) {
+          removedHtml += '<div class="workout-preview-item removed"><span class="wp-icon">-</span><span class="wp-name">' + escapeHtml(e.name) + '</span><span class="wp-detail">' + (groupLabels[e.group] || e.group) + ' | ' + e.sets + 'x' + e.reps + '</span></div>';
+        });
+        removedHtml += '</div>';
+      }
+      // Added
+      var addedHtml = '';
+      if (preview.added.length > 0) {
+        addedHtml = '<div class="workout-preview-section"><div class="workout-preview-section-title">Serao adicionados</div>';
+        preview.added.forEach(function(s) {
+          var name = s.exercise_name || s.label || '';
+          var group = groupLabels[s.workout_group] || s.workout_group || '';
+          addedHtml += '<div class="workout-preview-item added"><span class="wp-icon">+</span><span class="wp-name">' + escapeHtml(name) + '</span><span class="wp-detail">' + group + ' | ' + (s.sets || 3) + 'x' + (s.reps || '10') + '</span></div>';
+        });
+        addedHtml += '</div>';
+      }
+      // Kept
+      var keptHtml = '';
+      if (preview.kept.length > 0) {
+        keptHtml = '<div class="workout-preview-section"><div class="workout-preview-section-title">Serao mantidos</div>';
+        preview.kept.forEach(function(e) {
+          keptHtml += '<div class="workout-preview-item kept"><span class="wp-icon">=</span><span class="wp-name">' + escapeHtml(e.name) + '</span><span class="wp-detail">' + (groupLabels[e.group] || e.group) + '</span></div>';
+        });
+        keptHtml += '</div>';
+      }
+      overlay.innerHTML = '<div class="workout-preview-modal">' +
+        '<div class="workout-preview-header">' +
+          '<div class="workout-preview-title">Revisar Mudancas no Treino</div>' +
+          '<div class="workout-preview-subtitle">Confira o que vai mudar antes de aplicar</div>' +
+        '</div>' +
+        '<div class="workout-preview-body">' +
+          statsHtml + fixedHtml + removedHtml + addedHtml + keptHtml +
+        '</div>' +
+        '<div class="workout-preview-actions">' +
+          '<button class="workout-preview-btn workout-preview-btn-primary" id="wpBtnReplace">Substituir tudo</button>' +
+          (preview.currentExercises.length > 0 ? '<button class="workout-preview-btn workout-preview-btn-merge" id="wpBtnMerge">Mesclar (manter existentes + adicionar novos)</button>' : '') +
+          '<button class="workout-preview-btn workout-preview-btn-cancel" id="wpBtnCancel">Cancelar</button>' +
+        '</div></div>';
+      document.body.appendChild(overlay);
+      // Wire buttons
+      document.getElementById('wpBtnReplace').onclick = function() {
+        overlay.remove();
+        onAccept('replace');
+      };
+      var mergeBtn = document.getElementById('wpBtnMerge');
+      if (mergeBtn) {
+        mergeBtn.onclick = function() {
+          overlay.remove();
+          onAccept('merge');
+        };
+      }
+      document.getElementById('wpBtnCancel').onclick = function() { overlay.remove(); };
+    }
+
+    // ========== FIXED ACTIVITY VALIDATION ==========
+
+    function validateAndRestoreFixedActivities(suggestions) {
+      var fixas = getFixedActivities();
+      if (fixas.length === 0) return;
+      var actSuggestions = suggestions.filter(function(s) { return s.type === 'atividade'; });
+      var sugDates = {};
+      actSuggestions.forEach(function(s) {
+        var type = (s.activity_type || '').toLowerCase();
+        if (!sugDates[type]) sugDates[type] = [];
+        if (s.date) sugDates[type].push(s.date);
+      });
+      // Get next 7 days
+      var next7 = [];
+      var dayNames = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+      for (var i = 0; i < 7; i++) {
+        var d = getSaoPauloNow();
+        d.setDate(d.getDate() + i);
+        next7.push({ date: formatDate(d), dayName: dayNames[d.getDay()], dayObj: d });
+      }
+      fixas.forEach(function(fixa) {
+        var fixaType = fixa.nome.toLowerCase();
+        var alreadySuggested = sugDates[fixaType] && sugDates[fixaType].length > 0;
+        if (alreadySuggested) return; // AI already included it
+        // Find the correct day(s) for this fixed activity
+        var fixaDias = (fixa.dias || []).map(function(d) { return d.toLowerCase().replace(/[-\s]/g, ''); });
+        next7.forEach(function(day) {
+          var dayNorm = day.dayName.replace(/[-\s]/g, '');
+          var isFixaDay = fixaDias.length === 0 || fixaDias.some(function(fd) {
+            return dayNorm.indexOf(fd) === 0 || fd.indexOf(dayNorm) === 0;
+          });
+          if (!isFixaDay) return;
+          // Check if there's already an activity of this type on this date
+          var existing = (activities[day.date] || []).some(function(a) { return a.type === fixaType; });
+          if (existing) return;
+          // Check max 2 per day
+          var planned = (activities[day.date] || []).filter(function(a) { return a.status === 'planned'; });
+          if (planned.length >= 2) return;
+          // Add the fixed activity
+          if (!activities[day.date]) activities[day.date] = [];
+          activities[day.date].push({
+            type: fixaType,
+            time: fixa.horario || fixa.horarios?.[dayNorm] || '',
+            duration: null,
+            notes: fixa.nome + ' (restaurada automaticamente)',
+            effort: null,
+            status: 'planned'
+          });
+          // Save
+          var prevSelected = selectedDate;
+          var parts = day.date.split('-');
+          selectedDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+          saveActivities();
+          selectedDate = prevSelected;
+        });
+      });
+      renderCalendar();
+      renderDayActivities();
+    }
+
     function saveCustomExercises(customArr) {
       localStorage.setItem('custom-exercises', JSON.stringify(customArr));
       // Sync to Supabase (fire-and-forget)
@@ -8573,65 +8938,112 @@
       } catch(e) { console.error('loadCustomExercises:', e); }
     }
 
-    async function _doAcceptSuggestion(s, cardEl) {
+    async function _executeTreinoAccept(s, cardEl, pendingCards, allSuggestions, mode) {
       cardEl.classList.add('accepted');
+      // Backup before destroying
+      var backup = backupCurrentWorkout();
+      if (backup) console.log('Workout backed up before treino accept:', backup.exercises.length, 'exercises');
 
-      // Handle full workout replacement
-      if (s.type === 'treino') {
+      if (mode === 'merge') {
+        _bulkOperation = true;
+      } else {
         clearAllWorkoutContainers();
         _bulkOperation = true;
-        // Auto-accept all pending exercise suggestion cards
+      }
+      var addedCount = 0;
+      for (var ci = 0; ci < pendingCards.length; ci++) {
+        var ps;
+        try { ps = JSON.parse(pendingCards[ci].dataset.suggestion); } catch(e) { continue; }
+        if (ps.type === 'exercicio') {
+          // In merge mode, skip exercises that already exist
+          if (mode === 'merge') {
+            var existingEl = findExerciseByName(ps.exercise_name || ps.label);
+            if (existingEl) {
+              pendingCards[ci].classList.add('accepted');
+              pendingCards[ci].innerHTML =
+                '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">' +
+                '<span style="font-size:16px;">✅</span>' +
+                '<span style="font-size:12px;color:var(--text-muted);">' + escapeHtml(ps.exercise_name || ps.label) + ' (ja existe)</span></div>';
+              continue;
+            }
+          }
+          applyExerciseSuggestion(ps);
+          pendingCards[ci].classList.add('accepted');
+          pendingCards[ci].innerHTML =
+            '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">' +
+            '<span style="font-size:16px;">✅</span>' +
+            '<span style="font-size:12px;color:var(--text-secondary);">' + escapeHtml(ps.exercise_name || ps.label) + '</span></div>';
+          addedCount++;
+        }
+      }
+      _bulkOperation = false;
+      saveExerciseConfigs();
+      try {
+        var finalCustom = JSON.parse(localStorage.getItem('custom-exercises') || '[]');
+        saveCustomExercises(finalCustom);
+      } catch(e) {}
+      // Apply activity suggestions
+      for (var ai = 0; ai < pendingCards.length; ai++) {
+        if (pendingCards[ai].classList.contains('accepted') || pendingCards[ai].classList.contains('rejected')) continue;
+        var as;
+        try { as = JSON.parse(pendingCards[ai].dataset.suggestion); } catch(e) { continue; }
+        if (as.type === 'atividade') {
+          await _doAcceptSuggestion(as, pendingCards[ai]);
+        }
+      }
+      // Validate fixed activities
+      validateAndRestoreFixedActivities(allSuggestions);
+      // Collapse treino card
+      var modeLabel = mode === 'merge' ? ' (mesclado)' : '';
+      cardEl.innerHTML =
+        '<div style="display:flex;align-items:center;gap:10px;">' +
+        '<span style="font-size:22px;">✅</span>' +
+        '<div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">Treino aplicado!' + modeLabel + '</div>' +
+        '<div style="font-size:11px;color:var(--success);margin-top:2px;">' + addedCount + ' exercícios criados</div></div></div>';
+      // Mark batch bar as done
+      var prev = cardEl.previousElementSibling;
+      while (prev && !prev.classList.contains('chat-bubble')) {
+        if (prev.classList.contains('suggestion-batch-bar')) {
+          prev.innerHTML = '<span style="color:var(--success);font-size:12px;font-weight:600;">✓ Treino completo aplicado' + modeLabel + '</span>';
+          break;
+        }
+        prev = prev.previousElementSibling;
+      }
+      showView('workouts');
+      var tabContainers = ['braco', 'perna', 'mob1', 'mob2', 'mob3'];
+      for (var ti = 0; ti < tabContainers.length; ti++) {
+        var cont = document.getElementById(tabContainers[ti]);
+        if (cont && cont.querySelectorAll('.exercise').length > 0) {
+          var tabBtn = document.querySelector('.workout-tab[onclick*="' + tabContainers[ti] + '"]');
+          if (!tabBtn) tabBtn = document.querySelector('.workout-tab');
+          showWorkout(tabContainers[ti], tabBtn);
+          break;
+        }
+      }
+      updateProgress();
+      showToast('🏋️ Novo treino aplicado com ' + addedCount + ' exercícios!' + modeLabel);
+    }
+
+    async function _doAcceptSuggestion(s, cardEl) {
+      // Handle full workout replacement — show preview if user has existing exercises
+      if (s.type === 'treino') {
+        var hasCurrentExercises = getCurrentWorkoutSnapshot().length > 0;
+        // Collect all pending suggestions for preview
         var pendingCards = document.querySelectorAll('#chatMessages .suggestion-card:not(.accepted):not(.rejected)');
-        var addedCount = 0;
-        for (var ci = 0; ci < pendingCards.length; ci++) {
-          var ps;
-          try { ps = JSON.parse(pendingCards[ci].dataset.suggestion); } catch(e) { continue; }
-          if (ps.type === 'exercicio') {
-            applyExerciseSuggestion(ps);
-            pendingCards[ci].classList.add('accepted');
-            pendingCards[ci].innerHTML =
-              '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">' +
-              '<span style="font-size:16px;">✅</span>' +
-              '<span style="font-size:12px;color:var(--text-secondary);">' + escapeHtml(ps.exercise_name || ps.label) + '</span></div>';
-            addedCount++;
-          }
+        var allPendingSuggestions = [s];
+        for (var pi = 0; pi < pendingCards.length; pi++) {
+          try {
+            var ps = JSON.parse(pendingCards[pi].dataset.suggestion);
+            if (ps.type !== 'treino') allPendingSuggestions.push(ps);
+          } catch(e) {}
         }
-        _bulkOperation = false;
-        // Final sync to Supabase with complete state (avoids race conditions)
-        saveExerciseConfigs();
-        try {
-          var finalCustom = JSON.parse(localStorage.getItem('custom-exercises') || '[]');
-          saveCustomExercises(finalCustom);
-        } catch(e) {}
-        // Collapse treino card
-        cardEl.innerHTML =
-          '<div style="display:flex;align-items:center;gap:10px;">' +
-          '<span style="font-size:22px;">✅</span>' +
-          '<div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">Treino aplicado!</div>' +
-          '<div style="font-size:11px;color:var(--success);margin-top:2px;">' + addedCount + ' exercícios criados</div></div></div>';
-        // Mark batch bar as done
-        var prev = cardEl.previousElementSibling;
-        while (prev && !prev.classList.contains('chat-bubble')) {
-          if (prev.classList.contains('suggestion-batch-bar')) {
-            prev.innerHTML = '<span style="color:var(--success);font-size:12px;font-weight:600;">✓ Treino completo aplicado</span>';
-            break;
-          }
-          prev = prev.previousElementSibling;
+        if (hasCurrentExercises) {
+          showWorkoutPreviewModal(allPendingSuggestions, function(mode) {
+            _executeTreinoAccept(s, cardEl, pendingCards, allPendingSuggestions, mode);
+          });
+          return;
         }
-        showView('workouts');
-        // Activate first tab that has exercises
-        var tabContainers = ['braco', 'perna', 'mob1', 'mob2', 'mob3'];
-        for (var ti = 0; ti < tabContainers.length; ti++) {
-          var cont = document.getElementById(tabContainers[ti]);
-          if (cont && cont.querySelectorAll('.exercise').length > 0) {
-            var tabBtn = document.querySelector('.workout-tab[onclick*="' + tabContainers[ti] + '"]');
-            if (!tabBtn) tabBtn = document.querySelector('.workout-tab');
-            showWorkout(tabContainers[ti], tabBtn);
-            break;
-          }
-        }
-        updateProgress();
-        showToast('🏋️ Novo treino aplicado com ' + addedCount + ' exercícios!');
+        _executeTreinoAccept(s, cardEl, pendingCards, allPendingSuggestions, 'replace');
         return;
       }
 
@@ -8757,22 +9169,50 @@
     async function acceptAllSuggestions(barBtn) {
       const cards = document.querySelectorAll('#chatMessages .suggestion-card:not(.accepted):not(.rejected)');
       if (!cards.length) return;
-      barBtn.disabled = true;
-      barBtn.textContent = 'Aplicando...';
 
-      // Auto-detect full workout replacement: 4+ exercise:add OR treino header
+      // Collect all suggestions
+      var allSuggestions = [];
       var exAddCount = 0;
       var hasTreinoHeader = false;
       for (var di = 0; di < cards.length; di++) {
         var ds;
         try { ds = JSON.parse(cards[di].dataset.suggestion); } catch(e) { continue; }
+        allSuggestions.push(ds);
         if (ds.type === 'treino') hasTreinoHeader = true;
         if (ds.type === 'exercicio' && (ds.action || 'add').toLowerCase() === 'add') exAddCount++;
       }
       var isFullReplacement = hasTreinoHeader || exAddCount >= 4;
+      var hasCurrentExercises = getCurrentWorkoutSnapshot().length > 0;
+
+      // If full replacement and user has existing exercises, show preview first
+      if (isFullReplacement && hasCurrentExercises) {
+        showWorkoutPreviewModal(allSuggestions, function(mode) {
+          _executeAcceptAll(barBtn, cards, allSuggestions, isFullReplacement, mode);
+        });
+        return;
+      }
+
+      // Otherwise execute directly
+      _executeAcceptAll(barBtn, cards, allSuggestions, isFullReplacement, 'replace');
+    }
+
+    async function _executeAcceptAll(barBtn, cards, allSuggestions, isFullReplacement, mode) {
+      barBtn.disabled = true;
+      barBtn.textContent = 'Aplicando...';
+
       if (isFullReplacement) {
-        clearAllWorkoutContainers();
-        _bulkOperation = true;
+        // Backup before destroying
+        var backup = backupCurrentWorkout();
+        if (backup) console.log('Workout backed up:', backup.exercises.length, 'exercises');
+
+        if (mode === 'merge') {
+          // Merge mode: only add new exercises, don't clear existing
+          _bulkOperation = true;
+        } else {
+          // Replace mode: clear all
+          clearAllWorkoutContainers();
+          _bulkOperation = true;
+        }
       }
 
       var count = 0;
@@ -8780,11 +9220,10 @@
       var validActivityTypes = ['corrida', 'surf', 'tenis', 'bike', 'fisio', 'upper', 'lower', 'caminhada', 'descanso', 'mobilidade'];
       for (var i = 0; i < cards.length; i++) {
         var card = cards[i];
-        // Skip if already processed (e.g. by treino auto-accept)
         if (card.classList.contains('accepted') || card.classList.contains('rejected')) continue;
         var s;
         try { s = JSON.parse(card.dataset.suggestion); } catch(e) { continue; }
-        // Skip treino header card in full replacement mode (already handled above)
+        // Skip treino header card in full replacement mode
         if (s.type === 'treino' && isFullReplacement) {
           card.classList.add('accepted');
           card.innerHTML =
@@ -8793,7 +9232,7 @@
             '<div><div style="font-size:13px;font-weight:600;color:var(--text-primary);">Treino aplicado!</div></div></div>';
           continue;
         }
-        // Enforce max 2 planned activities per day (in code, not just prompt)
+        // Enforce max 2 planned activities per day
         if (s.type === 'atividade' && s.activity_type && validActivityTypes.includes(s.activity_type)) {
           var tDate = s.date && /^\d{4}-\d{2}-\d{2}$/.test(s.date) ? s.date : getTodayDateStr();
           var plannedTypes = (activities[tDate] || [])
@@ -8810,6 +9249,18 @@
         }
         // For full replacement, collapse exercise cards after applying
         if (isFullReplacement && s.type === 'exercicio') {
+          // In merge mode, skip exercises that already exist
+          if (mode === 'merge') {
+            var existingEl = findExerciseByName(s.exercise_name || s.label);
+            if (existingEl) {
+              card.classList.add('accepted');
+              card.innerHTML =
+                '<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">' +
+                '<span style="font-size:16px;">✅</span>' +
+                '<span style="font-size:12px;color:var(--text-muted);">' + escapeHtml(s.exercise_name || s.label) + ' (ja existe)</span></div>';
+              continue;
+            }
+          }
           applyExerciseSuggestion(s);
           card.classList.add('accepted');
           card.innerHTML =
@@ -8831,8 +9282,9 @@
           var finalCustom = JSON.parse(localStorage.getItem('custom-exercises') || '[]');
           saveCustomExercises(finalCustom);
         } catch(e) {}
+        // Validate fixed activities are preserved
+        validateAndRestoreFixedActivities(allSuggestions);
         showView('workouts');
-        // Activate first tab with exercises
         var tabContainers = ['braco', 'perna', 'mob1', 'mob2', 'mob3'];
         for (var ti = 0; ti < tabContainers.length; ti++) {
           var cont = document.getElementById(tabContainers[ti]);
@@ -8843,7 +9295,8 @@
           }
         }
         updateProgress();
-        showToast('🏋️ Novo treino aplicado com ' + count + ' exercícios!');
+        var modeLabel = mode === 'merge' ? ' (mesclado)' : '';
+        showToast('🏋️ Novo treino aplicado com ' + count + ' exercícios!' + modeLabel);
       } else {
         showToast(count + ' sugestões aplicadas!' + (skipped > 0 ? ' (' + skipped + ' ignoradas — limite 2/dia)' : ''));
       }
@@ -9966,6 +10419,11 @@
           if (profile.historico_analises && Array.isArray(profile.historico_analises)) {
             historicoAnalises = profile.historico_analises;
             renderAnalysisHistory();
+          }
+
+          // Load workout history from cloud
+          if (profile.workout_history && Array.isArray(profile.workout_history)) {
+            localStorage.setItem('workout-history', JSON.stringify(profile.workout_history));
           }
 
           // Atualizar status de salvamento
