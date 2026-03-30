@@ -6482,26 +6482,10 @@
     let exerciseConfigs = {};
 
     async function loadExerciseConfigs() {
-      var wasReplaced = localStorage.getItem('workout-replaced') === 'true';
-      // If workout was just reset/replaced, use localStorage (already cleared)
-      if (wasReplaced) {
-        try { exerciseConfigs = JSON.parse(localStorage.getItem('exercise-configs') || '{}'); } catch(e) { exerciseConfigs = {}; }
-        // Push empty state to Supabase
-        if (Object.keys(exerciseConfigs).length === 0) {
-          try {
-            fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId(), {
-              method: 'PATCH',
-              headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
-              body: JSON.stringify({ exercise_configs: {} })
-            }).catch(function(e) {});
-          } catch(e) {}
-        }
-        return;
-      }
-      // Normal: try Supabase first
+      // Always try Supabase first — cross-device source of truth
       try {
-        var res = await fetch(`${SUPABASE_URL}/rest/v1/user_profile?user_id=eq.${getCurrentUserId()}&select=exercise_configs`, {
-          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        var res = await fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId() + '&select=exercise_configs', {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
         });
         var data = await res.json();
         if (data[0]?.exercise_configs && Object.keys(data[0].exercise_configs).length > 0) {
@@ -8947,54 +8931,33 @@
 
     async function loadCustomExercises() {
       var custom = [];
-      var wasReplaced = localStorage.getItem('workout-replaced') === 'true';
-
-      if (wasReplaced) {
-        // ALWAYS clear DOM first when workout was replaced/reset
-        ['braco', 'perna', 'mob1', 'mob2', 'mob3'].forEach(function(cid) {
-          var cont = document.getElementById(cid);
-          if (cont) cont.querySelectorAll('.exercise, .section-title').forEach(function(el) { el.remove(); });
+      // Always try Supabase first — it's the cross-device source of truth
+      try {
+        var res = await fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId() + '&select=custom_exercises', {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
         });
-        // Use localStorage as source of truth (already cleared by reset)
-        try { custom = JSON.parse(localStorage.getItem('custom-exercises') || '[]'); } catch(e) { custom = []; }
-        // Force sync empty state to Supabase
-        try {
-          fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId(), {
-            method: 'PATCH',
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ custom_exercises: custom, exercise_configs: custom.length === 0 ? {} : undefined })
-          }).catch(function(e) {});
-        } catch(e) {}
-        // If truly empty after reset, don't add anything — just return
-        if (custom.length === 0) {
-          console.log('loadCustomExercises: workout was reset, no exercises to load');
-          return;
+        var data = await res.json();
+        if (data[0]?.custom_exercises?.length > 0) {
+          custom = data[0].custom_exercises;
+          localStorage.setItem('custom-exercises', JSON.stringify(custom));
+          // Clear stale reset flag if Supabase has exercises
+          localStorage.removeItem('workout-replaced');
         }
-      } else {
-        // Normal flow: try Supabase first
-        try {
-          var res = await fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + getCurrentUserId() + '&select=custom_exercises', {
-            headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-          });
-          var data = await res.json();
-          if (data[0]?.custom_exercises?.length > 0) {
-            custom = data[0].custom_exercises;
-            localStorage.setItem('custom-exercises', JSON.stringify(custom));
-          }
-        } catch(e) { console.error('load custom exercises from cloud:', e); }
-        // Fallback localStorage
-        if (!custom.length) {
-          try { custom = JSON.parse(localStorage.getItem('custom-exercises') || '[]'); } catch(e) {}
-        }
+      } catch(e) { console.error('load custom exercises from cloud:', e); }
+      // Fallback localStorage only if Supabase returned nothing
+      if (!custom.length) {
+        try { custom = JSON.parse(localStorage.getItem('custom-exercises') || '[]'); } catch(e) {}
+      }
+      // Clear DOM before re-adding (prevents dupes from previous state)
+      ['braco', 'perna', 'mob1', 'mob2', 'mob3'].forEach(function(cid) {
+        var cont = document.getElementById(cid);
+        if (cont) cont.querySelectorAll('.exercise, .section-title').forEach(function(el) { el.remove(); });
+      });
+      if (custom.length === 0) {
+        console.log('loadCustomExercises: no exercises to load');
+        return;
       }
       try {
-        // Clear hardcoded exercises if workout was replaced (non-reset path with exercises)
-        if (wasReplaced) {
-          ['braco', 'perna', 'mob1', 'mob2', 'mob3'].forEach(function(cid) {
-            var cont = document.getElementById(cid);
-            if (cont) cont.querySelectorAll('.exercise, .section-title').forEach(function(el) { el.remove(); });
-          });
-        }
         // Deduplicate by name+group before adding to DOM
         var seen = {};
         custom = custom.filter(function(c) {
