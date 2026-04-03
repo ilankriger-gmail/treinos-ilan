@@ -3654,7 +3654,7 @@
   </div>
   
   <!-- Daily Check-in Modal -->
-  <div id="checkinOverlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; padding:20px;" onclick="if(event.target===this)dismissCheckin()">
+  <div id="checkinOverlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:9999; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; padding:20px;" onclick="dismissCheckin()">
     <div style="background:var(--bg-secondary); border:1px solid var(--border); border-radius:16px; width:100%; max-width:380px; padding:28px 24px; position:relative;">
       <div style="text-align:center; margin-bottom:20px;">
         <div style="font-size:28px; margin-bottom:8px;">🧠</div>
@@ -5537,6 +5537,9 @@
 
     function showView(view) {
       currentView = view;
+      // Dismiss check-in overlay if open
+      var checkinOv = document.getElementById('checkinOverlay');
+      if (checkinOv && checkinOv.style.display !== 'none') checkinOv.style.display = 'none';
       document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
       document.querySelectorAll('.main-tab').forEach(function(t) { t.classList.remove('active'); });
       document.getElementById(view + 'View').classList.add('active');
@@ -11406,6 +11409,8 @@
       loadTodayCheckin();
       if (todayCheckin) return; // Already checked in today
       if (localStorage.getItem('checkin-dismissed-' + getTodayDateStr())) return; // Dismissed today
+      // Only show on dashboard, not while chatting
+      if (chatActive) return;
       showCheckinModal();
     }
 
