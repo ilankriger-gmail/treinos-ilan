@@ -6262,8 +6262,8 @@
         if (response.ok) {
           showToast('Treino salvo!');
           showSync('Salvo!', 'success');
-          // Refresh exercise history & sparklines
-          loadExerciseHistory().then(renderExerciseSparklines);
+          // Refresh exercise history & sparklines, then check badges
+          loadExerciseHistory().then(function() { renderExerciseSparklines(); checkBadges(); });
 
           // Add to calendar — upgrade planned→done if exists, else add new
           const dateStr = today;
@@ -10768,6 +10768,9 @@
           '<div class="dash-card-arrow">›</div>' +
         '</div>';
 
+      // Badges card
+      renderBadgesCard(container);
+
       // Goal progress card (only if cache available)
       renderGoalProgressCard(container);
     }
@@ -10968,6 +10971,155 @@
       }
       current = streak;
       return { current: current, longest: longest };
+    }
+
+    // ========== BADGES / CONQUISTAS ==========
+    var BADGE_DEFS = [
+      { id: 'primeiro_treino', icon: '💪', nome: 'Primeiro Treino', desc: 'Completou seu primeiro treino' },
+      { id: 'streak_7', icon: '🔥', nome: '7 Dias Seguidos', desc: 'Treinou 7 dias consecutivos' },
+      { id: 'streak_30', icon: '👑', nome: 'Imbativel', desc: 'Treinou 30 dias consecutivos' },
+      { id: 'pr_batido', icon: '🏆', nome: 'Novo Recorde!', desc: 'Bateu um recorde pessoal de peso' },
+      { id: 'dez_treinos', icon: '⭐', nome: 'Dedicado', desc: 'Completou 10 treinos' },
+      { id: 'versatil', icon: '🏄', nome: 'Versatil', desc: '3+ esportes diferentes na mesma semana' },
+      { id: 'checkin_7', icon: '🧠', nome: 'Autoconsciente', desc: 'Fez check-in 7 dias seguidos' }
+    ];
+
+    function getUnlockedBadges() {
+      try {
+        var stored = localStorage.getItem('badges-unlocked');
+        return stored ? JSON.parse(stored) : {};
+      } catch(e) { return {}; }
+    }
+
+    function unlockBadge(badgeId) {
+      var unlocked = getUnlockedBadges();
+      if (unlocked[badgeId]) return false; // already unlocked
+      unlocked[badgeId] = { date: getTodayDateStr(), timestamp: new Date().toISOString() };
+      localStorage.setItem('badges-unlocked', JSON.stringify(unlocked));
+      // Find badge info
+      var badge = BADGE_DEFS.find(function(b) { return b.id === badgeId; });
+      if (badge) showToast(badge.icon + ' ' + badge.nome + ' desbloqueado!');
+      // Sync to Supabase (fire-and-forget)
+      var userId = getCurrentUserId();
+      if (userId) {
+        fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + userId, {
+          method: 'PATCH',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ badges_unlocked: unlocked })
+        }).catch(function() {});
+      }
+      return true; // newly unlocked
+    }
+
+    function checkBadges() {
+      var unlocked = getUnlockedBadges();
+
+      // 1. Primeiro Treino — check if any workout_sessions exist
+      if (!unlocked.primeiro_treino) {
+        var totalSessions = Object.keys(exerciseHistory).length > 0 ||
+          Object.keys(activities).some(function(d) {
+            return (activities[d] || []).some(function(a) { return (a.status || 'done') === 'done' && a.type !== 'descanso'; });
+          });
+        if (totalSessions) unlockBadge('primeiro_treino');
+      }
+
+      // 2-3. Streak badges
+      var streaks = calculateStreaks();
+      if (!unlocked.streak_7 && streaks.current >= 7) unlockBadge('streak_7');
+      if (!unlocked.streak_30 && streaks.current >= 30) unlockBadge('streak_30');
+
+      // 4. PR detection — compare max weights in history
+      if (!unlocked.pr_batido) {
+        var prFound = false;
+        Object.keys(exerciseHistory).forEach(function(exId) {
+          var entries = exerciseHistory[exId];
+          if (entries.length >= 2) {
+            var maxEver = 0;
+            for (var i = 0; i < entries.length - 1; i++) {
+              if (entries[i].maxWeight > maxEver) maxEver = entries[i].maxWeight;
+            }
+            var latest = entries[entries.length - 1];
+            if (latest.maxWeight > maxEver && maxEver > 0) prFound = true;
+          }
+        });
+        if (prFound) unlockBadge('pr_batido');
+      }
+
+      // 5. 10 treinos — count done activities
+      if (!unlocked.dez_treinos) {
+        var totalDone = 0;
+        Object.keys(activities).forEach(function(d) {
+          (activities[d] || []).forEach(function(a) {
+            if ((a.status || 'done') === 'done' && a.type !== 'descanso') totalDone++;
+          });
+        });
+        if (totalDone >= 10) unlockBadge('dez_treinos');
+      }
+
+      // 6. Versatil — 3+ different sport types in current week
+      if (!unlocked.versatil) {
+        var now = getSaoPauloNow();
+        var weekStart = new Date(now);
+        weekStart.setDate(weekStart.getDate() - weekStart.getDay()); // Sunday
+        var types = {};
+        for (var d = 0; d < 7; d++) {
+          var wd = new Date(weekStart);
+          wd.setDate(wd.getDate() + d);
+          var ds = wd.getFullYear() + '-' + String(wd.getMonth() + 1).padStart(2, '0') + '-' + String(wd.getDate()).padStart(2, '0');
+          (activities[ds] || []).forEach(function(a) {
+            if ((a.status || 'done') === 'done' && a.type !== 'descanso') types[a.type] = true;
+          });
+        }
+        if (Object.keys(types).length >= 3) unlockBadge('versatil');
+      }
+
+      // 7. Check-in 7 dias seguidos
+      if (!unlocked.checkin_7) {
+        var checkinStreak = 0;
+        var checkDate = getSaoPauloNow();
+        for (var i = 0; i < 30; i++) {
+          var ds = checkDate.getFullYear() + '-' + String(checkDate.getMonth() + 1).padStart(2, '0') + '-' + String(checkDate.getDate()).padStart(2, '0');
+          if (localStorage.getItem('checkin-' + ds)) {
+            checkinStreak++;
+          } else if (i === 0) {
+            // Today might not have check-in yet
+          } else {
+            break;
+          }
+          checkDate.setDate(checkDate.getDate() - 1);
+        }
+        if (checkinStreak >= 7) unlockBadge('checkin_7');
+      }
+
+      renderDashboardCards();
+    }
+
+    function renderBadgesCard(container) {
+      var unlocked = getUnlockedBadges();
+      var unlockedCount = Object.keys(unlocked).length;
+      var total = BADGE_DEFS.length;
+
+      var badgesHtml = '<div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">';
+      BADGE_DEFS.forEach(function(b) {
+        var isUnlocked = !!unlocked[b.id];
+        badgesHtml += '<div title="' + b.nome + ': ' + b.desc + '" style="' +
+          'width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; ' +
+          'border: 1px solid ' + (isUnlocked ? 'var(--accent)' : 'var(--border)') + '; ' +
+          'background: ' + (isUnlocked ? 'var(--accent-dim)' : 'var(--bg-tertiary)') + '; ' +
+          (isUnlocked ? '' : 'opacity:0.35; filter:grayscale(1);') +
+          '">' + b.icon + '</div>';
+      });
+      badgesHtml += '</div>';
+
+      container.innerHTML +=
+        '<div class="dash-card" style="cursor:default;">' +
+          '<div class="dash-card-icon">🏅</div>' +
+          '<div class="dash-card-content" style="flex:1;">' +
+            '<div class="dash-card-title">Conquistas</div>' +
+            '<div class="dash-card-value">' + unlockedCount + '/' + total + ' desbloqueadas</div>' +
+            badgesHtml +
+          '</div>' +
+        '</div>';
     }
 
     // ========== INIT ==========
@@ -11205,6 +11357,7 @@
       localStorage.setItem('checkin-' + getTodayDateStr(), JSON.stringify(checkinData));
       document.getElementById('checkinOverlay').style.display = 'none';
       showToast('Check-in salvo!');
+      checkBadges();
       // Save to Supabase (fire-and-forget)
       try {
         var userId = getCurrentUserId();
@@ -11485,10 +11638,11 @@
         updateSessionTimerDisplay();
       }
 
-      // Daily check-in + coach message (non-blocking, fires after app is ready)
+      // Daily check-in + coach message + badges (non-blocking)
       loadTodayCheckin();
       checkAndShowDailyCheckin();
       checkAndShowDailyMessage();
+      checkBadges();
     }
 
     document.addEventListener('DOMContentLoaded', async function() {
