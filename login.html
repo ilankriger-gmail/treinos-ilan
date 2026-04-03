@@ -438,7 +438,7 @@
       .then(function(r) { return r.json(); })
       .then(function(data) {
         if (data.valid) {
-          window.location.href = '/index.html';
+          window.location.href = '/app';
         }
       })
       .catch(function() {});
@@ -536,7 +536,7 @@
     function saveAuthAndRedirect(data) {
       localStorage.setItem('auth_token', data.token);
       localStorage.setItem('auth_user', JSON.stringify(data.user));
-      window.location.href = '/index.html';
+      window.location.href = '/app';
     }
 
     // ── Login ──
