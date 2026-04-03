@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Treinos - Entrar</title>
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-primary: #1e1e1e;
+      --bg-secondary: #262626;
+      --bg-tertiary: #2e2e2e;
+      --accent: #7f6df2;
+      --accent-dark: #6c5ce7;
+      --accent-dim: rgba(127,109,242,0.08);
+      --text-primary: #e8e8e8;
+      --text-secondary: #a0a0a0;
+      --text-muted: #666;
+      --border: #333;
+      --border-subtle: rgba(255,255,255,0.08);
+      --success: #59a869;
+      --error: #d95555;
+      --error-dim: rgba(217,85,85,0.1);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    ::selection {
+      background: rgba(127,109,242,0.3);
+      color: #fff;
+    }
+
+    /* ── Nav ── */
+    .nav {
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-primary);
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-logo-bar {
+      width: 4px;
+      height: 22px;
+      background: var(--accent);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ── Main ── */
+    .main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .auth-title {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .auth-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+
+    /* ── Tabs ── */
+    .auth-tabs {
+      display: flex;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 10px 16px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .auth-tab.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .auth-tab:not(.active):hover {
+      color: var(--text-secondary);
+    }
+
+    /* ── Form ── */
+    .auth-form {
+      display: none;
+    }
+
+    .auth-form.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      transition: border-color 0.2s;
+    }
+
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .form-input.error {
+      border-color: var(--error);
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .password-toggle:hover {
+      color: var(--text-secondary);
+    }
+
+    /* ── Button ── */
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 6px;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-dark);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-submit .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Alert ── */
+    .alert {
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 18px;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-error {
+      background: var(--error-dim);
+      border: 1px solid rgba(217,85,85,0.25);
+      color: var(--error);
+    }
+
+    .alert-success {
+      background: rgba(89,168,105,0.08);
+      border: 1px solid rgba(89,168,105,0.25);
+      color: var(--success);
+    }
+
+    /* ── Divider ── */
+    .auth-footer {
+      text-align: center;
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .auth-footer-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .auth-footer-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .auth-footer-link:hover {
+      text-decoration: underline;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      padding: 20px 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .footer-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .footer-text a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    .footer-text a:hover {
+      color: var(--text-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/landing.html" class="nav-logo">
+        <span class="nav-logo-bar"></span>
+        Treinos
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="auth-container">
+
+      <div class="auth-header">
+        <h1 class="auth-title" id="auth-title">Entrar</h1>
+        <p class="auth-subtitle" id="auth-subtitle">Acesse sua conta e continue treinando</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login" type="button">Entrar</button>
+        <button class="auth-tab" data-tab="signup" type="button">Criar conta</button>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert" id="alert" role="alert"></div>
+
+      <!-- Login Form -->
+      <form class="auth-form active" id="login-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email</label>
+          <input class="form-input" id="login-email" type="email" placeholder="seu@email.com" autocomplete="email" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Senha</label>
+          <div class="password-wrapper">
+            <input class="form-input" id="login-password" type="password" placeholder="Sua senha" autocomplete="current-password" required>
+            <button type="button" class="password-toggle" data-target="login-password" aria-label="Mostrar senha">&#128065;</button>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit" id="login-btn">Entrar</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form class="auth-form" id="signup-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="signup-nome">Nome</label>
+          <input class="form-input" id="signup-nome" type="text" placeholder="Seu nome" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="signup-email">Email</label>
+          <input class="form-input" id="signup-email" type="email" placeholder="seu@email.com" autocomplete="email" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="signup-password">Senha</label>
+          <div class="password-wrapper">
+            <input class="form-input" id="signup-password" type="password" placeholder="Minimo 6 caracteres" autocomplete="new-password" required>
+            <button type="button" class="password-toggle" data-target="signup-password" aria-label="Mostrar senha">&#128065;</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="signup-confirm">Confirmar senha</label>
+          <div class="password-wrapper">
+            <input class="form-input" id="signup-confirm" type="password" placeholder="Repita a senha" autocomplete="new-password" required>
+            <button type="button" class="password-toggle" data-target="signup-confirm" aria-label="Mostrar senha">&#128065;</button>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit" id="signup-btn">Criar conta</button>
+      </form>
+
+      <!-- Footer link -->
+      <div class="auth-footer">
+        <p class="auth-footer-text" id="footer-toggle">
+          Nao tem conta? <a class="auth-footer-link" data-switch="signup">Criar conta gratis</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p class="footer-text"><a href="/landing.html">Treinos</a> &copy; 2026</p>
+  </footer>
+
+  <script>
+  (function() {
+    var API_URL = '/api/auth';
+
+    // ── Elements ──
+    var tabs = document.querySelectorAll('.auth-tab');
+    var loginForm = document.getElementById('login-form');
+    var signupForm = document.getElementById('signup-form');
+    var alertEl = document.getElementById('alert');
+    var authTitle = document.getElementById('auth-title');
+    var authSubtitle = document.getElementById('auth-subtitle');
+    var footerToggle = document.getElementById('footer-toggle');
+
+    // ── Check if already logged in ──
+    var existingToken = localStorage.getItem('auth_token');
+    if (existingToken) {
+      fetch(API_URL + '?action=verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: existingToken })
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.valid) {
+          window.location.href = '/index.html';
+        }
+      })
+      .catch(function() {});
+    }
+
+    // ── Tab Switching ──
+    function switchTab(tab) {
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+
+      loginForm.classList.remove('active');
+      signupForm.classList.remove('active');
+      hideAlert();
+
+      if (tab === 'login') {
+        loginForm.classList.add('active');
+        authTitle.textContent = 'Entrar';
+        authSubtitle.textContent = 'Acesse sua conta e continue treinando';
+        footerToggle.innerHTML = 'Nao tem conta? <a class="auth-footer-link" data-switch="signup">Criar conta gratis</a>';
+      } else {
+        signupForm.classList.add('active');
+        authTitle.textContent = 'Criar conta';
+        authSubtitle.textContent = 'Comece a treinar com seu coach de IA';
+        footerToggle.innerHTML = 'Ja tem conta? <a class="auth-footer-link" data-switch="login">Entrar</a>';
+      }
+
+      // Bind footer links
+      var switchLink = footerToggle.querySelector('[data-switch]');
+      if (switchLink) {
+        switchLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          switchTab(this.getAttribute('data-switch'));
+        });
+      }
+    }
+
+    tabs.forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        switchTab(this.getAttribute('data-tab'));
+      });
+    });
+
+    // Footer link
+    var initialSwitch = footerToggle.querySelector('[data-switch]');
+    if (initialSwitch) {
+      initialSwitch.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab(this.getAttribute('data-switch'));
+      });
+    }
+
+    // ── URL param: ?tab=signup ──
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('tab') === 'signup') {
+      switchTab('signup');
+    }
+
+    // ── Alert ──
+    function showAlert(msg, type) {
+      alertEl.textContent = msg;
+      alertEl.className = 'alert show alert-' + type;
+    }
+
+    function hideAlert() {
+      alertEl.className = 'alert';
+    }
+
+    // ── Password toggle ──
+    document.querySelectorAll('.password-toggle').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var input = document.getElementById(this.getAttribute('data-target'));
+        if (input.type === 'password') {
+          input.type = 'text';
+          this.innerHTML = '&#128064;';
+        } else {
+          input.type = 'password';
+          this.innerHTML = '&#128065;';
+        }
+      });
+    });
+
+    // ── Set loading state ──
+    function setLoading(btn, loading) {
+      if (loading) {
+        btn.disabled = true;
+        btn.setAttribute('data-text', btn.textContent);
+        btn.innerHTML = '<span class="spinner"></span> Aguarde...';
+      } else {
+        btn.disabled = false;
+        btn.textContent = btn.getAttribute('data-text') || btn.textContent;
+      }
+    }
+
+    // ── Save auth and redirect ──
+    function saveAuthAndRedirect(data) {
+      localStorage.setItem('auth_token', data.token);
+      localStorage.setItem('auth_user', JSON.stringify(data.user));
+      window.location.href = '/index.html';
+    }
+
+    // ── Login ──
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      hideAlert();
+
+      var email = document.getElementById('login-email').value.trim();
+      var password = document.getElementById('login-password').value;
+
+      if (!email || !password) {
+        showAlert('Preencha todos os campos.', 'error');
+        return;
+      }
+
+      var btn = document.getElementById('login-btn');
+      setLoading(btn, true);
+
+      fetch(API_URL + '?action=login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password })
+      })
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(res) {
+        setLoading(btn, false);
+        if (!res.ok) {
+          showAlert(res.data.error || 'Erro ao fazer login.', 'error');
+          return;
+        }
+        saveAuthAndRedirect(res.data);
+      })
+      .catch(function() {
+        setLoading(btn, false);
+        showAlert('Erro de conexao. Tente novamente.', 'error');
+      });
+    });
+
+    // ── Signup ──
+    signupForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      hideAlert();
+
+      var nome = document.getElementById('signup-nome').value.trim();
+      var email = document.getElementById('signup-email').value.trim();
+      var password = document.getElementById('signup-password').value;
+      var confirm = document.getElementById('signup-confirm').value;
+
+      if (!email || !password) {
+        showAlert('Email e senha sao obrigatorios.', 'error');
+        return;
+      }
+
+      if (password.length < 6) {
+        showAlert('Senha deve ter pelo menos 6 caracteres.', 'error');
+        return;
+      }
+
+      if (password !== confirm) {
+        showAlert('As senhas nao coincidem.', 'error');
+        return;
+      }
+
+      var btn = document.getElementById('signup-btn');
+      setLoading(btn, true);
+
+      fetch(API_URL + '?action=signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password, nome: nome || null })
+      })
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(res) {
+        setLoading(btn, false);
+        if (!res.ok) {
+          showAlert(res.data.error || 'Erro ao criar conta.', 'error');
+          return;
+        }
+        saveAuthAndRedirect(res.data);
+      })
+      .catch(function() {
+        setLoading(btn, false);
+        showAlert('Erro de conexao. Tente novamente.', 'error');
+      });
+    });
+
+  })();
+  </script>
+
+</body>
+</html>
