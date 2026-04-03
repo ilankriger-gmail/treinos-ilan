@@ -3653,6 +3653,58 @@
     </div>
   </div>
   
+  <!-- Daily Check-in Modal -->
+  <div id="checkinOverlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; padding:20px;" onclick="if(event.target===this)dismissCheckin()">
+    <div style="background:var(--bg-secondary); border:1px solid var(--border); border-radius:16px; width:100%; max-width:380px; padding:28px 24px; position:relative;">
+      <div style="text-align:center; margin-bottom:20px;">
+        <div style="font-size:28px; margin-bottom:8px;">🧠</div>
+        <h3 style="font-size:18px; font-weight:700; margin-bottom:4px;">Como voce esta hoje?</h3>
+        <p style="font-size:13px; color:var(--text-muted);">O Coach AI adapta seu treino com base nisso.</p>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:8px;">Energia</label>
+        <div id="checkinEnergia" style="display:flex; gap:6px;">
+          <button type="button" class="checkin-opt" data-field="energia" data-val="1" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Muito baixa</button>
+          <button type="button" class="checkin-opt" data-field="energia" data-val="2" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Baixa</button>
+          <button type="button" class="checkin-opt" data-field="energia" data-val="3" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Ok</button>
+          <button type="button" class="checkin-opt" data-field="energia" data-val="4" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Boa</button>
+          <button type="button" class="checkin-opt" data-field="energia" data-val="5" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Alta</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:8px;">Sono na noite passada</label>
+        <div id="checkinSono" style="display:flex; gap:6px;">
+          <button type="button" class="checkin-opt" data-field="sono" data-val="1" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Pessimo</button>
+          <button type="button" class="checkin-opt" data-field="sono" data-val="2" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Ruim</button>
+          <button type="button" class="checkin-opt" data-field="sono" data-val="3" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Ok</button>
+          <button type="button" class="checkin-opt" data-field="sono" data-val="4" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Bom</button>
+          <button type="button" class="checkin-opt" data-field="sono" data-val="5" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Otimo</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px;">
+        <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:8px;">Stress</label>
+        <div id="checkinStress" style="display:flex; gap:6px;">
+          <button type="button" class="checkin-opt" data-field="stress" data-val="1" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Nenhum</button>
+          <button type="button" class="checkin-opt" data-field="stress" data-val="2" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Pouco</button>
+          <button type="button" class="checkin-opt" data-field="stress" data-val="3" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Medio</button>
+          <button type="button" class="checkin-opt" data-field="stress" data-val="4" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Alto</button>
+          <button type="button" class="checkin-opt" data-field="stress" data-val="5" style="flex:1; padding:10px 0; border-radius:8px; border:1px solid var(--border); background:var(--bg-tertiary); color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; transition:all .15s;">Muito alto</button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label style="font-size:12px; color:var(--text-muted); display:block; margin-bottom:8px;">Alguma dor ou desconforto?</label>
+        <input type="text" id="checkinDor" placeholder="Ex: ombro esquerdo, nenhuma" style="width:100%; padding:12px; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:8px; color:var(--text-primary); font-size:14px; font-family:'Inter',sans-serif;">
+      </div>
+
+      <button onclick="saveCheckin()" id="checkinSaveBtn" style="width:100%; padding:14px; border:none; border-radius:10px; background:var(--accent); color:#fff; font-family:'Inter',sans-serif; font-size:15px; font-weight:700; cursor:pointer;">Salvar e treinar</button>
+      <button onclick="dismissCheckin()" style="width:100%; padding:10px; border:none; background:transparent; color:var(--text-muted); cursor:pointer; font-size:13px; margin-top:8px; font-family:'Inter',sans-serif;">Pular por hoje</button>
+    </div>
+  </div>
+
   <script>
     const SUPABASE_URL = 'https://nxvwihwpzungfeovkevx.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im54dndpaHdwenVuZ2Zlb3ZrZXZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MDYxMTIsImV4cCI6MjA4NzM4MjExMn0._dvPEH9t3_C-wTsHpyNlsOks7VURSCdVOFM9kctxoYs';
@@ -7007,7 +7059,8 @@
         '6. Conecte SEMPRE suas recomendacoes ao objetivo — explique COMO cada sugestao ajuda a chegar la.\n' +
         '7. Se existirem NOTAS MEDICAS no contexto, SEMPRE respeite como restricoes. NUNCA sugira exercicios que conflitem com lesoes, condicoes ou restricoes medicas do aluno. Adapte todas as sugestoes.\n\n' +
         'DATA DE HOJE: ' + getTodayDateStr() + ' (' + ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][getSaoPauloNow().getDay()] + ')\n' +
-        'PROXIMOS 7 DIAS: ' + getNext7Days() + '\n\n' +
+        'PROXIMOS 7 DIAS: ' + getNext7Days() + '\n' +
+        getCheckinContext() + '\n' +
         'FORMATO DE SUGESTAO:\n' +
         'Existem 3 tipos de blocos de sugestao. Podem ser COMBINADOS na mesma resposta quando necessario:\n\n' +
         'AJUSTAR EXERCICIOS INDIVIDUAIS:\n' +
@@ -11089,6 +11142,120 @@
         'Use o contexto do usuário para criar uma mensagem matinal relevante.';
     }
 
+    // ── Daily Check-in System ──
+    var todayCheckin = null;
+
+    function initCheckinButtons() {
+      document.querySelectorAll('.checkin-opt').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var field = this.getAttribute('data-field');
+          document.querySelectorAll('.checkin-opt[data-field="' + field + '"]').forEach(function(b) {
+            b.style.background = 'var(--bg-tertiary)';
+            b.style.borderColor = 'var(--border)';
+            b.style.color = 'var(--text-secondary)';
+          });
+          this.style.background = 'var(--accent)';
+          this.style.borderColor = 'var(--accent)';
+          this.style.color = '#fff';
+        });
+      });
+    }
+
+    function showCheckinModal() {
+      var overlay = document.getElementById('checkinOverlay');
+      overlay.style.display = 'flex';
+      initCheckinButtons();
+    }
+
+    function dismissCheckin() {
+      document.getElementById('checkinOverlay').style.display = 'none';
+      localStorage.setItem('checkin-dismissed-' + getTodayDateStr(), '1');
+    }
+
+    function getCheckinValues() {
+      var energia = 0, sono = 0, stress = 0;
+      document.querySelectorAll('.checkin-opt[data-field="energia"]').forEach(function(b) {
+        if (b.style.background === 'var(--accent)') energia = parseInt(b.getAttribute('data-val'));
+      });
+      document.querySelectorAll('.checkin-opt[data-field="sono"]').forEach(function(b) {
+        if (b.style.background === 'var(--accent)') sono = parseInt(b.getAttribute('data-val'));
+      });
+      document.querySelectorAll('.checkin-opt[data-field="stress"]').forEach(function(b) {
+        if (b.style.background === 'var(--accent)') stress = parseInt(b.getAttribute('data-val'));
+      });
+      var dor = (document.getElementById('checkinDor') || {}).value || '';
+      return { energia: energia, sono: sono, stress: stress, dor: dor.trim() };
+    }
+
+    async function saveCheckin() {
+      var vals = getCheckinValues();
+      if (!vals.energia || !vals.sono || !vals.stress) {
+        showToast('Selecione energia, sono e stress');
+        return;
+      }
+      var checkinData = {
+        date: getTodayDateStr(),
+        energia: vals.energia,
+        sono: vals.sono,
+        stress: vals.stress,
+        dor: vals.dor,
+        timestamp: new Date().toISOString()
+      };
+      todayCheckin = checkinData;
+      localStorage.setItem('checkin-' + getTodayDateStr(), JSON.stringify(checkinData));
+      document.getElementById('checkinOverlay').style.display = 'none';
+      showToast('Check-in salvo!');
+      // Save to Supabase (fire-and-forget)
+      try {
+        var userId = getCurrentUserId();
+        if (userId) {
+          // Load existing history
+          var res = await fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + userId + '&select=daily_checkins', {
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+          });
+          var data = await res.json();
+          var history = (data[0] && data[0].daily_checkins) || [];
+          if (!Array.isArray(history)) history = [];
+          // Replace today's entry if exists, or add
+          history = history.filter(function(c) { return c.date !== checkinData.date; });
+          history.push(checkinData);
+          // Keep last 30 days
+          if (history.length > 30) history = history.slice(-30);
+          await fetch(SUPABASE_URL + '/rest/v1/user_profile?user_id=eq.' + userId, {
+            method: 'PATCH',
+            headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ daily_checkins: history })
+          });
+        }
+      } catch(e) { console.error('Checkin sync error:', e); }
+    }
+
+    function loadTodayCheckin() {
+      var stored = localStorage.getItem('checkin-' + getTodayDateStr());
+      if (stored) {
+        try { todayCheckin = JSON.parse(stored); } catch(e) {}
+      }
+    }
+
+    function getCheckinContext() {
+      if (!todayCheckin) return '';
+      var labels = { energia: ['','Muito baixa','Baixa','Ok','Boa','Alta'], sono: ['','Pessimo','Ruim','Ok','Bom','Otimo'], stress: ['','Nenhum','Pouco','Medio','Alto','Muito alto'] };
+      var ctx = '\nCHECK-IN DE HOJE (' + todayCheckin.date + '):\n';
+      ctx += '- Energia: ' + labels.energia[todayCheckin.energia] + ' (' + todayCheckin.energia + '/5)\n';
+      ctx += '- Sono: ' + labels.sono[todayCheckin.sono] + ' (' + todayCheckin.sono + '/5)\n';
+      ctx += '- Stress: ' + labels.stress[todayCheckin.stress] + ' (' + todayCheckin.stress + '/5)\n';
+      if (todayCheckin.dor) ctx += '- Dor/desconforto: ' + todayCheckin.dor + '\n';
+      ctx += 'INSTRUCAO: Adapte a intensidade do treino com base nestes dados. Energia baixa ou sono ruim = menos volume, mais foco em qualidade. Stress alto = exercicios que aliviam tensao. Dor = evitar ou adaptar exercicios que afetam a regiao.\n';
+      return ctx;
+    }
+
+    async function checkAndShowDailyCheckin() {
+      loadTodayCheckin();
+      if (todayCheckin) return; // Already checked in today
+      if (localStorage.getItem('checkin-dismissed-' + getTodayDateStr())) return; // Dismissed today
+      showCheckinModal();
+    }
+
     async function checkAndShowDailyMessage() {
       try {
         var today = getTodayDateStr();
@@ -11318,7 +11485,9 @@
         updateSessionTimerDisplay();
       }
 
-      // Daily coach message (non-blocking, fires after app is ready)
+      // Daily check-in + coach message (non-blocking, fires after app is ready)
+      loadTodayCheckin();
+      checkAndShowDailyCheckin();
       checkAndShowDailyMessage();
     }
 
